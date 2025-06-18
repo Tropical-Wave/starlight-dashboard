@@ -109,7 +109,7 @@
         
         /* Progress Bar */
         .progress-indicator { display: flex; align-items: center; justify-content: center; margin-top: 2rem; padding: 0 1rem; }
-        .progress-line { flex-grow: 1; height: 8px; background-color: #CBD5E1; margin: 0 -2px; }
+        .progress-line { flex-grow: 1; height: 8px; background-color: #CBD5E1; margin: 0 -2px; transition: background 0.4s ease; }
         .progress-line.completed { background: linear-gradient(to right, #49A35A, #6ABE8A); }
         .progress-step .stamp-circle {
             width: 80px; height: 80px; border-radius: 50%;
@@ -120,10 +120,11 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
             position: relative; z-index: 1;
         }
+        /* UPDATED: Style for a completed step's circle */
         .progress-step.completed .stamp-circle {
-            background: linear-gradient(135deg, #7DCB86, #49A35A, #7DCB86);
-            color: white; transform: scale(1.05);
-            box-shadow: 0 10px 15px -3px rgba(73, 163, 90, 0.3);
+            background-color: white; /* White background for stamped circle */
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Neutral shadow */
         }
         .event-label { margin-top: 0.75rem; font-weight: 600; color: #64748B; transition: all 0.3s ease; }
         .progress-step.completed .event-label { color: #1E293B; }
@@ -250,7 +251,9 @@
                 </button>
                 <h3 class="flex-grow text-center font-bold text-lg text-slate-800">Points History</h3>
             </div>
-            <div id="historyList" class="p-4 overflow-y-auto"></div>
+            <div id="historyList" class="p-4 overflow-y-auto">
+                <!-- History content will be dynamically inserted here -->
+            </div>
         </div>
     </div>
     
@@ -302,7 +305,7 @@
     let inactivityTimer = null;
     function resetInactivityTimer() {
       clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(showSplashScreen, 30000);
+      inactivityTimer = setTimeout(showSplashScreen, 30000); // 30 second timeout
     }
 
     async function handleLogin() {
@@ -320,18 +323,22 @@
       try {
         const url = `${GOOGLE_SHEET_URL}?code=${code}`;
         const res = await fetch(url);
+        // Assuming your Google Apps Script returns a JSON object like:
+        // { user: { Name: "Juan", Points: 15, Event1: "Tier1", ... }, history: [ { Game: "Game1", Points: 5 }, ... ] }
         const json = await res.json();
 
         if (!json.user || !json.user.Name) {
-          throw new Error("Invalid code");
+          throw new Error("Invalid code or user data not found");
         }
-
+        
+        // Hide login and show dashboard
         loginScreen.classList.remove('visible');
         dashboard.style.display = 'flex';
         setTimeout(() => dashboard.style.opacity = 1, 50);
 
         updateDashboardUI(json.user, json.history);
       } catch (error) {
+        console.error("Login failed:", error);
         accessCodeError.textContent = "Invalid Access Code. Please try again.";
         accessCodeError.classList.remove('hidden');
       } finally {
@@ -348,6 +355,10 @@
       renderHistoryList(historyData || []);
     }
 
+    /**
+     * UPDATED: Renders the progress bar based on event tiers.
+     * Each tier has a unique shape and color.
+     */
     function renderProgressBar(data) {
       progressContainer.innerHTML = '';
       const steps = [
@@ -356,61 +367,101 @@
         { key: 'Event3', label: 'Touchdown' }
       ];
 
+      const tierStyles = {
+        'Tier1': { // Green Triangle
+          icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#49A35A"/></svg>`
+        },
+        'Tier2': { // Blue Square
+          icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>`
+        },
+        'Tier3': { // Yellow Diamond
+          icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>`
+        }
+      };
+
       steps.forEach((step, index) => {
-        const completed = data[step.key] === true || data[step.key] === "TRUE";
+        const tier = data[step.key];
+        const isCompleted = tier && tierStyles[tier];
+
         const stepEl = document.createElement('div');
-        stepEl.className = `progress-step flex flex-col items-center ${completed ? 'completed' : ''}`;
+        stepEl.className = `progress-step flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
+
+        let stampContent = `<span class="text-3xl font-bold">${index + 1}</span>`;
+        if (isCompleted) {
+          stampContent = tierStyles[tier].icon;
+        }
+
         stepEl.innerHTML = `
           <div class="stamp-circle">
-            ${completed
-              ? `<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-10 w-10\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\" /></svg>`
-              : `<span class="text-3xl font-bold">${index + 1}</span>`
-            }
+            ${stampContent}
           </div>
-          <div class="event-label ${!completed ? 'label-blurred' : ''}">${step.label}</div>
+          <div class="event-label ${!isCompleted ? 'label-blurred' : ''}">${step.label}</div>
         `;
         progressContainer.appendChild(stepEl);
 
         if (index < steps.length - 1) {
           const line = document.createElement('div');
-          line.className = `progress-line ${completed ? 'completed' : ''}`;
+          const isLineCompleted = isCompleted; // A line is 'complete' if the step before it is.
+          line.className = `progress-line ${isLineCompleted ? 'completed' : ''}`;
           progressContainer.appendChild(line);
         }
       });
     }
 
+    /**
+     * UPDATED: Renders the points history list.
+     * Displays a clean two-column layout for Game and Points.
+     */
     function renderHistoryList(historyData) {
-      if (!historyData || historyData.length === 0) {
-        historyList.innerHTML = '<p class="text-center text-slate-500 mt-6">No points history yet.</p>';
-        return;
-      }
+        historyList.innerHTML = ''; // Clear previous content
 
-      const sorted = [...historyData].sort((a, b) => {
-        const aTime = a.Time || "";
-        const bTime = b.Time || "";
-        return bTime.localeCompare(aTime);
-      });
+        if (!historyData || historyData.length === 0) {
+            historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history has been recorded yet.</p>';
+            return;
+        }
+        
+        const table = document.createElement('div');
+        table.className = 'w-full text-sm';
+        
+        // Add a header for the list
+        table.innerHTML = `
+            <div class="flex justify-between items-center pb-2 mb-2 border-b-2 border-slate-200">
+                <span class="font-bold text-slate-600">Game / Event</span>
+                <span class="font-bold text-slate-600">Points Earned</span>
+            </div>
+        `;
 
-      historyList.innerHTML = sorted.map(item => `
-        <div class="flex justify-between items-center py-3 border-b border-slate-100">
-          <div>
-            <p class="font-semibold text-slate-700">${item.Game}</p>
-            <p class="text-xs text-slate-400">${item.Time}</p>
-          </div>
-          <p class="font-bold text-lg text-green-500">+${item.Points}</p>
-        </div>
-      `).join('');
+        const body = document.createElement('div');
+        body.className = 'flex flex-col';
+        
+        // Create a row for each history item
+        historyData.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
+            row.innerHTML = `
+                <span class="font-semibold text-slate-800">${item.Game || 'Unknown Event'}</span>
+                <span class="font-bold text-lg text-green-500">+${item.Points || '0'}</span>
+            `;
+            body.appendChild(row);
+        });
+        
+        table.appendChild(body);
+        historyList.appendChild(table);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       showSplashScreen();
       setTimeout(showLoginScreen, 2500);
 
+      // Reset inactivity timer on user interaction
       ['click', 'keypress', 'mousemove'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       splashScreen.addEventListener('click', showLoginScreen);
+      
+      // Login listeners
       accessCodeEnterBtn.addEventListener('click', handleLogin);
       accessCodeInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleLogin());
 
+      // Popup/Page listeners
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
       document.getElementById('showRewardsBtn').addEventListener('click', () => rewardsPage.classList.add('visible'));
