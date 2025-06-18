@@ -78,7 +78,7 @@
             padding: 2.5rem; border-radius: 1.5rem; text-align: center;
             width: 90%; max-width: 450px;
             border: 1px solid #D1E0DE;
-            box-shadow: 0 8px 32px 0 rgba(0,0,0, 0.1);
+            box-shadow: 0 8px 24px 0 rgba(0,0,0, 0.08); /* Subtle shadow */
         }
         #accessCodeInput {
             border: 2px solid #D1E0DE;
@@ -95,10 +95,14 @@
         /* --- Dashboard Container --- */
         #dashboard {
             display: none; height: 100dvh;
-            padding: 2rem; gap: 2rem;
+            padding: 1rem; /* Base padding for mobile */
+            gap: 1rem; /* Base gap for mobile */
             opacity: 0; transition: opacity 0.5s ease-in;
         }
-         @media (orientation: landscape) {
+         @media (min-width: 768px) { /* Medium screens and up (tablets) */
+             #dashboard { padding: 2rem; gap: 2rem; }
+         }
+         @media (min-width: 1024px) and (orientation: landscape) { /* Landscape tablets and desktops */
             #dashboard { flex-direction: row; }
             .left-panel { flex: 0 0 45%; max-width: 45%; }
             .right-panel { flex: 1; }
@@ -107,26 +111,55 @@
         /* --- Left Panel: Header and Progress --- */
         .dashboard-header { font-family: 'Oswald', sans-serif; color: #1E293B; }
         
-        /* Progress Bar */
-        .progress-indicator { display: flex; align-items: center; justify-content: center; margin-top: 2rem; padding: 0 1rem; }
-        .progress-line { flex-grow: 1; height: 8px; background-color: #CBD5E1; margin: 0 -2px; transition: background 0.4s ease; }
-        .progress-line.completed { background: linear-gradient(to right, #49A35A, #6ABE8A); }
+        /* UPDATED: Progress Bar */
+        .progress-indicator {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem auto 0;
+        }
+        .progress-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background-color: #CBD5E1; /* Inactive line color */
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+        .progress-line-active {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(to right, #49A35A, #6ABE8A);
+            transform: translateY(-50%);
+            z-index: 0;
+            transition: width 0.5s ease-in-out;
+        }
+        .progress-step { z-index: 1; }
+
         .progress-step .stamp-circle {
             width: 80px; height: 80px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             background-color: #CBD5E1; color: #64748B;
             border: 6px solid #EEF7F6;
             transition: all 0.4s ease;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.06); /* Subtle shadow */
             position: relative; z-index: 1;
         }
-        /* UPDATED: Style for a completed step's circle */
+
         .progress-step.completed .stamp-circle {
             background-color: white; /* White background for stamped circle */
             transform: scale(1.05);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Neutral shadow */
+            box-shadow: 0 6px 10px -3px rgba(0, 0, 0, 0.08); /* Subtle neutral shadow */
         }
-        .event-label { margin-top: 0.75rem; font-weight: 600; color: #64748B; transition: all 0.3s ease; }
+        .event-label { margin-top: 0.75rem; font-weight: 600; color: #64748B; transition: all 0.3s ease; text-align: center; }
         .progress-step.completed .event-label { color: #1E293B; }
         .label-blurred { filter: blur(4px); opacity: 0.5; }
 
@@ -135,14 +168,14 @@
             background-color: white; border-radius: 1.5rem;
             border: 1px solid #D1E0DE;
             padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Subtle shadow */
         }
         .game-card {
             background-color: #F8FAFC; border: 1px solid #E2E8F0;
             transition: all 0.2s ease-out;
         }
         .game-card:hover {
-            transform: translateY(-4px); box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1);
+            transform: translateY(-4px); box-shadow: 0 6px 15px -5px rgba(0,0,0,0.08); /* Subtle shadow */
             border-color: #49A35A; background-color: white;
         }
 
@@ -150,10 +183,11 @@
         .popup-card {
             background-color: white; border-radius: 1rem;
             border: 1px solid #D1E0DE;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); /* Subtle shadow */
             display: flex; flex-direction: column;
+            width: 90%; max-width: 400px;
         }
-        #historyPopup.visible .popup-card {
+        #historyPopup.visible .popup-card, #rewardsPage.visible .popup-card {
             transform: scale(1); opacity: 1; pointer-events: auto;
         }
     </style>
@@ -161,7 +195,7 @@
 <body class="antialiased">
     
     <!-- Splash Screen / Screensaver -->
-    <div id="splashScreen" class="fullscreen-overlay">
+    <div id="splashScreen" class="fullscreen-overlay visible">
         <div class="star-container">
             <svg fill="#EEF7F6" version="1.1" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg">
              <path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.8711-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/>
@@ -181,7 +215,7 @@
             <p class="text-slate-500 mt-1">Enter your code to view your dashboard</p>
             <div class="mt-8">
                 <input type="text" id="accessCodeInput" autocomplete="off" placeholder="Enter Access Code" class="w-full p-4 rounded-lg font-semibold text-lg tracking-wider">
-                <button id="accessCodeEnterBtn" class="w-full mt-4 p-4 bg-green-600 text-white font-bold rounded-lg text-lg transition hover:bg-green-700 shadow-lg shadow-green-600/20 hover:shadow-green-600/40">
+                <button id="accessCodeEnterBtn" class="w-full mt-4 p-4 bg-green-600 text-white font-bold rounded-lg text-lg transition hover:bg-green-700 shadow-md shadow-green-600/10 hover:shadow-green-600/20">
                     Verify Code
                 </button>
                 <p id="loadingIndicator" class="text-green-600 mt-4 font-semibold hidden">
@@ -194,14 +228,16 @@
     </div>
 
     <!-- Main Dashboard View -->
-    <main id="dashboard" class="flex flex-col md:flex-row">
+    <main id="dashboard" class="flex flex-col lg:flex-row">
         <!-- Left Panel (Header and Progress) -->
-        <div class="left-panel flex flex-col">
-            <header class="dashboard-header text-5xl md:text-6xl">Dashboard</header>
-            <p class="text-3xl md:text-4xl mt-2 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
-            <div class="flex-grow"></div>
+        <div class="left-panel flex flex-col justify-center">
+             <div>
+                <header class="dashboard-header text-4xl md:text-5xl lg:text-6xl">Dashboard</header>
+                <p class="text-2xl md:text-3xl lg:text-4xl mt-2 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
+            </div>
+            <div class="flex-grow lg:flex-grow-0 lg:mt-24"></div>
             <div class="mt-auto">
-                <h3 class="font-bold text-xl text-slate-800">Event Progress</h3>
+                <h3 class="font-bold text-xl text-slate-800 text-center lg:text-left">Event Progress</h3>
                 <div id="progressContainer" class="progress-indicator"></div>
             </div>
         </div>
@@ -211,31 +247,31 @@
             <div class="dashboard-card h-full">
                 <!-- Points & Rewards -->
                 <div class="flex justify-between items-center border-b border-slate-200 pb-4">
-                    <div class="flex items-center gap-3">
-                        <span class="font-semibold text-lg text-slate-600">Points:</span>
-                        <span id="userPoints" class="text-4xl font-bold text-slate-800">0</span>
+                    <div class="flex items-center gap-2 md:gap-3">
+                        <span class="font-semibold text-base md:text-lg text-slate-600">Points:</span>
+                        <span id="userPoints" class="text-3xl md:text-4xl font-bold text-slate-800">0</span>
                         <button id="showHistoryBtn" class="text-slate-400 hover:text-green-500 transition-colors duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
-                    <button id="showRewardsBtn" class="font-semibold text-sm py-2 px-5 rounded-full text-white hover:shadow-lg transition" style="background: linear-gradient(135deg, #7DCB86, #49A35A, #7DCB86);">Rewards</button>
+                    <button id="showRewardsBtn" class="font-semibold text-sm py-2 px-4 md:px-5 rounded-full text-white hover:shadow-md transition" style="background: linear-gradient(135deg, #7DCB86, #49A35A, #7DCB86);">Rewards</button>
                 </div>
                 <!-- Game Selection -->
-                <div class="flex-grow grid grid-cols-3 gap-4 pt-4">
+                <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
                     <button class="game-card rounded-2xl p-2" data-game-name="Puzzle Box" data-game-points="5">
                         <div class="h-12 w-12 text-green-500 mx-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1.5 1.5 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 011-1h.5a1.5 1.5 0 000-3H6a1 1 0 01-1-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" /></svg></div>
-                        <span class="block font-semibold mt-2 text-slate-700 text-sm md:text-base">Puzzle Box</span>
-                        <span class="block text-sm font-medium text-slate-500">Easy: 5 pts</span>
+                        <span class="block font-semibold mt-2 text-slate-700 text-xs md:text-base">Puzzle Box</span>
+                        <span class="block text-xs md:text-sm font-medium text-slate-500">Easy: 5 pts</span>
                     </button>
                     <button class="game-card rounded-2xl p-2" data-game-name="Lightning Round" data-game-points="15">
                         <div class="h-12 w-12 text-green-500 mx-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" /></svg></div>
-                        <span class="block font-semibold mt-2 text-slate-700 text-sm md:text-base">Lightning Round</span>
-                        <span class="block text-sm font-medium text-slate-500">Hard: 15 pts</span>
+                        <span class="block font-semibold mt-2 text-slate-700 text-xs md:text-base">Lightning Round</span>
+                        <span class="block text-xs md:text-sm font-medium text-slate-500">Hard: 15 pts</span>
                     </button>
                     <button class="game-card rounded-2xl p-2" data-game-name="Memory Match" data-game-points="10">
                         <div class="h-12 w-12 text-green-500 mx-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" /></svg></div>
-                        <span class="block font-semibold mt-2 text-slate-700 text-sm md:text-base">Memory Match</span>
-                        <span class="block text-sm font-medium text-slate-500">Med: 10 pts</span>
+                        <span class="block font-semibold mt-2 text-slate-700 text-xs md:text-base">Memory Match</span>
+                        <span class="block text-xs md:text-sm font-medium text-slate-500">Med: 10 pts</span>
                     </button>
                 </div>
             </div>
@@ -244,7 +280,7 @@
     
     <!-- Points History Pop-up -->
     <div id="historyPopup" class="fullscreen-overlay" onclick="this.classList.remove('visible')">
-        <div class="popup-card w-[380px] max-h-[80%] transform scale-95 opacity-0 transition-transform transition-opacity" onclick="event.stopPropagation()">
+        <div class="popup-card transform scale-95 opacity-0 transition-transform transition-opacity" onclick="event.stopPropagation()">
             <div class="p-4 border-b border-slate-200 flex items-center flex-shrink-0">
                 <button id="closeHistoryBtn" class="text-slate-500 hover:text-slate-800 mr-3 p-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
@@ -265,10 +301,10 @@
             </button>
             <h2 class="flex-grow text-center font-bold text-2xl text-slate-800 mr-8">Rewards</h2>
         </header>
-        <div class="p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-y-auto">
-             <button class="text-center group disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow" data-cost="5">
-                <div class="h-16 w-16 text-yellow-400"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg></div>
-                <p class="mt-2 font-semibold text-slate-700">Sticker Pack</p>
+        <div class="p-4 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 overflow-y-auto">
+             <button class="text-center group disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow" data-cost="5">
+                <div class="h-12 w-12 md:h-16 md:w-16 text-yellow-400"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg></div>
+                <p class="mt-2 font-semibold text-slate-700 text-sm md:text-base">Sticker Pack</p>
                 <p class="text-sm font-bold text-green-600">5 pts</p>
             </button>
         </div>
@@ -323,15 +359,12 @@
       try {
         const url = `${GOOGLE_SHEET_URL}?code=${code}`;
         const res = await fetch(url);
-        // Assuming your Google Apps Script returns a JSON object like:
-        // { user: { Name: "Juan", Points: 15, Event1: "Tier1", ... }, history: [ { Game: "Game1", Points: 5 }, ... ] }
         const json = await res.json();
 
         if (!json.user || !json.user.Name) {
           throw new Error("Invalid code or user data not found");
         }
         
-        // Hide login and show dashboard
         loginScreen.classList.remove('visible');
         dashboard.style.display = 'flex';
         setTimeout(() => dashboard.style.opacity = 1, 50);
@@ -354,13 +387,16 @@
       renderProgressBar(userData);
       renderHistoryList(historyData || []);
     }
-
+    
     /**
-     * UPDATED: Renders the progress bar based on event tiers.
-     * Each tier has a unique shape and color.
+     * UPDATED: Renders the progress bar with a visually centered connecting line.
      */
     function renderProgressBar(data) {
-      progressContainer.innerHTML = '';
+      progressContainer.innerHTML = ''; // Clear previous content
+      const activeLine = document.createElement('div');
+      activeLine.className = 'progress-line-active';
+      progressContainer.appendChild(activeLine);
+      
       const steps = [
         { key: 'Event1', label: 'Onboarding' },
         { key: 'Event2', label: 'Take Off' },
@@ -368,20 +404,18 @@
       ];
 
       const tierStyles = {
-        'Tier1': { // Green Triangle
-          icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#49A35A"/></svg>`
-        },
-        'Tier2': { // Blue Square
-          icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>`
-        },
-        'Tier3': { // Yellow Diamond
-          icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>`
-        }
+        'Tier1': { icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#49A35A"/></svg>` },
+        'Tier2': { icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>` },
+        'Tier3': { icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>` }
       };
 
+      let completedCount = 0;
       steps.forEach((step, index) => {
         const tier = data[step.key];
         const isCompleted = tier && tierStyles[tier];
+        if (isCompleted) {
+            completedCount++;
+        }
 
         const stepEl = document.createElement('div');
         stepEl.className = `progress-step flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
@@ -398,22 +432,16 @@
           <div class="event-label ${!isCompleted ? 'label-blurred' : ''}">${step.label}</div>
         `;
         progressContainer.appendChild(stepEl);
-
-        if (index < steps.length - 1) {
-          const line = document.createElement('div');
-          const isLineCompleted = isCompleted; // A line is 'complete' if the step before it is.
-          line.className = `progress-line ${isLineCompleted ? 'completed' : ''}`;
-          progressContainer.appendChild(line);
-        }
       });
+
+      // Update the active line's width. (0 steps = 0%, 1 step = 0%, 2 steps = 50%, 3 steps = 100%)
+      const activeLineWidth = completedCount > 1 ? ((completedCount - 1) / (steps.length - 1)) * 100 : 0;
+      activeLine.style.width = `${activeLineWidth}%`;
     }
 
-    /**
-     * UPDATED: Renders the points history list.
-     * Displays a clean two-column layout for Game and Points.
-     */
+
     function renderHistoryList(historyData) {
-        historyList.innerHTML = ''; // Clear previous content
+        historyList.innerHTML = '';
 
         if (!historyData || historyData.length === 0) {
             historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history has been recorded yet.</p>';
@@ -423,7 +451,6 @@
         const table = document.createElement('div');
         table.className = 'w-full text-sm';
         
-        // Add a header for the list
         table.innerHTML = `
             <div class="flex justify-between items-center pb-2 mb-2 border-b-2 border-slate-200">
                 <span class="font-bold text-slate-600">Game / Event</span>
@@ -434,7 +461,6 @@
         const body = document.createElement('div');
         body.className = 'flex flex-col';
         
-        // Create a row for each history item
         historyData.forEach(item => {
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
@@ -453,15 +479,12 @@
       showSplashScreen();
       setTimeout(showLoginScreen, 2500);
 
-      // Reset inactivity timer on user interaction
       ['click', 'keypress', 'mousemove'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       splashScreen.addEventListener('click', showLoginScreen);
       
-      // Login listeners
       accessCodeEnterBtn.addEventListener('click', handleLogin);
       accessCodeInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleLogin());
 
-      // Popup/Page listeners
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
       document.getElementById('showRewardsBtn').addEventListener('click', () => rewardsPage.classList.add('visible'));
