@@ -133,16 +133,7 @@
             transform: translateY(-50%);
             z-index: 0;
         }
-        .progress-line-active {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            height: 8px;
-            background: linear-gradient(to right, #49A35A, #6ABE8A);
-            transform: translateY(-50%);
-            z-index: 0;
-            transition: width 0.5s ease-in-out;
-        }
+        /* REMOVED .progress-line-active */
         .progress-step { z-index: 1; }
 
         .progress-step .stamp-circle {
@@ -283,13 +274,17 @@
     <!-- Points History Pop-up -->
     <div id="historyPopup" class="fullscreen-overlay" onclick="this.classList.remove('visible')">
         <div class="popup-card transform scale-95 opacity-0 transition-transform transition-opacity" onclick="event.stopPropagation()">
-            <!-- MODIFIED: Header with Back Button and Centered Title -->
+            <!-- MODIFIED: Header with Back and Refresh Buttons -->
             <div class="p-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
                 <button id="closeHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
                 </button>
                 <h3 class="text-center font-bold text-lg text-slate-800 absolute left-1/2 -translate-x-1/2">Points History</h3>
-                <div class="w-8"></div> <!-- Spacer to balance the back button -->
+                <button id="refreshHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.899 2.186A7.002 7.002 0 0112.186 18a6.963 6.963 0 01-4.78-1.928A1 1 0 018.63 14.89a5.002 5.002 0 009.252-3.186 5.002 5.002 0 00-5.337-4.789A5.002 5.002 0 006 10.963V13a1 1 0 11-2 0V3a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                </button>
             </div>
             <!-- MODIFIED: Scrollable content area -->
             <div id="historyList" class="flex-grow p-4 overflow-y-auto">
@@ -334,14 +329,24 @@
     // --- Configuration ---
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwesD3xz5S_7aUMF9xMOvdgnhqyJ4KEChi0eyCVvcprkGWSIb9Vym9Q676J5iol_nkrFw/exec";
     const INACTIVITY_TIMEOUT = 30000; // 30 seconds
+    const AUTO_REFRESH_INTERVAL = 15000; // 15 seconds
 
     // --- App State ---
     let inactivityTimer = null;
+    let autoRefreshInterval = null;
+    let currentUserCode = null;
 
     // --- UI Flow Functions ---
     function showSplashScreen() {
       splashScreen.classList.add('visible');
       loginScreen.classList.remove('visible');
+      dashboard.style.display = 'none';
+      dashboard.style.opacity = '0';
+      
+      // Clear session state
+      currentUserCode = null;
+      clearInterval(autoRefreshInterval);
+      autoRefreshInterval = null;
     }
 
     function showLoginScreen() {
@@ -355,6 +360,40 @@
       inactivityTimer = setTimeout(showSplashScreen, INACTIVITY_TIMEOUT); 
     }
     
+    /**
+     * Fetches the latest user and history data from the server.
+     * @param {string} code The user's access code.
+     * @param {boolean} isManualRefresh Indicates if the refresh was triggered by the user.
+     */
+    async function fetchDashboardData(code, isManualRefresh = false) {
+      if (isManualRefresh) {
+        const refreshBtn = document.getElementById('refreshHistoryBtn');
+        refreshBtn.classList.add('animate-spin');
+      }
+      try {
+        // Append a timestamp to the URL to bypass browser cache
+        const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Network response was not ok: ${res.statusText}`);
+        const json = await res.json();
+
+        if (!json.user || !json.user.Name) {
+          throw new Error("Invalid user data in response");
+        }
+        
+        updateDashboardUI(json.user, json.history);
+
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+        // Optionally, display an error message to the user
+      } finally {
+        if (isManualRefresh) {
+            const refreshBtn = document.getElementById('refreshHistoryBtn');
+            refreshBtn.classList.remove('animate-spin');
+        }
+      }
+    }
+
     // --- Data & API Functions ---
     async function handleLogin() {
       const code = accessCodeInput.value.trim();
@@ -369,7 +408,7 @@
       accessCodeEnterBtn.disabled = true;
 
       try {
-        const url = `${GOOGLE_SHEET_URL}?code=${code}`;
+        const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Network response was not ok: ${res.statusText}`);
         const json = await res.json();
@@ -378,15 +417,26 @@
           throw new Error("Invalid code or user data not found");
         }
         
+        // --- Success ---
+        currentUserCode = code; // Store the code for auto-refresh
         loginScreen.classList.remove('visible');
         dashboard.style.display = 'flex';
         setTimeout(() => dashboard.style.opacity = 1, 50);
 
         updateDashboardUI(json.user, json.history);
+
+        // Start auto-refresh interval
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = setInterval(() => {
+            if(currentUserCode) fetchDashboardData(currentUserCode);
+        }, AUTO_REFRESH_INTERVAL);
+
       } catch (error) {
         console.error("Login failed:", error);
         accessCodeError.textContent = "Invalid Access Code. Please try again.";
         accessCodeError.classList.remove('hidden');
+        currentUserCode = null;
+        clearInterval(autoRefreshInterval);
       } finally {
         loadingIndicator.classList.add('hidden');
         accessCodeEnterBtn.disabled = false;
@@ -405,9 +455,6 @@
     
     function renderProgressBar(data) {
       progressContainer.innerHTML = ''; // Clear previous content
-      const activeLine = document.createElement('div');
-      activeLine.className = 'progress-line-active';
-      progressContainer.appendChild(activeLine);
       
       const steps = [
         { key: 'Event1', label: 'Onboarding' },
@@ -421,13 +468,9 @@
         'Tier3': { icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>` }
       };
 
-      let completedCount = 0;
       steps.forEach((step, index) => {
         const tier = data[step.key];
         const isCompleted = tier && tierStyles[tier];
-        if (isCompleted) {
-            completedCount++;
-        }
 
         const stepEl = document.createElement('div');
         stepEl.className = `progress-step flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
@@ -445,17 +488,10 @@
         `;
         progressContainer.appendChild(stepEl);
       });
-
-      const activeLineWidth = completedCount > 1 ? ((completedCount - 1) / (steps.length - 1)) * 100 : 0;
-      activeLine.style.width = `${activeLineWidth}%`;
     }
 
-    /**
-     * Renders the points history list in the popup.
-     * @param {Array<Object>} historyData - Array of history items.
-     */
     function renderHistoryList(historyData) {
-        historyList.innerHTML = ''; // Clear previous content
+        historyList.innerHTML = ''; 
 
         if (!historyData || historyData.length === 0) {
             historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history has been recorded yet.</p>';
@@ -465,7 +501,6 @@
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
 
-        // Create Header
         const header = document.createElement('div');
         header.className = 'flex justify-between items-center pb-2 mb-2 border-b-2 border-slate-200 sticky top-0 bg-white';
         header.innerHTML = `
@@ -474,7 +509,6 @@
         `;
         container.appendChild(header);
 
-        // Create list items
         historyData.forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
             const pointsClass = points > 0 ? 'text-green-500' : 'text-red-500';
@@ -483,7 +517,6 @@
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
             
-            // Sanitize item.Label to prevent XSS
             const labelSpan = document.createElement('span');
             labelSpan.className = 'font-semibold text-slate-800 text-left';
             labelSpan.textContent = item.Label || 'Unknown Event';
@@ -505,19 +538,24 @@
       showSplashScreen();
       setTimeout(showLoginScreen, 2500);
 
-      // Reset inactivity timer on user interaction
       ['click', 'keypress', 'mousemove'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       splashScreen.addEventListener('click', showLoginScreen);
       
-      // Login events
       accessCodeEnterBtn.addEventListener('click', handleLogin);
       accessCodeInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleLogin());
 
-      // Popup/Page toggle events
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
       document.getElementById('showRewardsBtn').addEventListener('click', () => rewardsPage.classList.add('visible'));
       document.getElementById('closeRewardsBtn').addEventListener('click', () => rewardsPage.classList.remove('visible'));
+      
+      // Manual refresh button
+      document.getElementById('refreshHistoryBtn').addEventListener('click', (e) => {
+          e.stopPropagation(); // prevent popup from closing
+          if (currentUserCode) {
+              fetchDashboardData(currentUserCode, true);
+          }
+      });
     });
   </script>
 </body>
