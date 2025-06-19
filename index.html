@@ -59,14 +59,32 @@
             z-index: 100; display: none; /* Hidden by default */
             align-items: center; justify-content: center;
             opacity: 0;
-            transition: opacity 0.75s ease-out, visibility 0.75s ease-out;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
             background-color: rgba(0, 0, 0, 0.4); /* Added backdrop */
+            backdrop-filter: blur(4px);
         }
         .fullscreen-overlay.visible {
             display: flex;
             opacity: 1;
             visibility: visible;
         }
+        
+        /* NEW: Styles for popup cards used in modals */
+        .popup-card {
+            background-color: white; border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex;
+            flex-direction: column; width: 90%; max-width: 400px;
+            max-height: 90vh;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .fullscreen-overlay.visible .popup-card {
+            transform: scale(1);
+            opacity: 1;
+        }
+
 
         /* --- Splash Screen / Screensaver --- */
         #splashScreen {
@@ -112,8 +130,6 @@
             opacity: 0; transition: opacity 0.5s ease-in;
         }
         
-        /* UPDATED: Responsive Layout Logic */
-        /* Default to portrait (stacked) */
         #dashboard {
             flex-direction: column;
         }
@@ -121,44 +137,37 @@
             width: 100%;
         }
 
-        /* Landscape orientation */
         @media (min-width: 1024px) and (orientation: landscape) {
             #dashboard { flex-direction: row; padding: 2rem; gap: 2rem; }
             .left-panel { flex: 0 0 45%; max-width: 45%; }
             .right-panel { flex: 1; }
         }
 
-
-        /* --- Left Panel: Header and Progress --- */
         .dashboard-header { font-family: 'Oswald', sans-serif; color: #1E293B; }
         
-        /* --- Progress Bar --- */
         .progress-indicator {
             position: relative; display: flex; align-items: center;
             justify-content: space-between; width: 100%; max-width: 500px;
             margin: 2rem auto 0;
         }
-        /* Inactive background line */
         .progress-indicator::before {
             content: ''; position: absolute; top: 50%; left: 0; right: 0;
-            height: 6px; background-color: #CBD5E1; /* Inactive line color */
+            height: 6px; background-color: #CBD5E1;
             transform: translateY(-50%); z-index: 0;
         }
-        /* UPDATED: Active progress line style */
         #progress-line-active {
             position: absolute; top: 50%; left: 0;
             height: 6px; background-color: var(--brand-color);
             transform: translateY(-50%); z-index: 0;
-            width: 0%; /* Initially 0, updated by JS */
-            transition: width 0.5s ease-out;
+            width: 0%; transition: width 0.5s ease-out;
         }
         .progress-step { z-index: 1; }
         
         .progress-step .stamp-circle {
             width: 60px; height: 60px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            background-color: #E2E8F0; color: #94A3B8; /* Default light gray circle */
-            border: 4px solid var(--brand-color); /* Matches page background */
+            background-color: #E2E8F0; color: #94A3B8;
+            border: 4px solid var(--brand-color);
             transition: all 0.4s ease;
             box-shadow: 0 2px 4px -1px rgba(0,0,0,0.06);
             position: relative; z-index: 1;
@@ -166,7 +175,6 @@
         @media (min-width: 768px) {
             .progress-step .stamp-circle { width: 80px; height: 80px; }
         }
-        /* UPDATED: Completed state with brand color border and white background */
         .progress-step.completed .stamp-circle {
             background-color: white; 
             border-color: var(--brand-color);
@@ -177,7 +185,6 @@
         .progress-step.completed .event-label { color: #1E293B; }
         .label-blurred { filter: blur(4px); opacity: 0.5; }
 
-        /* --- Right Panel: Main Card --- */
         .dashboard-card {
             background-color: white; border-radius: 1.5rem;
             border: 1px solid #D1E0DE; padding: 1.5rem; display: flex;
@@ -185,13 +192,15 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
-        /* UPDATED: Removed hover gradient from interactive cards */
+        /* Using <a> tags now, so apply styles to them */
         .interactive-card {
             background-color: #F8FAFC; border: 1px solid #E2E8F0;
             border-radius: 1rem;
             transition: all 0.2s ease-out;
             position: relative;
             overflow: hidden;
+            display: block; /* Important for <a> tags to behave like blocks */
+            text-decoration: none; /* Remove underline from links */
         }
         .interactive-card:hover {
             transform: translateY(-4px); 
@@ -202,58 +211,58 @@
             transition: color 0.3s ease-out;
         }
 
-        /* --- Pop-ups (History & Rewards) --- */
-        .popup-card {
-            background-color: white; border-radius: 1rem; border: 1px solid #D1E0DE;
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); display: flex;
-            flex-direction: column; width: 90%; max-width: 400px; max-height: 80vh;
-        }
         #historyPopup.visible .popup-card, #rewardsPage.visible .popup-card {
             transform: scale(1); opacity: 1; pointer-events: auto;
         }
+        
+        /* NEW: Styles for the reward redemption modal buttons */
+        .modal-button {
+            flex-grow: 1; text-align: center; padding: 0.75rem 1rem;
+            font-weight: 600; border-radius: 0.75rem;
+            transition: all 0.2s ease;
+        }
+        .modal-button.primary {
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));
+            color: white;
+        }
+        .modal-button.primary:hover { opacity: 0.9; }
+        
+        .modal-button.secondary {
+            background-color: #E2E8F0; color: #475569;
+        }
+        .modal-button.secondary:hover { background-color: #D1D5DB; }
+
     </style>
 </head>
 <body class="antialiased">
     
-    <!-- Splash Screen / Screensaver -->
+    <!-- Splash Screen -->
     <div id="splashScreen" class="fullscreen-overlay visible">
         <div class="star-container">
-            <svg fill="#EEF7F6" version="1.1" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg">
-             <path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.8711-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/>
-            </svg>
+            <svg fill="#EEF7F6" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.8711-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/></svg>
         </div>
     </div>
 
-    <!-- Onboarding/Login Screen -->
+    <!-- Login Screen -->
     <div id="loginScreen" class="fullscreen-overlay">
         <div class="login-box">
-            <div class="w-20 h-20 mx-auto text-cyan-600">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                </svg>
-            </div>
+            <div class="w-20 h-20 mx-auto text-cyan-600"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></div>
             <h2 class="text-3xl font-bold text-slate-800 mt-4">Event Access</h2>
             <p class="text-slate-500 mt-1">Enter your code to view your dashboard</p>
             <div class="mt-8">
                 <input type="text" id="accessCodeInput" autocomplete="off" placeholder="Enter Access Code" class="w-full p-4 rounded-lg font-semibold text-lg tracking-wider">
-                <button id="accessCodeEnterBtn" class="w-full mt-4 p-4 text-white font-bold rounded-lg text-lg transition hover:opacity-90 shadow-lg shadow-cyan-500/10" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">
-                    Verify Code
-                </button>
-                <p id="loadingIndicator" class="text-cyan-600 mt-4 font-semibold hidden">
-                    <span class="inline-block animate-spin h-5 w-5 mr-2 border-2 border-current border-t-transparent rounded-full" role="status"></span>
-                    Verifying...
-                </p>
+                <button id="accessCodeEnterBtn" class="w-full mt-4 p-4 text-white font-bold rounded-lg text-lg transition hover:opacity-90 shadow-lg shadow-cyan-500/10" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Verify Code</button>
+                <p id="loadingIndicator" class="text-cyan-600 mt-4 font-semibold hidden"><span class="inline-block animate-spin h-5 w-5 mr-2 border-2 border-current border-t-transparent rounded-full"></span>Verifying...</p>
                 <p id="accessCodeError" class="text-red-500 mt-4 font-semibold hidden">Invalid Code. Please try again.</p>
             </div>
         </div>
     </div>
 
-    <!-- Main Dashboard View -->
+    <!-- Main Dashboard -->
     <main id="dashboard" class="flex">
-        <!-- Left Panel (Header and Progress) -->
+        <!-- Left Panel -->
         <div class="left-panel flex flex-col justify-center">
              <div class="flex items-center gap-4">
-                <!-- REMOVED: Logout Button is gone -->
                 <div>
                     <header class="dashboard-header text-4xl md:text-5xl">Dashboard</header>
                     <p class="text-xl md:text-2xl mt-1 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
@@ -262,13 +271,11 @@
             <div class="flex-grow lg:flex-grow-0 lg:mt-24"></div>
             <div class="mt-auto">
                 <h3 class="font-bold text-xl text-slate-800 text-center lg:text-left">Event Progress</h3>
-                <div id="progressContainer" class="progress-indicator">
-                    <!-- This is now populated by JS, including the active line -->
-                </div>
+                <div id="progressContainer" class="progress-indicator"></div>
             </div>
         </div>
 
-        <!-- Right Panel (Card with Points, Games) -->
+        <!-- Right Panel -->
         <div class="right-panel">
             <div class="dashboard-card h-full">
                 <!-- Points & Rewards -->
@@ -276,82 +283,89 @@
                     <div class="flex items-center gap-2 md:gap-3">
                         <span class="font-semibold text-base md:text-lg text-slate-600">Points:</span>
                         <span id="userPoints" class="text-3xl md:text-4xl font-bold text-slate-800">0</span>
-                        <button id="showHistoryBtn" class="text-slate-400 hover:text-cyan-500 transition-colors duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-                        </button>
+                        <button id="showHistoryBtn" class="text-slate-400 hover:text-cyan-500 transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg></button>
                     </div>
                     <button id="showRewardsBtn" class="font-semibold text-sm py-2 px-4 md:px-5 rounded-full text-white hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Rewards</button>
                 </div>
-                <!-- Game Selection -->
+                <!-- Game Selection: UPDATED to <a> tags -->
                 <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
-                    <button class="interactive-card p-2 text-center" data-game-name="Puzzle Box" data-game-points="5">
-                        <div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1.5 1.5 0 011 1v3a1 1 0 01-1-1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 011-1h.5a1.5 1.5 0 000-3H6a1 1 0 01-1-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" /></svg></div>
-                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Puzzle Box</span>
-                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Easy: 5 pts</span>
-                    </button>
-                    <button class="interactive-card p-2 text-center" data-game-name="Lightning Round" data-game-points="15">
-                        <div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" /></svg></div>
-                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Lightning Round</span>
-                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Hard: 15 pts</span>
-                    </button>
-                    <button class="interactive-card p-2 text-center" data-game-name="Memory Match" data-game-points="10">
-                        <div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" /></svg></div>
-                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Memory Match</span>
-                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Med: 10 pts</span>
-                    </button>
+                    <a href="game1.html" class="interactive-card p-2 text-center" data-label="Guess the Song (Easy)">
+                        <div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div>
+                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span>
+                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Easy</span>
+                    </a>
+                    <a href="game2.html" class="interactive-card p-2 text-center" data-label="Guess the Song (Moderate)">
+                        <div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div>
+                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span>
+                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Moderate</span>
+                    </a>
+                    <a href="game3.html" class="interactive-card p-2 text-center" data-label="True or False (Hard)">
+                        <div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div>
+                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">True or False</span>
+                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Hard</span>
+                    </a>
                 </div>
             </div>
         </div>
     </main>
     
     <!-- Points History Pop-up -->
-    <div id="historyPopup" class="fullscreen-overlay" onclick="this.classList.remove('visible')">
-        <div class="popup-card transform scale-95 opacity-0 transition-transform transition-opacity" onclick="event.stopPropagation()">
+    <div id="historyPopup" class="fullscreen-overlay">
+        <div class="popup-card">
             <div class="p-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
-                <button id="closeHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
-                </button>
+                <button id="closeHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg></button>
                 <h3 class="text-center font-bold text-lg text-slate-800 absolute left-1/2 -translate-x-1/2">Points History</h3>
-                <button id="refreshHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
-                    <!-- UPDATED: Refresh Icon -->
-                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="none" fill-rule="evenodd">
-                            <path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/>
-                        </g>
-                    </svg>
-                </button>
+                <button id="refreshHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
             </div>
-            <div id="historyList" class="flex-grow p-4 overflow-y-auto">
-                <!-- History content will be dynamically inserted here -->
-            </div>
+            <div id="historyList" class="flex-grow p-4 overflow-y-auto"></div>
         </div>
     </div>
     
     <!-- Rewards Fullscreen Page -->
-    <div id="rewardsPage" class="fullscreen-overlay flex-col !items-stretch !justify-start bg-slate-50">
+    <div id="rewardsPage" class="fullscreen-overlay !items-stretch !justify-start bg-slate-50">
         <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-10 flex-shrink-0">
-            <button id="closeRewardsBtn" class="text-slate-600 hover:text-slate-900 mr-3 p-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
-            </button>
+            <button id="closeRewardsBtn" class="text-slate-600 hover:text-slate-900 mr-3 p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg></button>
             <h2 class="flex-grow font-bold text-2xl text-slate-800">Rewards</h2>
             <div id="rewardsUserPointsContainer" class="text-right">
                 <div class="text-xs text-slate-500">Your Points</div>
                 <div class="text-2xl font-bold text-gradient">0</div>
             </div>
         </header>
-        <div class="p-4 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 overflow-y-auto">
-             <button class="interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="5">
-                <div class="h-12 w-12 md:h-16 md:w-16 text-yellow-400 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg></div>
-                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Sticker Pack</p>
+        <!-- UPDATED Rewards buttons with new items and data-labels -->
+        <div id="rewardsGrid" class="p-4 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 overflow-y-auto">
+             <button class="reward-button interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="5" data-label="Candy">
+                <div class="h-12 w-12 md:h-16 md:w-16 text-red-500 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd" /></svg></div>
+                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Candy</p>
                 <p class="card-subtitle text-sm font-bold text-cyan-600">5 pts</p>
             </button>
-             <button class="interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="15">
-                <div class="h-12 w-12 md:h-16 md:w-16 text-pink-500 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg></div>
-                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Custom Pin</p>
-                <p class="card-subtitle text-sm font-bold text-cyan-600">15 pts</p>
+             <button class="reward-button interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="10" data-label="Cookie">
+                <div class="h-12 w-12 md:h-16 md:w-16 text-yellow-600 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.464 10a9.5 9.5 0 0119.072 0 9.5 9.5 0 01-19.072 0zM10 18a8 8 0 100-16 8 8 0 000 16z" clip-rule="evenodd" /></svg></div>
+                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Cookie</p>
+                <p class="card-subtitle text-sm font-bold text-cyan-600">10 pts</p>
+            </button>
+            <!-- NEW Third Reward -->
+             <button class="reward-button interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="20" data-label="Ramen">
+                <div class="h-12 w-12 md:h-16 md:w-16 text-orange-500 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg></div>
+                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Ramen</p>
+                <p class="card-subtitle text-sm font-bold text-cyan-600">20 pts</p>
             </button>
         </div>
     </div>
+    
+    <!-- NEW: Reward Redemption Modal -->
+    <div id="redeemModal" class="fullscreen-overlay">
+        <div id="redeemModalCard" class="popup-card text-center p-6 gap-4">
+            <!-- Content is populated by JS -->
+            <div id="redeemModalIcon" class="w-24 h-24 mx-auto text-cyan-500"></div>
+            <h3 id="redeemModalTitle" class="text-2xl font-bold text-slate-800"></h3>
+            <p class="text-slate-500">Redeem this reward for <strong id="redeemModalPoints" class="text-slate-700"></strong> points?</p>
+            <div class="flex items-center justify-center gap-4 mt-4 w-full">
+                <button id="redeemModalBackBtn" class="modal-button secondary">Back</button>
+                <button id="redeemModalConfirmBtn" class="modal-button primary">Redeem Now</button>
+            </div>
+        </div>
+    </div>
+
 
   <script>
     // --- DOM Element Constants ---
@@ -369,29 +383,67 @@
     const historyList = document.getElementById('historyList');
     const historyPopup = document.getElementById('historyPopup');
     const rewardsPage = document.getElementById('rewardsPage');
+    const rewardsGrid = document.getElementById('rewardsGrid');
+    
+    // NEW: Redeem Modal elements
+    const redeemModal = document.getElementById('redeemModal');
+    const redeemModalCard = document.getElementById('redeemModalCard');
+    const redeemModalIcon = document.getElementById('redeemModalIcon');
+    const redeemModalTitle = document.getElementById('redeemModalTitle');
+    const redeemModalPoints = document.getElementById('redeemModalPoints');
+    const redeemModalBackBtn = document.getElementById('redeemModalBackBtn');
+    const redeemModalConfirmBtn = document.getElementById('redeemModalConfirmBtn');
 
     // --- Configuration ---
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec";
-    const INACTIVITY_TIMEOUT = 30000; // 30 seconds for auto-logout
-    const AUTO_REFRESH_INTERVAL = 15000; // 15 seconds
+    const INACTIVITY_TIMEOUT = 30000;
+    const AUTO_REFRESH_INTERVAL = 15000;
 
     // --- App State ---
     let inactivityTimer = null;
     let autoRefreshInterval = null;
     let currentUserCode = null;
 
-    // --- UI Flow Functions ---
+    // --- Core Logic ---
+    
+    /**
+     * NEW: Prepares and logs data for sending to Google Sheets.
+     * The actual fetch request will be added in the next step.
+     * @param {string} label The activity or reward name to be logged.
+     */
+    async function postToSheet(label) {
+        const accessCode = currentUserCode || sessionStorage.getItem('currentUserCode');
+        if (!accessCode) {
+            alert("No access code found. Please log in again.");
+            showSplashScreen();
+            return;
+        }
+
+        console.log(`Preparing to POST to Google Sheet for user: ${accessCode}`);
+        console.log(`Data: { accessCode: "${accessCode}", label: "${label}" }`);
+
+        // Placeholder for the actual fetch POST request.
+        // For now, we'll show an alert and close the modals.
+        
+        alert(`Activity logged: ${label}`);
+        
+        // Hide modals and refresh data to reflect changes
+        redeemModal.classList.remove('visible');
+        await fetchDashboardData(accessCode, true); // Refresh data to show point deduction
+    }
+    
+    // --- UI Flow & Data Functions ---
     function showSplashScreen() {
       splashScreen.classList.add('visible');
       loginScreen.classList.remove('visible');
       dashboard.style.display = 'none';
       dashboard.style.opacity = '0';
       
-      // Clear session state
       currentUserCode = null;
+      sessionStorage.removeItem('currentUserCode');
       accessCodeInput.value = '';
       clearInterval(autoRefreshInterval);
-      clearTimeout(inactivityTimer); // Clear timers
+      clearTimeout(inactivityTimer);
       autoRefreshInterval = null;
       inactivityTimer = null;
     }
@@ -399,58 +451,45 @@
     function showLoginScreen() {
       splashScreen.classList.remove('visible');
       loginScreen.classList.add('visible');
-      resetInactivityTimer();
     }
 
-    // UPDATED: Inactivity timer logic
     function resetInactivityTimer() {
       clearTimeout(inactivityTimer);
-      // Only set the timer if the user is logged in (dashboard is visible)
       if (dashboard.style.opacity === '1') {
         inactivityTimer = setTimeout(showSplashScreen, INACTIVITY_TIMEOUT);
       }
     }
     
-    /**
-     * Fetches the latest user and history data from the server.
-     * @param {string} code The user's access code.
-     * @param {boolean} isManualRefresh Indicates if the refresh was triggered by the user.
-     */
     async function fetchDashboardData(code, isManualRefresh = false) {
       if (isManualRefresh) {
-        const refreshBtn = document.getElementById('refreshHistoryBtn');
-        refreshBtn.classList.add('animate-spin');
+        document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
       try {
         const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
         const res = await fetch(url);
-        if (!res.ok) throw new Error(`Network response was not ok: ${res.statusText}`);
+        if (!res.ok) throw new Error(`Network error: ${res.statusText}`);
         const json = await res.json();
 
         if (json.error || !json.user || !json.user.Name) {
-          throw new Error(json.error || "Invalid user data in response");
+          throw new Error(json.error || "Invalid user data");
         }
         
         updateDashboardUI(json.user, json.history);
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        if (!isManualRefresh) {
-            showSplashScreen();
-        }
+        if (!isManualRefresh) showSplashScreen();
       } finally {
         if (isManualRefresh) {
-            const refreshBtn = document.getElementById('refreshHistoryBtn');
-            refreshBtn.classList.remove('animate-spin');
+            document.getElementById('refreshHistoryBtn')?.classList.remove('animate-spin');
         }
       }
     }
 
-    // --- Data & API Functions ---
     async function handleLogin() {
       const code = accessCodeInput.value.trim();
       if (!code) {
-        accessCodeError.textContent = "Please enter an access code.";
+        accessCodeError.textContent = "Please enter a code.";
         accessCodeError.classList.remove('hidden');
         return;
       }
@@ -462,19 +501,22 @@
       try {
         const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
         const res = await fetch(url);
-        if (!res.ok) throw new Error(`Network response was not ok: ${res.statusText}`);
+        if (!res.ok) throw new Error(`Network error`);
         const json = await res.json();
 
         if (json.error || !json.user || !json.user.Name) {
-          throw new Error(json.error || "Invalid code or user data not found");
+          throw new Error(json.error || "Invalid code");
         }
         
         currentUserCode = code;
+        // NEW: Store code in session storage for other pages
+        sessionStorage.setItem('currentUserCode', code);
+
         loginScreen.classList.remove('visible');
         dashboard.style.display = 'flex';
         setTimeout(() => {
             dashboard.style.opacity = 1;
-            resetInactivityTimer(); // Start timer on successful login
+            resetInactivityTimer();
         }, 50);
 
         updateDashboardUI(json.user, json.history);
@@ -486,9 +528,10 @@
 
       } catch (error) {
         console.error("Login failed:", error);
-        accessCodeError.textContent = error.message.includes("Invalid") ? "Invalid Access Code." : "An error occurred.";
+        accessCodeError.textContent = "Invalid Access Code. Please try again.";
         accessCodeError.classList.remove('hidden');
         currentUserCode = null;
+        sessionStorage.removeItem('currentUserCode');
         clearInterval(autoRefreshInterval);
       } finally {
         loadingIndicator.classList.add('hidden');
@@ -499,18 +542,24 @@
     // --- UI Rendering Functions ---
     function updateDashboardUI(userData, historyData) {
       userNameEl.textContent = userData.Name || "Guest";
-      const userPoints = userData.Points || "0";
+      const userPoints = parseInt(userData.Points || "0", 10);
       userPointsEl.textContent = userPoints;
       rewardsUserPointsContainer.querySelector('.font-bold').textContent = userPoints;
 
       renderProgressBar(userData);
       renderHistoryList(historyData || []);
+      updateRewardButtons(userPoints);
+    }
+
+    function updateRewardButtons(currentPoints) {
+        document.querySelectorAll('.reward-button').forEach(button => {
+            const cost = parseInt(button.dataset.cost, 10);
+            button.disabled = currentPoints < cost;
+        });
     }
     
-    // UPDATED: Progress bar rendering with new styles and logic
     function renderProgressBar(data) {
-      progressContainer.innerHTML = ''; // Clear previous content
-      
+      progressContainer.innerHTML = '';
       const activeLine = document.createElement('div');
       activeLine.id = 'progress-line-active';
       progressContainer.appendChild(activeLine);
@@ -520,12 +569,10 @@
         { key: 'Event2', label: 'Take Off' },
         { key: 'Event3', label: 'Touchdown' }
       ];
-
-      // UPDATED: New stamp icon colors
       const tierIcons = {
-        'Tier1': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#10B981"/></svg>`, // Green Triangle
-        'Tier2': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>`, // Blue Square
-        'Tier3': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>` // Yellow Diamond
+        'Tier1': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#10B981"/></svg>`,
+        'Tier2': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>`,
+        'Tier3': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>`
       };
 
       let completedCount = 0;
@@ -536,83 +583,85 @@
 
         const stepEl = document.createElement('div');
         stepEl.className = `progress-step flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
-
-        let stampContent = `<span class="text-2xl md:text-3xl font-bold">${index + 1}</span>`;
-        if (isCompleted) {
-          stampContent = tierIcons[tier];
-        }
-
         stepEl.innerHTML = `
-          <div class="stamp-circle">${stampContent}</div>
+          <div class="stamp-circle">${isCompleted ? tierIcons[tier] : `<span class="text-2xl md:text-3xl font-bold">${index + 1}</span>`}</div>
           <div class="event-label ${!isCompleted ? 'label-blurred' : ''}">${step.label}</div>
         `;
         progressContainer.appendChild(stepEl);
       });
       
-      // Set the width of the active progress line
-      if (completedCount > 1) {
-          // 50% for 2 completed, 100% for 3 completed
-          const width = (completedCount - 1) * 50;
-          activeLine.style.width = `${width}%`;
-      } else {
-          activeLine.style.width = '0%';
-      }
+      activeLine.style.width = completedCount > 1 ? `${(completedCount - 1) * 50}%` : '0%';
     }
 
     function renderHistoryList(historyData) {
-        historyList.innerHTML = ''; 
-        if (!historyData || historyData.length === 0) {
-            historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history has been recorded yet.</p>';
-            return;
-        }
+        historyList.innerHTML = !historyData || historyData.length === 0 
+            ? '<p class="text-center text-slate-500 py-8">No points history recorded.</p>'
+            : '';
+        if (!historyData || historyData.length === 0) return;
         
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
-        historyData.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
-
-        historyData.forEach(item => {
+        historyData.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp)).forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
-            const pointsClass = points >= 0 ? 'text-cyan-600' : 'text-red-500';
-            const pointsSign = points >= 0 ? '+' : '';
-
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
             row.innerHTML = `
-                <span class="font-semibold text-slate-800 text-left">${item.Label || 'Unknown Event'}</span>
-                <span class="font-bold text-lg text-right ${pointsClass}">${pointsSign}${points}</span>
+                <span class="font-semibold text-slate-800 text-left">${item.Label || 'Event'}</span>
+                <span class="font-bold text-lg text-right ${points >= 0 ? 'text-cyan-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
             `;
             container.appendChild(row);
         });
-        
         historyList.appendChild(container);
     }
-
+    
     // --- Event Listeners Setup ---
     document.addEventListener('DOMContentLoaded', () => {
-      // Initial setup
       showSplashScreen();
       setTimeout(showLoginScreen, 2500);
 
-      // Global event listeners for inactivity timer
       ['click', 'keypress', 'mousemove', 'touchstart'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       splashScreen.addEventListener('click', showLoginScreen);
       
-      // Login listeners
       accessCodeEnterBtn.addEventListener('click', handleLogin);
       accessCodeInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleLogin());
 
-      // Navigation listeners
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
+      historyPopup.addEventListener('click', (e) => { if(e.target === historyPopup) historyPopup.classList.remove('visible'); });
+
       document.getElementById('showRewardsBtn').addEventListener('click', () => rewardsPage.classList.add('visible'));
       document.getElementById('closeRewardsBtn').addEventListener('click', () => rewardsPage.classList.remove('visible'));
       
-      // Manual refresh button
       document.getElementById('refreshHistoryBtn').addEventListener('click', (e) => {
           e.stopPropagation();
-          if (currentUserCode) {
-              fetchDashboardData(currentUserCode, true);
-          }
+          if (currentUserCode) fetchDashboardData(currentUserCode, true);
+      });
+      
+      // NEW: Event listeners for Reward Redemption Modal
+      rewardsGrid.addEventListener('click', (e) => {
+        const rewardButton = e.target.closest('.reward-button');
+        if (!rewardButton || rewardButton.disabled) return;
+
+        const label = rewardButton.dataset.label;
+        const cost = rewardButton.dataset.cost;
+        const iconHTML = rewardButton.querySelector('.card-icon').innerHTML;
+        
+        // Populate and show the modal
+        redeemModalIcon.innerHTML = iconHTML;
+        redeemModalTitle.textContent = label;
+        redeemModalPoints.textContent = cost;
+        redeemModal.classList.add('visible');
+
+        // Set up a one-time click handler for the confirmation
+        redeemModalConfirmBtn.onclick = () => {
+            postToSheet(label);
+        };
+      });
+
+      const closeModal = () => redeemModal.classList.remove('visible');
+      redeemModalBackBtn.addEventListener('click', closeModal);
+      redeemModal.addEventListener('click', (e) => {
+          if (e.target === redeemModal) closeModal();
       });
     });
   </script>

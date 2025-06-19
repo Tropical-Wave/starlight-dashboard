@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Page</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and overall body styling */
+        body {
+            font-family: "Inter", sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5; /* Light grey background */
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px; /* Space between elements */
+            width: 100%;
+            max-width: 400px; /* Max width for better appearance on larger screens */
+        }
+        .button-primary {
+            background-color: #4f46e5; /* Indigo-500 */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            text-decoration: none; /* Remove underline for links acting as buttons */
+            text-align: center;
+            width: 100%; /* Full width within the container */
+            max-width: 250px; /* Max width for buttons */
+        }
+        .button-primary:hover {
+            background-color: #4338ca; /* Indigo-600 */
+            transform: translateY(-2px);
+        }
+        .back-button-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100%;
+            max-width: 120px; /* Adjusted width for the back button */
+        }
+        .back-button {
+            background-color: #6b7280; /* Gray-500 */
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .back-button:hover {
+            background-color: #4b5563; /* Gray-700 */
+            transform: translateY(-1px);
+        }
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 0 15px; /* Add some horizontal margin on small screens */
+            }
+            .button-primary {
+                padding: 10px 20px;
+            }
+            .back-button-container {
+                top: 15px;
+                left: 15px;
+            }
+            .back-button {
+                padding: 7px 12px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button Container -->
+    <div class="back-button-container">
+        <a href="index.html" class="back-button">
+            <!-- SVG for a simple back arrow icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            Back
+        </a>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <h1 class="text-3xl font-bold text-gray-800 mb-5">Welcome Game 3!</h1>
+        <p class="text-gray-600 text-center mb-8">This is a simple page with a "Done" button.</p>
+
+        <!-- Done Button -->
+        <a href="" class="button-primary">Done</a>
+    </div>
+</body>
+</html>
