@@ -46,8 +46,11 @@
         }
         .text-gradient {
             background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            /* FIXED: Added standard background-clip and fallback color for compatibility */
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            color: transparent;
         }
 
         /* Generic class for fullscreen overlays */
