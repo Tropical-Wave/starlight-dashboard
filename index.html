@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Starlight Dashboard</title>
@@ -9,7 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Starlight">
-    <link rel="apple-touch-icon" href="https://placehold.co/192x192/49A35A/FFFFFF?text=S">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/4BA7AD/FFFFFF?text=S">
 
     <!-- Tailwind CSS and Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -35,6 +36,19 @@
         ::-webkit-scrollbar-track { background: #E0EBEA; }
         ::-webkit-scrollbar-thumb { background: #A8C5C1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #82A39F; }
+        
+        /* UPDATED: Gradient variables for consistency */
+        :root {
+            --gradient-start: #4BA7AD;
+            --gradient-mid: #89B3D9;
+            --gradient-end: #837FD9;
+            --gradient-angle: 135deg;
+        }
+        .text-gradient {
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
         /* Generic class for fullscreen overlays */
         .fullscreen-overlay {
@@ -53,7 +67,8 @@
 
         /* --- Splash Screen / Screensaver --- */
         #splashScreen {
-            background: linear-gradient(135deg, #7DCB86, #49A35A, #7DCB86);
+            /* UPDATED: New gradient background */
+            background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
             z-index: 200;
         }
         .star-container svg {
@@ -66,7 +81,6 @@
             50% { transform: scale(1.15); opacity: 1; }
         }
 
-
         /* --- Login/Onboarding Screen --- */
         #loginScreen {
             flex-direction: column;
@@ -75,29 +89,24 @@
             backdrop-filter: blur(8px);
         }
         .login-box {
-            background-color: white;
-            padding: 2.5rem; border-radius: 1.5rem; text-align: center;
+            background-color: white; padding: 2.5rem; border-radius: 1.5rem; text-align: center;
             width: 90%; max-width: 450px;
             border: 1px solid #D1E0DE;
-            box-shadow: 0 8px 24px 0 rgba(0,0,0, 0.08); /* Subtle shadow */
+            box-shadow: 0 8px 24px 0 rgba(0,0,0, 0.08);
         }
         #accessCodeInput {
-            border: 2px solid #D1E0DE;
-            background-color: #F8FAFC; color: #334155;
-            transition: border-color 0.3s ease;
-            text-align: center;
+            border: 2px solid #D1E0DE; background-color: #F8FAFC; color: #334155;
+            transition: border-color 0.3s ease; text-align: center;
         }
         #accessCodeInput:focus {
-            border-color: #49A35A;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(73, 163, 90, 0.2);
+            border-color: var(--gradient-start); outline: none;
+            box-shadow: 0 0 0 3px rgba(75, 167, 173, 0.2);
         }
 
         /* --- Dashboard Container --- */
         #dashboard {
             display: none; height: 100dvh;
-            padding: 1rem; /* Base padding for mobile */
-            gap: 1rem; /* Base gap for mobile */
+            padding: 1rem; gap: 1rem;
             opacity: 0; transition: opacity 0.5s ease-in;
         }
          @media (min-width: 768px) { /* Medium screens and up (tablets) */
@@ -112,44 +121,37 @@
         /* --- Left Panel: Header and Progress --- */
         .dashboard-header { font-family: 'Oswald', sans-serif; color: #1E293B; }
         
-        /* UPDATED: Progress Bar */
+        /* --- Progress Bar --- */
         .progress-indicator {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 500px;
+            position: relative; display: flex; align-items: center;
+            justify-content: space-between; width: 100%; max-width: 500px;
             margin: 2rem auto 0;
         }
         .progress-indicator::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 8px;
-            background-color: #CBD5E1; /* Inactive line color */
-            transform: translateY(-50%);
-            z-index: 0;
+            content: ''; position: absolute; top: 50%; left: 0; right: 0;
+            height: 6px; background-color: #CBD5E1; /* Inactive line color */
+            transform: translateY(-50%); z-index: 0;
         }
-        /* REMOVED .progress-line-active */
         .progress-step { z-index: 1; }
-
+        /* UPDATED: Dynamic circle size */
         .progress-step .stamp-circle {
-            width: 80px; height: 80px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            background-color: #CBD5E1; color: #64748B;
-            border: 6px solid #EEF7F6;
+            width: 60px; height: 60px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            background-color: #E2E8F0; color: #94A3B8; /* Default light gray circle */
+            border: 4px solid #EEF7F6; /* Matches the page background */
             transition: all 0.4s ease;
-            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.06); /* Subtle shadow */
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.06);
             position: relative; z-index: 1;
         }
-
+        @media (min-width: 768px) {
+            .progress-step .stamp-circle { width: 80px; height: 80px; }
+        }
+        /* UPDATED: Completed state with gray border and white background */
         .progress-step.completed .stamp-circle {
-            background-color: white; /* White background for stamped circle */
+            background-color: white; 
+            border-color: #94A3B8; /* Gray border for completed steps */
             transform: scale(1.05);
-            box-shadow: 0 6px 10px -3px rgba(0, 0, 0, 0.08); /* Subtle neutral shadow */
+            box-shadow: 0 6px 10px -3px rgba(0, 0, 0, 0.08);
         }
         .event-label { margin-top: 0.75rem; font-weight: 600; color: #64748B; transition: all 0.3s ease; text-align: center; }
         .progress-step.completed .event-label { color: #1E293B; }
@@ -158,27 +160,49 @@
         /* --- Right Panel: Main Card --- */
         .dashboard-card {
             background-color: white; border-radius: 1.5rem;
-            border: 1px solid #D1E0DE;
-            padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Subtle shadow */
+            border: 1px solid #D1E0DE; padding: 1.5rem; display: flex;
+            flex-direction: column; flex-grow: 1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .game-card {
+        
+        /* UPDATED: Shared style for game and reward cards */
+        .interactive-card {
             background-color: #F8FAFC; border: 1px solid #E2E8F0;
+            border-radius: 1rem;
             transition: all 0.2s ease-out;
+            position: relative;
+            overflow: hidden;
         }
-        .game-card:hover {
-            transform: translateY(-4px); box-shadow: 0 6px 15px -5px rgba(0,0,0,0.08); /* Subtle shadow */
-            border-color: #49A35A; background-color: white;
+        .interactive-card::before {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+            z-index: 0;
+        }
+        .interactive-card:hover::before {
+            opacity: 1;
+        }
+        .interactive-card > * {
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease-out;
+        }
+        .interactive-card:hover .card-icon, .interactive-card:hover .card-title, .interactive-card:hover .card-subtitle {
+            color: white !important;
+        }
+        .interactive-card:hover {
+            transform: translateY(-4px); 
+            box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
         }
 
         /* --- Pop-ups (History & Rewards) --- */
         .popup-card {
-            background-color: white; border-radius: 1rem;
-            border: 1px solid #D1E0DE;
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); /* Subtle shadow */
-            display: flex; flex-direction: column;
-            width: 90%; max-width: 400px;
-            max-height: 80vh; /* Set max height for the card */
+            background-color: white; border-radius: 1rem; border: 1px solid #D1E0DE;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); display: flex;
+            flex-direction: column; width: 90%; max-width: 400px; max-height: 80vh;
         }
         #historyPopup.visible .popup-card, #rewardsPage.visible .popup-card {
             transform: scale(1); opacity: 1; pointer-events: auto;
@@ -199,7 +223,7 @@
     <!-- Onboarding/Login Screen -->
     <div id="loginScreen" class="fullscreen-overlay">
         <div class="login-box">
-            <div class="w-20 h-20 mx-auto text-green-600">
+            <div class="w-20 h-20 mx-auto text-cyan-600">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                 </svg>
@@ -208,10 +232,10 @@
             <p class="text-slate-500 mt-1">Enter your code to view your dashboard</p>
             <div class="mt-8">
                 <input type="text" id="accessCodeInput" autocomplete="off" placeholder="Enter Access Code" class="w-full p-4 rounded-lg font-semibold text-lg tracking-wider">
-                <button id="accessCodeEnterBtn" class="w-full mt-4 p-4 bg-green-600 text-white font-bold rounded-lg text-lg transition hover:bg-green-700 shadow-md shadow-green-600/10 hover:shadow-green-600/20">
+                <button id="accessCodeEnterBtn" class="w-full mt-4 p-4 text-white font-bold rounded-lg text-lg transition hover:opacity-90 shadow-lg shadow-cyan-500/10" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">
                     Verify Code
                 </button>
-                <p id="loadingIndicator" class="text-green-600 mt-4 font-semibold hidden">
+                <p id="loadingIndicator" class="text-cyan-600 mt-4 font-semibold hidden">
                     <span class="inline-block animate-spin h-5 w-5 mr-2 border-2 border-current border-t-transparent rounded-full" role="status"></span>
                     Verifying...
                 </p>
@@ -224,9 +248,17 @@
     <main id="dashboard" class="flex flex-col lg:flex-row">
         <!-- Left Panel (Header and Progress) -->
         <div class="left-panel flex flex-col justify-center">
-             <div>
-                <header class="dashboard-header text-4xl md:text-5xl lg:text-6xl">Dashboard</header>
-                <p class="text-2xl md:text-3xl lg:text-4xl mt-2 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
+             <div class="flex items-center gap-4">
+                <!-- NEW: Logout Button -->
+                <button id="logoutBtn" class="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V5.414l7.293 7.293a1 1 0 001.414-1.414L5.414 4H15a1 1 0 100-2H4a1 1 0 00-1 1z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div>
+                    <header class="dashboard-header text-4xl md:text-5xl">Dashboard</header>
+                    <p class="text-xl md:text-2xl mt-1 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
+                </div>
             </div>
             <div class="flex-grow lg:flex-grow-0 lg:mt-24"></div>
             <div class="mt-auto">
@@ -243,28 +275,28 @@
                     <div class="flex items-center gap-2 md:gap-3">
                         <span class="font-semibold text-base md:text-lg text-slate-600">Points:</span>
                         <span id="userPoints" class="text-3xl md:text-4xl font-bold text-slate-800">0</span>
-                        <button id="showHistoryBtn" class="text-slate-400 hover:text-green-500 transition-colors duration-200">
+                        <button id="showHistoryBtn" class="text-slate-400 hover:text-cyan-500 transition-colors duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
-                    <button id="showRewardsBtn" class="font-semibold text-sm py-2 px-4 md:px-5 rounded-full text-white hover:shadow-md transition" style="background: linear-gradient(135deg, #7DCB86, #49A35A, #7DCB86);">Rewards</button>
+                    <button id="showRewardsBtn" class="font-semibold text-sm py-2 px-4 md:px-5 rounded-full text-white hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Rewards</button>
                 </div>
                 <!-- Game Selection -->
                 <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
-                    <button class="game-card rounded-2xl p-2" data-game-name="Puzzle Box" data-game-points="5">
-                        <div class="h-12 w-12 text-green-500 mx-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1.5 1.5 0 011 1v3a1 1 0 01-1-1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 011-1h.5a1.5 1.5 0 000-3H6a1 1 0 01-1-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" /></svg></div>
-                        <span class="block font-semibold mt-2 text-slate-700 text-xs md:text-base">Puzzle Box</span>
-                        <span class="block text-xs md:text-sm font-medium text-slate-500">Easy: 5 pts</span>
+                    <button class="interactive-card p-2 text-center" data-game-name="Puzzle Box" data-game-points="5">
+                        <div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1.5 1.5 0 011 1v3a1 1 0 01-1-1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 011-1h.5a1.5 1.5 0 000-3H6a1 1 0 01-1-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" /></svg></div>
+                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Puzzle Box</span>
+                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Easy: 5 pts</span>
                     </button>
-                    <button class="game-card rounded-2xl p-2" data-game-name="Lightning Round" data-game-points="15">
-                        <div class="h-12 w-12 text-green-500 mx-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" /></svg></div>
-                        <span class="block font-semibold mt-2 text-slate-700 text-xs md:text-base">Lightning Round</span>
-                        <span class="block text-xs md:text-sm font-medium text-slate-500">Hard: 15 pts</span>
+                    <button class="interactive-card p-2 text-center" data-game-name="Lightning Round" data-game-points="15">
+                        <div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" /></svg></div>
+                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Lightning Round</span>
+                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Hard: 15 pts</span>
                     </button>
-                    <button class="game-card rounded-2xl p-2" data-game-name="Memory Match" data-game-points="10">
-                        <div class="h-12 w-12 text-green-500 mx-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" /></svg></div>
-                        <span class="block font-semibold mt-2 text-slate-700 text-xs md:text-base">Memory Match</span>
-                        <span class="block text-xs md:text-sm font-medium text-slate-500">Med: 10 pts</span>
+                    <button class="interactive-card p-2 text-center" data-game-name="Memory Match" data-game-points="10">
+                        <div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" /></svg></div>
+                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Memory Match</span>
+                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Med: 10 pts</span>
                     </button>
                 </div>
             </div>
@@ -274,38 +306,47 @@
     <!-- Points History Pop-up -->
     <div id="historyPopup" class="fullscreen-overlay" onclick="this.classList.remove('visible')">
         <div class="popup-card transform scale-95 opacity-0 transition-transform transition-opacity" onclick="event.stopPropagation()">
-            <!-- MODIFIED: Header with Back and Refresh Buttons -->
             <div class="p-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
                 <button id="closeHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
                 </button>
                 <h3 class="text-center font-bold text-lg text-slate-800 absolute left-1/2 -translate-x-1/2">Points History</h3>
                 <button id="refreshHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.899 2.186A7.002 7.002 0 0112.186 18a6.963 6.963 0 01-4.78-1.928A1 1 0 018.63 14.89a5.002 5.002 0 009.252-3.186 5.002 5.002 0 00-5.337-4.789A5.002 5.002 0 006 10.963V13a1 1 0 11-2 0V3a1 1 0 011-1z" clip-rule="evenodd" />
+                    <!-- UPDATED: Refresh Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.664 0l3.18-3.185m-3.181-4.994v4.992m0 0h-4.992m4.992 0l-3.182-3.182a8.25 8.25 0 00-11.664 0l-3.18 3.185" />
                     </svg>
                 </button>
             </div>
-            <!-- MODIFIED: Scrollable content area -->
             <div id="historyList" class="flex-grow p-4 overflow-y-auto">
-                <!-- History content will be dynamically inserted here by renderHistoryList function -->
+                <!-- History content will be dynamically inserted here -->
             </div>
         </div>
     </div>
     
     <!-- Rewards Fullscreen Page -->
     <div id="rewardsPage" class="fullscreen-overlay flex-col !items-stretch !justify-start bg-slate-50">
+        <!-- UPDATED: Header with back button and points display -->
         <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-10 flex-shrink-0">
             <button id="closeRewardsBtn" class="text-slate-600 hover:text-slate-900 mr-3 p-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
             </button>
-            <h2 class="flex-grow text-center font-bold text-2xl text-slate-800 mr-8">Rewards</h2>
+            <h2 class="flex-grow font-bold text-2xl text-slate-800">Rewards</h2>
+            <div id="rewardsUserPointsContainer" class="text-right">
+                <div class="text-xs text-slate-500">Your Points</div>
+                <div class="text-2xl font-bold text-gradient">0</div>
+            </div>
         </header>
         <div class="p-4 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 overflow-y-auto">
-             <button class="text-center group disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow" data-cost="5">
-                <div class="h-12 w-12 md:h-16 md:w-16 text-yellow-400"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg></div>
-                <p class="mt-2 font-semibold text-slate-700 text-sm md:text-base">Sticker Pack</p>
-                <p class="text-sm font-bold text-green-600">5 pts</p>
+             <button class="interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="5">
+                <div class="h-12 w-12 md:h-16 md:w-16 text-yellow-400 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg></div>
+                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Sticker Pack</p>
+                <p class="card-subtitle text-sm font-bold text-cyan-600">5 pts</p>
+            </button>
+             <button class="interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="15">
+                <div class="h-12 w-12 md:h-16 md:w-16 text-pink-500 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg></div>
+                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Custom Pin</p>
+                <p class="card-subtitle text-sm font-bold text-cyan-600">15 pts</p>
             </button>
         </div>
     </div>
@@ -321,10 +362,12 @@
     const loadingIndicator = document.getElementById('loadingIndicator');
     const userNameEl = document.getElementById('userName');
     const userPointsEl = document.getElementById('userPoints');
+    const rewardsUserPointsContainer = document.getElementById('rewardsUserPointsContainer');
     const progressContainer = document.getElementById('progressContainer');
     const historyList = document.getElementById('historyList');
     const historyPopup = document.getElementById('historyPopup');
     const rewardsPage = document.getElementById('rewardsPage');
+    const logoutBtn = document.getElementById('logoutBtn');
 
     // --- Configuration ---
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec";
@@ -345,6 +388,7 @@
       
       // Clear session state
       currentUserCode = null;
+      accessCodeInput.value = '';
       clearInterval(autoRefreshInterval);
       autoRefreshInterval = null;
     }
@@ -357,7 +401,9 @@
 
     function resetInactivityTimer() {
       clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(showSplashScreen, INACTIVITY_TIMEOUT); 
+      if (!splashScreen.classList.contains('visible')) {
+        inactivityTimer = setTimeout(showSplashScreen, INACTIVITY_TIMEOUT);
+      }
     }
     
     /**
@@ -371,21 +417,23 @@
         refreshBtn.classList.add('animate-spin');
       }
       try {
-        // Append a timestamp to the URL to bypass browser cache
         const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Network response was not ok: ${res.statusText}`);
         const json = await res.json();
 
-        if (!json.user || !json.user.Name) {
-          throw new Error("Invalid user data in response");
+        if (json.error || !json.user || !json.user.Name) {
+          throw new Error(json.error || "Invalid user data in response");
         }
         
         updateDashboardUI(json.user, json.history);
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        // Optionally, display an error message to the user
+        // If data fetch fails (e.g. sheet deleted), log out.
+        if (!isManualRefresh) {
+            showSplashScreen();
+        }
       } finally {
         if (isManualRefresh) {
             const refreshBtn = document.getElementById('refreshHistoryBtn');
@@ -413,19 +461,18 @@
         if (!res.ok) throw new Error(`Network response was not ok: ${res.statusText}`);
         const json = await res.json();
 
-        if (!json.user || !json.user.Name) {
-          throw new Error("Invalid code or user data not found");
+        if (json.error || !json.user || !json.user.Name) {
+          throw new Error(json.error || "Invalid code or user data not found");
         }
         
         // --- Success ---
-        currentUserCode = code; // Store the code for auto-refresh
+        currentUserCode = code;
         loginScreen.classList.remove('visible');
         dashboard.style.display = 'flex';
         setTimeout(() => dashboard.style.opacity = 1, 50);
 
         updateDashboardUI(json.user, json.history);
 
-        // Start auto-refresh interval
         clearInterval(autoRefreshInterval);
         autoRefreshInterval = setInterval(() => {
             if(currentUserCode) fetchDashboardData(currentUserCode);
@@ -433,7 +480,7 @@
 
       } catch (error) {
         console.error("Login failed:", error);
-        accessCodeError.textContent = "Invalid Access Code. Please try again.";
+        accessCodeError.textContent = error.message.includes("Invalid") ? "Invalid Access Code." : "An error occurred.";
         accessCodeError.classList.remove('hidden');
         currentUserCode = null;
         clearInterval(autoRefreshInterval);
@@ -447,14 +494,17 @@
     // --- UI Rendering Functions ---
     function updateDashboardUI(userData, historyData) {
       userNameEl.textContent = userData.Name || "Guest";
-      userPointsEl.textContent = userData.Points || "0";
+      const userPoints = userData.Points || "0";
+      userPointsEl.textContent = userPoints;
+      // UPDATED: Also update points on the rewards page
+      rewardsUserPointsContainer.querySelector('.font-bold').textContent = userPoints;
 
       renderProgressBar(userData);
       renderHistoryList(historyData || []);
     }
     
     function renderProgressBar(data) {
-      progressContainer.innerHTML = ''; // Clear previous content
+      progressContainer.innerHTML = ''; 
       
       const steps = [
         { key: 'Event1', label: 'Onboarding' },
@@ -462,28 +512,27 @@
         { key: 'Event3', label: 'Touchdown' }
       ];
 
-      const tierStyles = {
-        'Tier1': { icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#49A35A"/></svg>` },
-        'Tier2': { icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>` },
-        'Tier3': { icon: `<svg class="w-12 h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>` }
+      // Tier styles now only contain the SVG icon string
+      const tierIcons = {
+        'Tier1': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#3B82F6"/></svg>`, // Blue Triangle
+        'Tier2': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#8B5CF6"/></svg>`, // Purple Square
+        'Tier3': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>` // Yellow Diamond
       };
 
       steps.forEach((step, index) => {
         const tier = data[step.key];
-        const isCompleted = tier && tierStyles[tier];
+        const isCompleted = tier && tierIcons[tier];
 
         const stepEl = document.createElement('div');
         stepEl.className = `progress-step flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
 
-        let stampContent = `<span class="text-3xl font-bold">${index + 1}</span>`;
+        let stampContent = `<span class="text-2xl md:text-3xl font-bold">${index + 1}</span>`;
         if (isCompleted) {
-          stampContent = tierStyles[tier].icon;
+          stampContent = tierIcons[tier];
         }
 
         stepEl.innerHTML = `
-          <div class="stamp-circle">
-            ${stampContent}
-          </div>
+          <div class="stamp-circle">${stampContent}</div>
           <div class="event-label ${!isCompleted ? 'label-blurred' : ''}">${step.label}</div>
         `;
         progressContainer.appendChild(stepEl);
@@ -501,32 +550,20 @@
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
 
-        const header = document.createElement('div');
-        header.className = 'flex justify-between items-center pb-2 mb-2 border-b-2 border-slate-200 sticky top-0 bg-white';
-        header.innerHTML = `
-            <span class="font-bold text-slate-600 text-left">Transaction</span>
-            <span class="font-bold text-slate-600 text-right">Points</span>
-        `;
-        container.appendChild(header);
+        historyData.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp)); // Sort by most recent if timestamp exists
 
         historyData.forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
-            const pointsClass = points > 0 ? 'text-green-500' : 'text-red-500';
-            const pointsSign = points > 0 ? '+' : '';
+            const pointsClass = points >= 0 ? 'text-cyan-600' : 'text-red-500';
+            const pointsSign = points >= 0 ? '+' : '';
 
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
             
-            const labelSpan = document.createElement('span');
-            labelSpan.className = 'font-semibold text-slate-800 text-left';
-            labelSpan.textContent = item.Label || 'Unknown Event';
-
-            const pointsSpan = document.createElement('span');
-            pointsSpan.className = `font-bold text-lg text-right ${pointsClass}`;
-            pointsSpan.textContent = `${pointsSign}${points}`;
-
-            row.appendChild(labelSpan);
-            row.appendChild(pointsSpan);
+            row.innerHTML = `
+                <span class="font-semibold text-slate-800 text-left">${item.Label || 'Unknown Event'}</span>
+                <span class="font-bold text-lg text-right ${pointsClass}">${pointsSign}${points}</span>
+            `;
             container.appendChild(row);
         });
         
@@ -535,15 +572,20 @@
 
     // --- Event Listeners Setup ---
     document.addEventListener('DOMContentLoaded', () => {
+      // Initial setup
       showSplashScreen();
       setTimeout(showLoginScreen, 2500);
 
+      // Global event listeners
       ['click', 'keypress', 'mousemove'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       splashScreen.addEventListener('click', showLoginScreen);
       
+      // Login listeners
       accessCodeEnterBtn.addEventListener('click', handleLogin);
       accessCodeInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleLogin());
 
+      // Navigation listeners
+      logoutBtn.addEventListener('click', showSplashScreen);
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
       document.getElementById('showRewardsBtn').addEventListener('click', () => rewardsPage.classList.add('visible'));
@@ -551,7 +593,7 @@
       
       // Manual refresh button
       document.getElementById('refreshHistoryBtn').addEventListener('click', (e) => {
-          e.stopPropagation(); // prevent popup from closing
+          e.stopPropagation();
           if (currentUserCode) {
               fetchDashboardData(currentUserCode, true);
           }
