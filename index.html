@@ -37,16 +37,16 @@
         ::-webkit-scrollbar-thumb { background: #A8C5C1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #82A39F; }
         
-        /* UPDATED: Gradient variables for consistency */
+        /* Gradient variables for consistency */
         :root {
             --gradient-start: #4BA7AD;
             --gradient-mid: #89B3D9;
             --gradient-end: #837FD9;
             --gradient-angle: 135deg;
+            --brand-color: #4BA7AD;
         }
         .text-gradient {
             background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
-            /* FIXED: Added standard background-clip and fallback color for compatibility */
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -70,7 +70,6 @@
 
         /* --- Splash Screen / Screensaver --- */
         #splashScreen {
-            /* UPDATED: New gradient background */
             background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
             z-index: 200;
         }
@@ -102,7 +101,7 @@
             transition: border-color 0.3s ease; text-align: center;
         }
         #accessCodeInput:focus {
-            border-color: var(--gradient-start); outline: none;
+            border-color: var(--brand-color); outline: none;
             box-shadow: 0 0 0 3px rgba(75, 167, 173, 0.2);
         }
 
@@ -112,14 +111,23 @@
             padding: 1rem; gap: 1rem;
             opacity: 0; transition: opacity 0.5s ease-in;
         }
-         @media (min-width: 768px) { /* Medium screens and up (tablets) */
-             #dashboard { padding: 2rem; gap: 2rem; }
-         }
-         @media (min-width: 1024px) and (orientation: landscape) { /* Landscape tablets and desktops */
-            #dashboard { flex-direction: row; }
+        
+        /* UPDATED: Responsive Layout Logic */
+        /* Default to portrait (stacked) */
+        #dashboard {
+            flex-direction: column;
+        }
+        .left-panel, .right-panel {
+            width: 100%;
+        }
+
+        /* Landscape orientation */
+        @media (min-width: 1024px) and (orientation: landscape) {
+            #dashboard { flex-direction: row; padding: 2rem; gap: 2rem; }
             .left-panel { flex: 0 0 45%; max-width: 45%; }
             .right-panel { flex: 1; }
         }
+
 
         /* --- Left Panel: Header and Progress --- */
         .dashboard-header { font-family: 'Oswald', sans-serif; color: #1E293B; }
@@ -130,18 +138,27 @@
             justify-content: space-between; width: 100%; max-width: 500px;
             margin: 2rem auto 0;
         }
+        /* Inactive background line */
         .progress-indicator::before {
             content: ''; position: absolute; top: 50%; left: 0; right: 0;
             height: 6px; background-color: #CBD5E1; /* Inactive line color */
             transform: translateY(-50%); z-index: 0;
         }
+        /* UPDATED: Active progress line style */
+        #progress-line-active {
+            position: absolute; top: 50%; left: 0;
+            height: 6px; background-color: var(--brand-color);
+            transform: translateY(-50%); z-index: 0;
+            width: 0%; /* Initially 0, updated by JS */
+            transition: width 0.5s ease-out;
+        }
         .progress-step { z-index: 1; }
-        /* UPDATED: Dynamic circle size */
+        
         .progress-step .stamp-circle {
             width: 60px; height: 60px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             background-color: #E2E8F0; color: #94A3B8; /* Default light gray circle */
-            border: 4px solid #EEF7F6; /* Matches the page background */
+            border: 4px solid var(--brand-color); /* Matches page background */
             transition: all 0.4s ease;
             box-shadow: 0 2px 4px -1px rgba(0,0,0,0.06);
             position: relative; z-index: 1;
@@ -149,10 +166,10 @@
         @media (min-width: 768px) {
             .progress-step .stamp-circle { width: 80px; height: 80px; }
         }
-        /* UPDATED: Completed state with gray border and white background */
+        /* UPDATED: Completed state with brand color border and white background */
         .progress-step.completed .stamp-circle {
             background-color: white; 
-            border-color: #94A3B8; /* Gray border for completed steps */
+            border-color: var(--brand-color);
             transform: scale(1.05);
             box-shadow: 0 6px 10px -3px rgba(0, 0, 0, 0.08);
         }
@@ -168,7 +185,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
-        /* UPDATED: Shared style for game and reward cards */
+        /* UPDATED: Removed hover gradient from interactive cards */
         .interactive-card {
             background-color: #F8FAFC; border: 1px solid #E2E8F0;
             border-radius: 1rem;
@@ -176,29 +193,13 @@
             position: relative;
             overflow: hidden;
         }
-        .interactive-card::before {
-            content: "";
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
-            opacity: 0;
-            transition: opacity 0.3s ease-out;
-            z-index: 0;
-        }
-        .interactive-card:hover::before {
-            opacity: 1;
-        }
-        .interactive-card > * {
-            position: relative;
-            z-index: 1;
-            transition: color 0.3s ease-out;
-        }
-        .interactive-card:hover .card-icon, .interactive-card:hover .card-title, .interactive-card:hover .card-subtitle {
-            color: white !important;
-        }
         .interactive-card:hover {
             transform: translateY(-4px); 
+            border-color: #D1E0DE;
             box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
+        }
+        .interactive-card > * {
+            transition: color 0.3s ease-out;
         }
 
         /* --- Pop-ups (History & Rewards) --- */
@@ -248,16 +249,11 @@
     </div>
 
     <!-- Main Dashboard View -->
-    <main id="dashboard" class="flex flex-col lg:flex-row">
+    <main id="dashboard" class="flex">
         <!-- Left Panel (Header and Progress) -->
         <div class="left-panel flex flex-col justify-center">
              <div class="flex items-center gap-4">
-                <!-- NEW: Logout Button -->
-                <button id="logoutBtn" class="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V5.414l7.293 7.293a1 1 0 001.414-1.414L5.414 4H15a1 1 0 100-2H4a1 1 0 00-1 1z" clip-rule="evenodd" />
-                    </svg>
-                </button>
+                <!-- REMOVED: Logout Button is gone -->
                 <div>
                     <header class="dashboard-header text-4xl md:text-5xl">Dashboard</header>
                     <p class="text-xl md:text-2xl mt-1 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
@@ -266,7 +262,9 @@
             <div class="flex-grow lg:flex-grow-0 lg:mt-24"></div>
             <div class="mt-auto">
                 <h3 class="font-bold text-xl text-slate-800 text-center lg:text-left">Event Progress</h3>
-                <div id="progressContainer" class="progress-indicator"></div>
+                <div id="progressContainer" class="progress-indicator">
+                    <!-- This is now populated by JS, including the active line -->
+                </div>
             </div>
         </div>
 
@@ -316,8 +314,10 @@
                 <h3 class="text-center font-bold text-lg text-slate-800 absolute left-1/2 -translate-x-1/2">Points History</h3>
                 <button id="refreshHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
                     <!-- UPDATED: Refresh Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.664 0l3.18-3.185m-3.181-4.994v4.992m0 0h-4.992m4.992 0l-3.182-3.182a8.25 8.25 0 00-11.664 0l-3.18 3.185" />
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none" fill-rule="evenodd">
+                            <path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/>
+                        </g>
                     </svg>
                 </button>
             </div>
@@ -329,7 +329,6 @@
     
     <!-- Rewards Fullscreen Page -->
     <div id="rewardsPage" class="fullscreen-overlay flex-col !items-stretch !justify-start bg-slate-50">
-        <!-- UPDATED: Header with back button and points display -->
         <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-10 flex-shrink-0">
             <button id="closeRewardsBtn" class="text-slate-600 hover:text-slate-900 mr-3 p-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
@@ -370,11 +369,10 @@
     const historyList = document.getElementById('historyList');
     const historyPopup = document.getElementById('historyPopup');
     const rewardsPage = document.getElementById('rewardsPage');
-    const logoutBtn = document.getElementById('logoutBtn');
 
     // --- Configuration ---
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec";
-    const INACTIVITY_TIMEOUT = 30000; // 30 seconds
+    const INACTIVITY_TIMEOUT = 30000; // 30 seconds for auto-logout
     const AUTO_REFRESH_INTERVAL = 15000; // 15 seconds
 
     // --- App State ---
@@ -393,7 +391,9 @@
       currentUserCode = null;
       accessCodeInput.value = '';
       clearInterval(autoRefreshInterval);
+      clearTimeout(inactivityTimer); // Clear timers
       autoRefreshInterval = null;
+      inactivityTimer = null;
     }
 
     function showLoginScreen() {
@@ -402,9 +402,11 @@
       resetInactivityTimer();
     }
 
+    // UPDATED: Inactivity timer logic
     function resetInactivityTimer() {
       clearTimeout(inactivityTimer);
-      if (!splashScreen.classList.contains('visible')) {
+      // Only set the timer if the user is logged in (dashboard is visible)
+      if (dashboard.style.opacity === '1') {
         inactivityTimer = setTimeout(showSplashScreen, INACTIVITY_TIMEOUT);
       }
     }
@@ -433,7 +435,6 @@
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        // If data fetch fails (e.g. sheet deleted), log out.
         if (!isManualRefresh) {
             showSplashScreen();
         }
@@ -468,11 +469,13 @@
           throw new Error(json.error || "Invalid code or user data not found");
         }
         
-        // --- Success ---
         currentUserCode = code;
         loginScreen.classList.remove('visible');
         dashboard.style.display = 'flex';
-        setTimeout(() => dashboard.style.opacity = 1, 50);
+        setTimeout(() => {
+            dashboard.style.opacity = 1;
+            resetInactivityTimer(); // Start timer on successful login
+        }, 50);
 
         updateDashboardUI(json.user, json.history);
 
@@ -490,7 +493,6 @@
       } finally {
         loadingIndicator.classList.add('hidden');
         accessCodeEnterBtn.disabled = false;
-        resetInactivityTimer();
       }
     }
 
@@ -499,32 +501,38 @@
       userNameEl.textContent = userData.Name || "Guest";
       const userPoints = userData.Points || "0";
       userPointsEl.textContent = userPoints;
-      // UPDATED: Also update points on the rewards page
       rewardsUserPointsContainer.querySelector('.font-bold').textContent = userPoints;
 
       renderProgressBar(userData);
       renderHistoryList(historyData || []);
     }
     
+    // UPDATED: Progress bar rendering with new styles and logic
     function renderProgressBar(data) {
-      progressContainer.innerHTML = ''; 
+      progressContainer.innerHTML = ''; // Clear previous content
       
+      const activeLine = document.createElement('div');
+      activeLine.id = 'progress-line-active';
+      progressContainer.appendChild(activeLine);
+
       const steps = [
         { key: 'Event1', label: 'Onboarding' },
         { key: 'Event2', label: 'Take Off' },
         { key: 'Event3', label: 'Touchdown' }
       ];
 
-      // Tier styles now only contain the SVG icon string
+      // UPDATED: New stamp icon colors
       const tierIcons = {
-        'Tier1': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#3B82F6"/></svg>`, // Blue Triangle
-        'Tier2': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#8B5CF6"/></svg>`, // Purple Square
+        'Tier1': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#10B981"/></svg>`, // Green Triangle
+        'Tier2': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>`, // Blue Square
         'Tier3': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>` // Yellow Diamond
       };
 
+      let completedCount = 0;
       steps.forEach((step, index) => {
         const tier = data[step.key];
         const isCompleted = tier && tierIcons[tier];
+        if (isCompleted) completedCount++;
 
         const stepEl = document.createElement('div');
         stepEl.className = `progress-step flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
@@ -540,11 +548,19 @@
         `;
         progressContainer.appendChild(stepEl);
       });
+      
+      // Set the width of the active progress line
+      if (completedCount > 1) {
+          // 50% for 2 completed, 100% for 3 completed
+          const width = (completedCount - 1) * 50;
+          activeLine.style.width = `${width}%`;
+      } else {
+          activeLine.style.width = '0%';
+      }
     }
 
     function renderHistoryList(historyData) {
         historyList.innerHTML = ''; 
-
         if (!historyData || historyData.length === 0) {
             historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history has been recorded yet.</p>';
             return;
@@ -552,8 +568,7 @@
         
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
-
-        historyData.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp)); // Sort by most recent if timestamp exists
+        historyData.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
 
         historyData.forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
@@ -562,7 +577,6 @@
 
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
-            
             row.innerHTML = `
                 <span class="font-semibold text-slate-800 text-left">${item.Label || 'Unknown Event'}</span>
                 <span class="font-bold text-lg text-right ${pointsClass}">${pointsSign}${points}</span>
@@ -579,8 +593,8 @@
       showSplashScreen();
       setTimeout(showLoginScreen, 2500);
 
-      // Global event listeners
-      ['click', 'keypress', 'mousemove'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
+      // Global event listeners for inactivity timer
+      ['click', 'keypress', 'mousemove', 'touchstart'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       splashScreen.addEventListener('click', showLoginScreen);
       
       // Login listeners
@@ -588,7 +602,6 @@
       accessCodeInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleLogin());
 
       // Navigation listeners
-      logoutBtn.addEventListener('click', showSplashScreen);
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
       document.getElementById('showRewardsBtn').addEventListener('click', () => rewardsPage.classList.add('visible'));
