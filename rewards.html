@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Redeem Rewards - Starlight</title>
 
-    <!-- Meta tags for a kiosk-like experience -->
     <meta name="theme-color" content="#EEF7F6"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Starlight">
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/4BA7AD/FFFFFF?text=S">
 
-    <!-- Tailwind CSS and Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,7 +95,6 @@
         </div>
     </div>
     
-    <!-- Main Rewards Page -->
     <div class="min-h-screen flex flex-col">
         <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-10 flex-shrink-0">
             <a href="index.html" class="text-slate-600 hover:text-slate-900 p-1 mr-3">
@@ -116,12 +113,12 @@
                 <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Candy</p>
                 <p class="text-sm font-bold text-cyan-600">5 pts</p>
             </button>
-            <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="10" data-label="Cookie" data-reward-code="Reward2">
+             <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="10" data-label="Cookie" data-reward-code="Reward2">
                 <img src="https://placehold.co/128x128/FFFBEB/D97706?text=?" alt="Cookie Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-amber-100">
                 <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Cookie</p>
                 <p class="text-sm font-bold text-cyan-600">10 pts</p>
             </button>
-            <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="15" data-label="Ramen" data-reward-code="Reward3">
+             <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="15" data-label="Ramen" data-reward-code="Reward3">
                 <img src="https://placehold.co/128x128/FFF7ED/F97316?text=?" alt="Ramen Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-orange-100">
                 <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Ramen</p>
                 <p class="text-sm font-bold text-cyan-600">15 pts</p>
@@ -134,13 +131,11 @@
         </main>
     </div>
 
-    <!-- Reward Redemption Modal -->
     <div id="redeemModal" class="fullscreen-overlay">
         <div class="popup-card p-6 gap-4 text-center">
              <button id="redeemModalBackBtn" class="absolute top-3 left-3 text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
             </button>
-            <!-- Content is populated by JS -->
             <img id="redeemModalImage" src="" alt="Reward Image" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl mx-auto">
             <h3 id="redeemModalTitle" class="text-2xl font-bold text-slate-800"></h3>
             <p class="text-slate-500">Redeem this reward for <strong id="redeemModalPoints" class="text-slate-700"></strong> points?</p>
@@ -241,12 +236,13 @@
             const response = await fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
                 mode: 'cors',
-                redirect: 'follow', // Important for Apps Script web apps
+                // The 'redirect: follow' line has been removed as it causes the "Failed to fetch" error.
+                // The browser's default handling is now used, which works with the corrected Apps Script.
                 headers: {
-                    'Content-Type': 'application/json' // Explicitly set content type for JSON payload
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    action: 'redeem', // Helps your doPost identify the request type
+                    action: 'redeem',
                     accessCode: accessCode,
                     rewardCode: rewardCode
                 })
@@ -258,7 +254,7 @@
                 throw new Error(`Server responded with an error: ${response.status} ${response.statusText} - ${errorText}`);
             }
 
-            const result = await response.json(); // Attempt to parse JSON
+            const result = await response.json();
 
             if (result.status !== 'success') {
                 throw new Error(result.message || 'Redemption failed with an unknown error.');
