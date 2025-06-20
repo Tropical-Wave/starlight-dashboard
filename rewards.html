@@ -51,7 +51,11 @@
     const infoModalTitle = document.getElementById('infoModalTitle');
     const infoModalMessage = document.getElementById('infoModalMessage');
     const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/library/d/1Of36TL_7e_OHo-WBpFGW82EhDCfqfPAv7BzAFlxzQX7W3RGaj5zm0skf/9"; // <<< IMPORTANT: Replace this with YOUR deployed Google Apps Script URL
+    
+    // --- IMPORTANT --- 
+    // PASTE YOUR NEW WEB APP URL (FROM GOOGLE APPS SCRIPT DEPLOYMENT) HERE
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec"; 
+    
     let currentUserCode = null;
     let isRedeeming = false;
     function showLoading(isLoading) { loadingOverlay.classList.toggle('visible', isLoading); }
