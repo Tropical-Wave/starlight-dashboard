@@ -51,106 +51,106 @@
     const infoModalTitle = document.getElementById('infoModalTitle');
     const infoModalMessage = document.getElementById('infoModalMessage');
     const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx_mh9eJJ0Ki86iSLrpY8pbPEbTy1shwaEWyOV6ahy7A1HBhwWYfBoN0KUzhxmegVLGJA/exec"; //
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/library/d/1Of36TL_7e_OHo-WBpFGW82EhDCfqfPAv7BzAFlxzQX7W3RGaj5zm0skf/9"; // <<< IMPORTANT: Replace this with YOUR deployed Google Apps Script URL
     let currentUserCode = null;
     let isRedeeming = false;
-    function showLoading(isLoading) { loadingOverlay.classList.toggle('visible', isLoading); } //
-    async function fetchUserData(code) { //
-        showLoading(true); //
-        try { //
-            if (!GOOGLE_SHEET_URL.includes("macros/s")) { //
-                throw new Error("The Google Apps Script URL is invalid. Please deploy your script and paste the correct URL."); //
+    function showLoading(isLoading) { loadingOverlay.classList.toggle('visible', isLoading); }
+    async function fetchUserData(code) {
+        showLoading(true);
+        try {
+            if (!GOOGLE_SHEET_URL.includes("macros/s")) {
+                throw new Error("The Google Apps Script URL is invalid. Please deploy your script and paste the correct URL.");
             }
-            const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`; //
-            const res = await fetch(url); //
-            if (!res.ok) { throw new Error(`Network response was not ok: ${res.status}`); } //
-            const json = await res.json(); //
-            if (json.error) { throw new Error(json.error); } //
-            if (!json.user) { throw new Error("No user data returned from script."); } //
-            updateUI(json.user); //
-        } catch (error) { //
-            console.error("Failed to fetch user data:", error); //
-            showInfoModal("Error", `Could not load your data. Redirecting to login. Details: ${error.message}`); //
-            setTimeout(() => { window.location.href = 'index.html'; }, 4000); //
-        } finally { //
-            showLoading(false); //
+            const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
+            const res = await fetch(url);
+            if (!res.ok) { throw new Error(`Network response was not ok: ${res.status}`); }
+            const json = await res.json();
+            if (json.error) { throw new Error(json.error); }
+            if (!json.user) { throw new Error("No user data returned from script."); }
+            updateUI(json.user);
+        } catch (error) {
+            console.error("Failed to fetch user data:", error);
+            showInfoModal("Error", `Could not load your data. Redirecting to login. Details: ${error.message}`);
+            setTimeout(() => { window.location.href = 'index.html'; }, 4000);
+        } finally {
+            showLoading(false);
         }
     }
-    function updateUI(userData) { //
-        const userPoints = parseInt(userData.Points || "0", 10); //
-        userPointsEl.textContent = userPoints; //
-        document.querySelectorAll('.reward-button').forEach(button => { //
-            const cost = parseInt(button.dataset.cost, 10); //
-            button.disabled = userPoints < cost; //
+    function updateUI(userData) {
+        const userPoints = parseInt(userData.Points || "0", 10);
+        userPointsEl.textContent = userPoints;
+        document.querySelectorAll('.reward-button').forEach(button => {
+            const cost = parseInt(button.dataset.cost, 10);
+            button.disabled = userPoints < cost;
         });
     }
-    async function redeemReward(rewardCode, accessCode) { //
-        if (isRedeeming) return; //
-        isRedeeming = true; //
-        redeemModalConfirmBtn.disabled = true; //
-        redeemModalConfirmBtn.textContent = 'Redeeming...'; //
-        redeemStatus.classList.add('hidden'); //
-        try { //
-            const response = await fetch(GOOGLE_SHEET_URL, { //
-                method: 'POST', mode: 'cors', //
-                headers: { 'Content-Type': 'application/json' }, //
-                body: JSON.stringify({ action: 'redeem', accessCode: accessCode, rewardCode: rewardCode }) //
+    async function redeemReward(rewardCode, accessCode) {
+        if (isRedeeming) return;
+        isRedeeming = true;
+        redeemModalConfirmBtn.disabled = true;
+        redeemModalConfirmBtn.textContent = 'Redeeming...';
+        redeemStatus.classList.add('hidden');
+        try {
+            const response = await fetch(GOOGLE_SHEET_URL, {
+                method: 'POST', mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'redeem', accessCode: accessCode, rewardCode: rewardCode })
             });
-            if (!response.ok) { throw new Error(`Server responded with an error: ${response.status}`); } //
-            const result = await response.json(); //
-            if (result.status !== 'success') { throw new Error(result.message || 'Redemption failed.'); } //
-            redeemStatus.textContent = 'Success! Points updated.'; //
-            redeemStatus.className = 'font-semibold mt-2 text-green-600'; //
-            setTimeout(() => { //
-                closeRedeemModal(); //
-                fetchUserData(accessCode); //
-            }, 1500); //
-        } catch (error) { //
-            console.error('Redemption error:', error); //
-            redeemStatus.textContent = `Error: ${error.message}`; //
-            redeemStatus.className = 'font-semibold mt-2 text-red-500'; //
-        } finally { //
-            setTimeout(() => { //
-                isRedeeming = false; //
-                redeemModalConfirmBtn.disabled = false; //
-                redeemModalConfirmBtn.textContent = 'Redeem Now'; //
-            }, 1500); //
+            if (!response.ok) { throw new Error(`Server responded with an error: ${response.status}`); }
+            const result = await response.json();
+            if (result.status !== 'success') { throw new Error(result.message || 'Redemption failed.'); }
+            redeemStatus.textContent = 'Success! Points updated.';
+            redeemStatus.className = 'font-semibold mt-2 text-green-600';
+            setTimeout(() => {
+                closeRedeemModal();
+                fetchUserData(accessCode);
+            }, 1500);
+        } catch (error) {
+            console.error('Redemption error:', error);
+            redeemStatus.textContent = `Error: ${error.message}`;
+            redeemStatus.className = 'font-semibold mt-2 text-red-500';
+        } finally {
+            setTimeout(() => {
+                isRedeeming = false;
+                redeemModalConfirmBtn.disabled = false;
+                redeemModalConfirmBtn.textContent = 'Redeem Now';
+            }, 1500);
         }
     }
-    function showRedeemModal(rewardButton) { //
-        const label = rewardButton.dataset.label; //
-        const cost = rewardButton.dataset.cost; //
-        const rewardCode = rewardButton.dataset.rewardCode; //
-        const imgSrc = rewardButton.querySelector('img').src; //
-        redeemModalImage.src = imgSrc; //
-        redeemModalTitle.textContent = label; //
-        redeemModalPoints.textContent = cost; //
-        redeemStatus.classList.add('hidden'); //
-        redeemModal.classList.add('visible'); //
-        redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, currentUserCode); //
+    function showRedeemModal(rewardButton) {
+        const label = rewardButton.dataset.label;
+        const cost = rewardButton.dataset.cost;
+        const rewardCode = rewardButton.dataset.rewardCode;
+        const imgSrc = rewardButton.querySelector('img').src;
+        redeemModalImage.src = imgSrc;
+        redeemModalTitle.textContent = label;
+        redeemModalPoints.textContent = cost;
+        redeemStatus.classList.add('hidden');
+        redeemModal.classList.add('visible');
+        redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, currentUserCode);
     }
-    function closeRedeemModal() { redeemModal.classList.remove('visible'); redeemModalConfirmBtn.onclick = null; } //
-    function showInfoModal(title, message) { //
-        infoModalTitle.textContent = title; //
-        infoModalMessage.textContent = message; //
-        infoModal.classList.add('visible'); //
-        const close = () => { infoModal.classList.remove('visible'); infoModalCloseBtn.onclick = null; } //
-        infoModalCloseBtn.onclick = close; //
-        infoModal.onclick = (e) => { if (e.target === infoModal) close(); }; //
+    function closeRedeemModal() { redeemModal.classList.remove('visible'); redeemModalConfirmBtn.onclick = null; }
+    function showInfoModal(title, message) {
+        infoModalTitle.textContent = title;
+        infoModalMessage.textContent = message;
+        infoModal.classList.add('visible');
+        const close = () => { infoModal.classList.remove('visible'); infoModalCloseBtn.onclick = null; }
+        infoModalCloseBtn.onclick = close;
+        infoModal.onclick = (e) => { if (e.target === infoModal) close(); };
     }
-    document.addEventListener('DOMContentLoaded', () => { //
-        currentUserCode = sessionStorage.getItem('currentUserCode'); //
-        if (!currentUserCode) { //
-            showInfoModal("Session Expired", "No active session found. Please log in first."); //
-            setTimeout(() => { window.location.href = 'index.html'; }, 3000); //
-            return; //
+    document.addEventListener('DOMContentLoaded', () => {
+        currentUserCode = sessionStorage.getItem('currentUserCode');
+        if (!currentUserCode) {
+            showInfoModal("Session Expired", "No active session found. Please log in first.");
+            setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+            return;
         }
-        fetchUserData(currentUserCode); //
-        rewardsGrid.addEventListener('click', (e) => { //
-            const rewardButton = e.target.closest('.reward-button'); //
-            if (rewardButton && !rewardButton.disabled) { showRedeemModal(rewardButton); } //
+        fetchUserData(currentUserCode);
+        rewardsGrid.addEventListener('click', (e) => {
+            const rewardButton = e.target.closest('.reward-button');
+            if (rewardButton && !rewardButton.disabled) { showRedeemModal(rewardButton); }
         });
-        redeemModalBackBtn.addEventListener('click', closeRedeemModal); //
+        redeemModalBackBtn.addEventListener('click', closeRedeemModal);
     });
   </script>
 </body>
