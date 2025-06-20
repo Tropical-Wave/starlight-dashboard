@@ -45,22 +45,15 @@
             --gradient-angle: 135deg;
             --brand-color: #4BA7AD;
         }
-        .text-gradient {
-            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-        }
-
-        /* Generic class for fullscreen overlays */
+        
+        /* Generic class for fullscreen overlays (used for popups) */
         .fullscreen-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 100; display: none; /* Hidden by default */
             align-items: center; justify-content: center;
             opacity: 0;
             transition: opacity 0.5s ease-out, visibility 0.5s;
-            background-color: rgba(0, 0, 0, 0.4); /* Added backdrop */
+            background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(4px);
         }
         .fullscreen-overlay.visible {
@@ -69,7 +62,7 @@
             visibility: visible;
         }
         
-        /* NEW: Styles for popup cards used in modals */
+        /* Styles for popup cards used in modals (e.g., History) */
         .popup-card {
             background-color: white; border-radius: 1.5rem;
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex;
@@ -79,13 +72,11 @@
             opacity: 0;
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
         }
-
         .fullscreen-overlay.visible .popup-card {
             transform: scale(1);
             opacity: 1;
         }
-
-
+        
         /* --- Splash Screen / Screensaver --- */
         #splashScreen {
             background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
@@ -128,9 +119,6 @@
             display: none; height: 100dvh;
             padding: 1rem; gap: 1rem;
             opacity: 0; transition: opacity 0.5s ease-in;
-        }
-        
-        #dashboard {
             flex-direction: column;
         }
         .left-panel, .right-panel {
@@ -192,7 +180,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
-        /* Using <a> tags now, so apply styles to them */
         .interactive-card {
             background-color: #F8FAFC; border: 1px solid #E2E8F0;
             border-radius: 1rem;
@@ -207,30 +194,9 @@
             border-color: #D1E0DE;
             box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
         }
-        .interactive-card > * {
-            transition: color 0.3s ease-out;
-        }
-
-        #historyPopup.visible .popup-card, #rewardsPage.visible .popup-card {
+        #historyPopup.visible .popup-card {
             transform: scale(1); opacity: 1; pointer-events: auto;
         }
-        
-        /* NEW: Styles for the reward redemption modal buttons */
-        .modal-button {
-            flex-grow: 1; text-align: center; padding: 0.75rem 1rem;
-            font-weight: 600; border-radius: 0.75rem;
-            transition: all 0.2s ease;
-        }
-        .modal-button.primary {
-            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));
-            color: white;
-        }
-        .modal-button.primary:hover { opacity: 0.9; }
-        
-        .modal-button.secondary {
-            background-color: #E2E8F0; color: #475569;
-        }
-        .modal-button.secondary:hover { background-color: #D1D5DB; }
 
     </style>
 </head>
@@ -285,9 +251,10 @@
                         <span id="userPoints" class="text-3xl md:text-4xl font-bold text-slate-800">0</span>
                         <button id="showHistoryBtn" class="text-slate-400 hover:text-cyan-500 transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg></button>
                     </div>
-                    <button id="showRewardsBtn" class="font-semibold text-sm py-2 px-4 md:px-5 rounded-full text-white hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Rewards</button>
+                    <!-- UPDATED: "Rewards" button is now an <a> tag linking to rewards.html -->
+                    <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full text-white hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Rewards</a>
                 </div>
-                <!-- Game Selection: UPDATED to <a> tags -->
+                <!-- Game Selection -->
                 <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
                     <a href="game1.html" class="interactive-card p-2 text-center" data-label="Guess the Song (Easy)">
                         <div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div>
@@ -321,52 +288,6 @@
         </div>
     </div>
     
-    <!-- Rewards Fullscreen Page -->
-    <div id="rewardsPage" class="fullscreen-overlay !items-stretch !justify-start bg-slate-50">
-        <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-10 flex-shrink-0">
-            <button id="closeRewardsBtn" class="text-slate-600 hover:text-slate-900 mr-3 p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg></button>
-            <h2 class="flex-grow font-bold text-2xl text-slate-800">Rewards</h2>
-            <div id="rewardsUserPointsContainer" class="text-right">
-                <div class="text-xs text-slate-500">Your Points</div>
-                <div class="text-2xl font-bold text-gradient">0</div>
-            </div>
-        </header>
-        <!-- UPDATED Rewards buttons with new items and data-labels -->
-        <div id="rewardsGrid" class="p-4 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 overflow-y-auto">
-             <button class="reward-button interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="5" data-label="Candy">
-                <div class="h-12 w-12 md:h-16 md:w-16 text-red-500 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd" /></svg></div>
-                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Candy</p>
-                <p class="card-subtitle text-sm font-bold text-cyan-600">5 pts</p>
-            </button>
-             <button class="reward-button interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="10" data-label="Cookie">
-                <div class="h-12 w-12 md:h-16 md:w-16 text-yellow-600 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.464 10a9.5 9.5 0 0119.072 0 9.5 9.5 0 01-19.072 0zM10 18a8 8 0 100-16 8 8 0 000 16z" clip-rule="evenodd" /></svg></div>
-                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Cookie</p>
-                <p class="card-subtitle text-sm font-bold text-cyan-600">10 pts</p>
-            </button>
-            <!-- NEW Third Reward -->
-             <button class="reward-button interactive-card text-center disabled:opacity-40 aspect-square flex flex-col items-center justify-center p-2" data-cost="20" data-label="Ramen">
-                <div class="h-12 w-12 md:h-16 md:w-16 text-orange-500 card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg></div>
-                <p class="card-title mt-2 font-semibold text-slate-700 text-sm md:text-base">Ramen</p>
-                <p class="card-subtitle text-sm font-bold text-cyan-600">20 pts</p>
-            </button>
-        </div>
-    </div>
-    
-    <!-- NEW: Reward Redemption Modal -->
-    <div id="redeemModal" class="fullscreen-overlay">
-        <div id="redeemModalCard" class="popup-card text-center p-6 gap-4">
-            <!-- Content is populated by JS -->
-            <div id="redeemModalIcon" class="w-24 h-24 mx-auto text-cyan-500"></div>
-            <h3 id="redeemModalTitle" class="text-2xl font-bold text-slate-800"></h3>
-            <p class="text-slate-500">Redeem this reward for <strong id="redeemModalPoints" class="text-slate-700"></strong> points?</p>
-            <div class="flex items-center justify-center gap-4 mt-4 w-full">
-                <button id="redeemModalBackBtn" class="modal-button secondary">Back</button>
-                <button id="redeemModalConfirmBtn" class="modal-button primary">Redeem Now</button>
-            </div>
-        </div>
-    </div>
-
-
   <script>
     // --- DOM Element Constants ---
     const splashScreen = document.getElementById('splashScreen');
@@ -378,21 +299,9 @@
     const loadingIndicator = document.getElementById('loadingIndicator');
     const userNameEl = document.getElementById('userName');
     const userPointsEl = document.getElementById('userPoints');
-    const rewardsUserPointsContainer = document.getElementById('rewardsUserPointsContainer');
     const progressContainer = document.getElementById('progressContainer');
     const historyList = document.getElementById('historyList');
     const historyPopup = document.getElementById('historyPopup');
-    const rewardsPage = document.getElementById('rewardsPage');
-    const rewardsGrid = document.getElementById('rewardsGrid');
-    
-    // NEW: Redeem Modal elements
-    const redeemModal = document.getElementById('redeemModal');
-    const redeemModalCard = document.getElementById('redeemModalCard');
-    const redeemModalIcon = document.getElementById('redeemModalIcon');
-    const redeemModalTitle = document.getElementById('redeemModalTitle');
-    const redeemModalPoints = document.getElementById('redeemModalPoints');
-    const redeemModalBackBtn = document.getElementById('redeemModalBackBtn');
-    const redeemModalConfirmBtn = document.getElementById('redeemModalConfirmBtn');
 
     // --- Configuration ---
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec";
@@ -403,34 +312,6 @@
     let inactivityTimer = null;
     let autoRefreshInterval = null;
     let currentUserCode = null;
-
-    // --- Core Logic ---
-    
-    /**
-     * NEW: Prepares and logs data for sending to Google Sheets.
-     * The actual fetch request will be added in the next step.
-     * @param {string} label The activity or reward name to be logged.
-     */
-    async function postToSheet(label) {
-        const accessCode = currentUserCode || sessionStorage.getItem('currentUserCode');
-        if (!accessCode) {
-            alert("No access code found. Please log in again.");
-            showSplashScreen();
-            return;
-        }
-
-        console.log(`Preparing to POST to Google Sheet for user: ${accessCode}`);
-        console.log(`Data: { accessCode: "${accessCode}", label: "${label}" }`);
-
-        // Placeholder for the actual fetch POST request.
-        // For now, we'll show an alert and close the modals.
-        
-        alert(`Activity logged: ${label}`);
-        
-        // Hide modals and refresh data to reflect changes
-        redeemModal.classList.remove('visible');
-        await fetchDashboardData(accessCode, true); // Refresh data to show point deduction
-    }
     
     // --- UI Flow & Data Functions ---
     function showSplashScreen() {
@@ -509,7 +390,7 @@
         }
         
         currentUserCode = code;
-        // NEW: Store code in session storage for other pages
+        // Store code in session storage for other pages (like rewards.html)
         sessionStorage.setItem('currentUserCode', code);
 
         loginScreen.classList.remove('visible');
@@ -544,20 +425,11 @@
       userNameEl.textContent = userData.Name || "Guest";
       const userPoints = parseInt(userData.Points || "0", 10);
       userPointsEl.textContent = userPoints;
-      rewardsUserPointsContainer.querySelector('.font-bold').textContent = userPoints;
 
       renderProgressBar(userData);
       renderHistoryList(historyData || []);
-      updateRewardButtons(userPoints);
     }
 
-    function updateRewardButtons(currentPoints) {
-        document.querySelectorAll('.reward-button').forEach(button => {
-            const cost = parseInt(button.dataset.cost, 10);
-            button.disabled = currentPoints < cost;
-        });
-    }
-    
     function renderProgressBar(data) {
       progressContainer.innerHTML = '';
       const activeLine = document.createElement('div');
@@ -628,40 +500,10 @@
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
       historyPopup.addEventListener('click', (e) => { if(e.target === historyPopup) historyPopup.classList.remove('visible'); });
-
-      document.getElementById('showRewardsBtn').addEventListener('click', () => rewardsPage.classList.add('visible'));
-      document.getElementById('closeRewardsBtn').addEventListener('click', () => rewardsPage.classList.remove('visible'));
       
       document.getElementById('refreshHistoryBtn').addEventListener('click', (e) => {
           e.stopPropagation();
           if (currentUserCode) fetchDashboardData(currentUserCode, true);
-      });
-      
-      // NEW: Event listeners for Reward Redemption Modal
-      rewardsGrid.addEventListener('click', (e) => {
-        const rewardButton = e.target.closest('.reward-button');
-        if (!rewardButton || rewardButton.disabled) return;
-
-        const label = rewardButton.dataset.label;
-        const cost = rewardButton.dataset.cost;
-        const iconHTML = rewardButton.querySelector('.card-icon').innerHTML;
-        
-        // Populate and show the modal
-        redeemModalIcon.innerHTML = iconHTML;
-        redeemModalTitle.textContent = label;
-        redeemModalPoints.textContent = cost;
-        redeemModal.classList.add('visible');
-
-        // Set up a one-time click handler for the confirmation
-        redeemModalConfirmBtn.onclick = () => {
-            postToSheet(label);
-        };
-      });
-
-      const closeModal = () => redeemModal.classList.remove('visible');
-      redeemModalBackBtn.addEventListener('click', closeModal);
-      redeemModal.addEventListener('click', (e) => {
-          if (e.target === redeemModal) closeModal();
       });
     });
   </script>

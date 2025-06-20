@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Redeem Rewards - Starlight</title>
+
+    <!-- Meta tags for a kiosk-like experience -->
+    <meta name="theme-color" content="#EEF7F6"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Starlight">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/4BA7AD/FFFFFF?text=S">
+
+    <!-- Tailwind CSS and Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base styles copied from index.html for consistency */
+        html, body {
+            margin: 0; padding: 0; width: 100%; min-height: 100%;
+            background-color: #F8FAFC; /* Lighter bg for content pages */
+            font-family: 'Poppins', sans-serif;
+            color: #334155;
+        }
+        :root {
+            --gradient-start: #4BA7AD;
+            --gradient-mid: #89B3D9;
+            --gradient-end: #837FD9;
+            --gradient-angle: 135deg;
+            --brand-color: #4BA7AD;
+        }
+        .text-gradient {
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; color: transparent;
+        }
+        .fullscreen-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 100; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease-out;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        .fullscreen-overlay.visible {
+            display: flex; opacity: 1;
+        }
+        .popup-card {
+            background-color: white; border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex;
+            flex-direction: column; width: 90%; max-width: 400px;
+            max-height: 90vh; transform: scale(0.95); opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .fullscreen-overlay.visible .popup-card {
+            transform: scale(1); opacity: 1;
+        }
+        .interactive-card {
+            background-color: white; border: 1px solid #E2E8F0;
+            border-radius: 1.5rem; /* More rounded squares */
+            transition: all 0.2s ease-out;
+            position: relative; overflow: hidden;
+            text-decoration: none;
+        }
+        .interactive-card:hover:not(:disabled) {
+            transform: translateY(-4px); 
+            border-color: #D1E0DE;
+            box-shadow: 0 8px 20px -5px rgba(0,0,0,0.12);
+        }
+        .interactive-card:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #F8FAFC;
+        }
+        .modal-button {
+            flex-grow: 1; text-align: center; padding: 1rem 1rem;
+            font-weight: 600; border-radius: 0.75rem;
+            transition: all 0.2s ease;
+        }
+        .modal-button.primary {
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));
+            color: white;
+        }
+        .modal-button.primary:hover { opacity: 0.9; }
+        .modal-button.primary:disabled { background: #94A3B8; opacity: 0.7; cursor: wait; }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80">
+        <div class="text-center">
+            <svg class="animate-spin h-10 w-10 text-cyan-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <p class="mt-4 font-semibold text-slate-600">Loading...</p>
+        </div>
+    </div>
+    
+    <!-- Main Rewards Page -->
+    <div class="min-h-screen flex flex-col">
+        <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-10 flex-shrink-0">
+            <a href="index.html" class="text-slate-600 hover:text-slate-900 p-1 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            </a>
+            <h1 class="flex-grow font-bold text-2xl text-slate-800 text-center">Redeem Rewards</h1>
+            <div id="userPointsContainer" class="text-right w-20">
+                <div class="text-xs text-slate-500">Your Points</div>
+                <div id="userPoints" class="text-2xl font-bold text-gradient">0</div>
+            </div>
+        </header>
+        
+        <main id="rewardsGrid" class="p-4 md:p-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 flex-grow">
+            <!-- Rewards will be dynamically checked and populated here -->
+             <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="5" data-label="Candy" data-reward-code="Reward1">
+                <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=?" alt="Candy Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-red-100">
+                <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Candy</p>
+                <p class="text-sm font-bold text-cyan-600">5 pts</p>
+            </button>
+             <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="10" data-label="Cookie" data-reward-code="Reward2">
+                <img src="https://placehold.co/128x128/FFFBEB/D97706?text=?" alt="Cookie Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-amber-100">
+                <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Cookie</p>
+                <p class="text-sm font-bold text-cyan-600">10 pts</p>
+            </button>
+             <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="15" data-label="Ramen" data-reward-code="Reward3">
+                <img src="https://placehold.co/128x128/FFF7ED/F97316?text=?" alt="Ramen Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-orange-100">
+                <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Ramen</p>
+                <p class="text-sm font-bold text-cyan-600">15 pts</p>
+            </button>
+            <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="20" data-label="Photocard" data-reward-code="Reward4">
+                <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=?" alt="Photocard Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-sky-100">
+                <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Photocard</p>
+                <p class="text-sm font-bold text-cyan-600">20 pts</p>
+            </button>
+        </main>
+    </div>
+
+    <!-- Reward Redemption Modal -->
+    <div id="redeemModal" class="fullscreen-overlay">
+        <div class="popup-card p-6 gap-4 text-center">
+             <button id="redeemModalBackBtn" class="absolute top-3 left-3 text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+            </button>
+            <!-- Content is populated by JS -->
+            <img id="redeemModalImage" src="" alt="Reward Image" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl mx-auto">
+            <h3 id="redeemModalTitle" class="text-2xl font-bold text-slate-800"></h3>
+            <p class="text-slate-500">Redeem this reward for <strong id="redeemModalPoints" class="text-slate-700"></strong> points?</p>
+            <div class="flex items-center justify-center gap-4 mt-4 w-full">
+                <button id="redeemModalConfirmBtn" class="modal-button primary w-full">Redeem Now</button>
+            </div>
+            <p id="redeemStatus" class="text-green-600 font-semibold mt-2 hidden"></p>
+        </div>
+    </div>
+
+
+  <script>
+    // --- DOM Element Constants ---
+    const userPointsEl = document.getElementById('userPoints');
+    const rewardsGrid = document.getElementById('rewardsGrid');
+    const redeemModal = document.getElementById('redeemModal');
+    const redeemModalImage = document.getElementById('redeemModalImage');
+    const redeemModalTitle = document.getElementById('redeemModalTitle');
+    const redeemModalPoints = document.getElementById('redeemModalPoints');
+    const redeemModalBackBtn = document.getElementById('redeemModalBackBtn');
+    const redeemModalConfirmBtn = document.getElementById('redeemModalConfirmBtn');
+    const redeemStatus = document.getElementById('redeemStatus');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    // --- Configuration ---
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec";
+
+    // --- App State ---
+    let currentUserCode = null;
+    let isRedeeming = false; // Prevents multiple clicks
+
+    /**
+     * Shows a loading overlay.
+     * @param {boolean} isLoading - True to show, false to hide.
+     */
+    function showLoading(isLoading) {
+        loadingOverlay.style.display = isLoading ? 'flex' : 'none';
+    }
+
+    /**
+     * Fetches user data and updates the UI.
+     * @param {string} code - The user's access code.
+     */
+    async function fetchUserData(code) {
+        showLoading(true);
+        try {
+            const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`; // Bust cache
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Network error`);
+            const json = await res.json();
+
+            if (json.error || !json.user) throw new Error(json.error || "Invalid user data");
+            
+            updateUI(json.user);
+        } catch (error) {
+            console.error("Failed to fetch user data:", error);
+            alert("Could not load your data. Redirecting to login.");
+            window.location.href = 'index.html';
+        } finally {
+            showLoading(false);
+        }
+    }
+    
+    /**
+     * Updates the UI elements with the user's data.
+     * @param {object} userData - The user object from the fetched data.
+     */
+    function updateUI(userData) {
+        const userPoints = parseInt(userData.Points || "0", 10);
+        userPointsEl.textContent = userPoints;
+        
+        // Enable/disable reward buttons based on points
+        document.querySelectorAll('.reward-button').forEach(button => {
+            const cost = parseInt(button.dataset.cost, 10);
+            button.disabled = userPoints < cost;
+        });
+    }
+
+    /**
+     * Handles the redemption process by sending data to the Google Sheet.
+     * @param {string} rewardCode - The specific code for the reward being redeemed.
+     * @param {string} accessCode - The user's access code.
+     */
+    async function redeemReward(rewardCode, accessCode) {
+        if (isRedeeming) return;
+        isRedeeming = true;
+        redeemModalConfirmBtn.disabled = true;
+        redeemModalConfirmBtn.textContent = 'Redeeming...';
+
+        try {
+            // NOTE: Your Apps Script needs a doPost(e) function to handle this.
+            const response = await fetch(GOOGLE_SHEET_URL, {
+                method: 'POST',
+                mode: 'cors',
+                redirect: 'follow', // Important for Apps Script web apps
+                headers: {
+                    // The 'Content-Type' header is not required for this simple POST
+                    // as Apps Script will parse it from e.postData.contents
+                },
+                // The body is a stringified object.
+                body: JSON.stringify({
+                    action: 'redeem', // Helps your doPost identify the request type
+                    accessCode: accessCode,
+                    rewardCode: rewardCode
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.status !== 'success') {
+                throw new Error(result.message || 'Redemption failed.');
+            }
+            
+            // Show success message and close modal after a delay
+            redeemStatus.textContent = 'Success! Points updated.';
+            redeemStatus.classList.remove('hidden', 'text-red-500');
+            redeemStatus.classList.add('text-green-600');
+            
+            setTimeout(() => {
+                closeRedeemModal();
+                fetchUserData(accessCode); // Refresh points and button states
+            }, 1500);
+
+        } catch (error) {
+            console.error('Redemption error:', error);
+            redeemStatus.textContent = error.message || 'An error occurred.';
+            redeemStatus.classList.remove('hidden', 'text-green-600');
+            redeemStatus.classList.add('text-red-500');
+        } finally {
+            // Reset button after a delay, allowing user to see status
+            setTimeout(() => {
+                isRedeeming = false;
+                redeemModalConfirmBtn.disabled = false;
+                redeemModalConfirmBtn.textContent = 'Redeem Now';
+            }, 1500);
+        }
+    }
+    
+    /**
+     * Populates and shows the redemption modal.
+     * @param {Element} rewardButton - The button element that was clicked.
+     */
+    function showRedeemModal(rewardButton) {
+        const label = rewardButton.dataset.label;
+        const cost = rewardButton.dataset.cost;
+        const rewardCode = rewardButton.dataset.rewardCode;
+        const imgSrc = rewardButton.querySelector('img').src;
+
+        // Populate modal
+        redeemModalImage.src = imgSrc;
+        redeemModalTitle.textContent = label;
+        redeemModalPoints.textContent = cost;
+        redeemStatus.classList.add('hidden'); // Hide status message on new open
+
+        // Show modal
+        redeemModal.classList.add('visible');
+
+        // Set up one-time click handler for the confirmation
+        redeemModalConfirmBtn.onclick = () => {
+            redeemReward(rewardCode, currentUserCode);
+        };
+    }
+
+    /**
+     * Hides the redemption modal.
+     */
+    function closeRedeemModal() {
+        redeemModal.classList.remove('visible');
+        // Clear the one-time click handler
+        redeemModalConfirmBtn.onclick = null;
+    }
+
+    // --- Page Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        currentUserCode = sessionStorage.getItem('currentUserCode');
+        
+        if (!currentUserCode) {
+            alert("No active session found. Please log in first.");
+            window.location.href = 'index.html';
+            return;
+        }
+
+        fetchUserData(currentUserCode);
+
+        // --- Event Listeners ---
+        rewardsGrid.addEventListener('click', (e) => {
+            const rewardButton = e.target.closest('.reward-button');
+            if (rewardButton && !rewardButton.disabled) {
+                showRedeemModal(rewardButton);
+            }
+        });
+
+        redeemModalBackBtn.addEventListener('click', closeRedeemModal);
+        redeemModal.addEventListener('click', (e) => {
+            // Close if the click is on the overlay itself, not the card
+            if (e.target === redeemModal) {
+                closeRedeemModal();
+            }
+        });
+    });
+  </script>
+</body>
+</html>

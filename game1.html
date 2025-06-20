@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Page</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Game 1</title> <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for the Inter font and overall body styling */
         body {
@@ -94,10 +92,8 @@
     </style>
 </head>
 <body>
-    <!-- Back Button Container -->
     <div class="back-button-container">
         <a href="index.html" class="back-button">
-            <!-- SVG for a simple back arrow icon -->
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
             </svg>
@@ -105,13 +101,56 @@
         </a>
     </div>
 
-    <!-- Main Content Container -->
     <div class="container">
         <h1 class="text-3xl font-bold text-gray-800 mb-5">Welcome Game 1!</h1>
-        <p class="text-gray-600 text-center mb-8">This is a simple page with a "Done" button.</p>
+        <p class="text-gray-600 text-center mb-8">Play this exciting game!</p>
 
-        <!-- Done Button -->
-        <a href="" class="button-primary">Done</a>
+        <p class="text-lg font-semibold text-green-600">You earned +10 points!</p>
+
+        <button id="doneButton" class="button-primary">Done</button>
     </div>
+
+    <script>
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec";
+
+        document.getElementById('doneButton').addEventListener('click', async () => {
+            const accessCode = sessionStorage.getItem('currentUserCode');
+            if (!accessCode) {
+                alert("You are not logged in. Please log in on the dashboard.");
+                window.location.href = "index.html"; // Redirect to login
+                return;
+            }
+
+            const gameLabel = "Game 1 Completed";
+            const pointsEarned = 10; // Example: points for completing Game 1
+
+            const url = new URL(GOOGLE_SHEET_URL);
+            url.searchParams.append('accessCode', accessCode);
+            url.searchParams.append('label', gameLabel);
+            url.searchParams.append('points', pointsEarned);
+
+            try {
+                // Using 'no-cors' mode as Apps Script doesn't return CORS headers for simple requests
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors'
+                });
+                console.log(`Successfully logged game completion: ${gameLabel} for ${pointsEarned} points.`);
+            } catch (error) {
+                console.error("Failed to log game completion:", error);
+                alert("There was an error saving your game progress. Please try again.");
+            } finally {
+                // Always redirect back to the dashboard regardless of success/failure
+                window.location.href = "index.html";
+            }
+        });
+
+        // Optional: If the back button should also log completion (less common for "done" logic)
+        document.querySelector('.back-button').addEventListener('click', (event) => {
+             // You might want to prevent the default behavior and add logic here
+             // if hitting 'back' should also log the game, even without hitting 'done'.
+             // For now, it just navigates back.
+        });
+    </script>
 </body>
 </html>
