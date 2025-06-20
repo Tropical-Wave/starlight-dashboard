@@ -167,7 +167,7 @@
     const loadingOverlay = document.getElementById('loadingOverlay');
 
     // --- Configuration ---
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec";
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec"; // <<< MAKE SURE THIS IS YOUR DEPLOYED WEB APP URL
 
     // --- App State ---
     let currentUserCode = null;
@@ -190,7 +190,10 @@
         try {
             const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`; // Bust cache
             const res = await fetch(url);
-            if (!res.ok) throw new Error(`Network error`);
+            if (!res.ok) {
+                const errorText = await res.text(); // Get raw error text from server
+                throw new Error(`Network response was not ok: ${res.status} ${res.statusText} - ${errorText}`);
+            }
             const json = await res.json();
 
             if (json.error || !json.user) throw new Error(json.error || "Invalid user data");
@@ -198,8 +201,11 @@
             updateUI(json.user);
         } catch (error) {
             console.error("Failed to fetch user data:", error);
-            alert("Could not load your data. Redirecting to login.");
-            window.location.href = 'index.html';
+            // Using a custom message box instead of alert()
+            showInfoModal("Error", "Could not load your data. Redirecting to login. Details: " + error.message);
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 3000); // Give user time to read message
         } finally {
             showLoading(false);
         }
@@ -230,18 +236,16 @@
         isRedeeming = true;
         redeemModalConfirmBtn.disabled = true;
         redeemModalConfirmBtn.textContent = 'Redeeming...';
+        redeemStatus.classList.add('hidden'); // Hide any previous status
 
         try {
-            // NOTE: Your Apps Script needs a doPost(e) function to handle this.
             const response = await fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
                 mode: 'cors',
                 redirect: 'follow', // Important for Apps Script web apps
                 headers: {
-                    // The 'Content-Type' header is not required for this simple POST
-                    // as Apps Script will parse it from e.postData.contents
+                    'Content-Type': 'application/json' // Explicitly set content type for JSON payload
                 },
-                // The body is a stringified object.
                 body: JSON.stringify({
                     action: 'redeem', // Helps your doPost identify the request type
                     accessCode: accessCode,
@@ -249,10 +253,16 @@
                 })
             });
 
-            const result = await response.json();
+            // Check if the response itself was successful (HTTP status 200-299)
+            if (!response.ok) {
+                const errorText = await response.text(); // Get raw error text from server
+                throw new Error(`Server responded with an error: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+
+            const result = await response.json(); // Attempt to parse JSON
 
             if (result.status !== 'success') {
-                throw new Error(result.message || 'Redemption failed.');
+                throw new Error(result.message || 'Redemption failed with an unknown error.');
             }
             
             // Show success message and close modal after a delay
@@ -262,12 +272,12 @@
             
             setTimeout(() => {
                 closeRedeemModal();
-                fetchUserData(accessCode); // Refresh points and button states
+                fetchUserData(accessCode); // Refresh points and button states from Users sheet
             }, 1500);
 
         } catch (error) {
             console.error('Redemption error:', error);
-            redeemStatus.textContent = error.message || 'An error occurred.';
+            redeemStatus.textContent = error.message || 'An error occurred during redemption.';
             redeemStatus.classList.remove('hidden', 'text-green-600');
             redeemStatus.classList.add('text-red-500');
         } finally {
@@ -300,7 +310,7 @@
         redeemModal.classList.add('visible');
 
         // Set up one-time click handler for the confirmation
-        redeemModalConfirmBtn.onclick = () => {
+        redeeemModalConfirmBtn.onclick = () => {
             redeemReward(rewardCode, currentUserCode);
         };
     }
@@ -314,13 +324,50 @@
         redeemModalConfirmBtn.onclick = null;
     }
 
+    // --- Custom Info/Error Modal (replaces alert()) ---
+    const infoModalHtml = `
+        <div id="infoModal" class="fullscreen-overlay">
+            <div class="popup-card p-6 gap-4 text-center">
+                <h3 id="infoModalTitle" class="text-2xl font-bold text-slate-800"></h3>
+                <p id="infoModalMessage" class="text-slate-500 break-words"></p>
+                <div class="flex items-center justify-center gap-4 mt-4 w-full">
+                    <button id="infoModalCloseBtn" class="modal-button primary w-full">OK</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', infoModalHtml);
+    const infoModal = document.getElementById('infoModal');
+    const infoModalTitle = document.getElementById('infoModalTitle');
+    const infoModalMessage = document.getElementById('infoModalMessage');
+    const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
+
+    function showInfoModal(title, message) {
+        infoModalTitle.textContent = title;
+        infoModalMessage.textContent = message;
+        infoModal.classList.add('visible');
+        infoModalCloseBtn.onclick = () => {
+            infoModal.classList.remove('visible');
+            infoModalCloseBtn.onclick = null; // Clear handler
+        };
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) {
+                infoModal.classList.remove('visible');
+                infoModalCloseBtn.onclick = null;
+            }
+        }, {once: true}); // Use once:true to auto-remove listener
+    }
+
+
     // --- Page Initialization ---
     document.addEventListener('DOMContentLoaded', () => {
         currentUserCode = sessionStorage.getItem('currentUserCode');
         
         if (!currentUserCode) {
-            alert("No active session found. Please log in first.");
-            window.location.href = 'index.html';
+            showInfoModal("Session Expired", "No active session found. Please log in first.");
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 3000);
             return;
         }
 
