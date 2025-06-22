@@ -52,37 +52,26 @@
     const infoModalMessage = document.getElementById('infoModalMessage');
     const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
     
-    // IMPORTANT: Make sure this URL is correct. Redeploy your Apps Script and paste the new URL here.
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyobRABN6LvK_SG-E9tFguLrZBC1EXH_i114JmQWk52lwdkgE4-pPlTqHgywQWWutqZIA/exec"; 
+    // --- IMPORTANT --- 
+    // PASTE YOUR NEW WEB APP URL (FROM GOOGLE APPS SCRIPT DEPLOYMENT) HERE
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwpYBXR7QNwrBzCQrKhbm451v1uQdfQFBmQYWucYL7wz1pxmLwUjLwUVZAhZG5FKW4lxg/exec"; 
     
     let currentUserCode = null;
     let isRedeeming = false;
-
     function showLoading(isLoading) { loadingOverlay.classList.toggle('visible', isLoading); }
-    
     async function fetchUserData(code) {
         showLoading(true);
         try {
             if (!GOOGLE_SHEET_URL.includes("macros/s")) {
                 throw new Error("The Google Apps Script URL is invalid. Please deploy your script and paste the correct URL.");
             }
-            const response = await fetch(GOOGLE_SHEET_URL, {
-                method: 'POST',
-                mode: 'cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'getUserData', accessCode: code })
-            });
-
-            if (!response.ok) { throw new Error(`Network response was not ok: ${response.status}`); }
-            
-            const result = await response.json();
-
-            if (result.status !== 'success' || !result.user) { 
-                throw new Error(result.message || "No user data returned from script."); 
-            }
-            
-            updateUI(result.user);
-
+            const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
+            const res = await fetch(url);
+            if (!res.ok) { throw new Error(`Network response was not ok: ${res.status}`); }
+            const json = await res.json();
+            if (json.error) { throw new Error(json.error); }
+            if (!json.user) { throw new Error("No user data returned from script."); }
+            updateUI(json.user);
         } catch (error) {
             console.error("Failed to fetch user data:", error);
             showInfoModal("Error", `Could not load your data. Redirecting to login. Details: ${error.message}`);
@@ -91,7 +80,6 @@
             showLoading(false);
         }
     }
-
     function updateUI(userData) {
         const userPoints = parseInt(userData.Points || "0", 10);
         userPointsEl.textContent = userPoints;
@@ -100,7 +88,6 @@
             button.disabled = userPoints < cost;
         });
     }
-
     async function redeemReward(rewardCode, accessCode) {
         if (isRedeeming) return;
         isRedeeming = true;
@@ -109,31 +96,23 @@
         redeemStatus.classList.add('hidden');
         try {
             const response = await fetch(GOOGLE_SHEET_URL, {
-                method: 'POST', 
-                mode: 'cors',
+                method: 'POST', mode: 'cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'redeem', accessCode: accessCode, rewardCode: rewardCode })
             });
-
             if (!response.ok) { throw new Error(`Server responded with an error: ${response.status}`); }
-            
             const result = await response.json();
-
             if (result.status !== 'success') { throw new Error(result.message || 'Redemption failed.'); }
-            
             redeemStatus.textContent = 'Success! Points updated.';
-            redeemStatus.className = 'font-semibold mt-2 text-green-600 visible';
-            
-            await fetchUserData(accessCode); // Refresh user data to update points and button states
-
+            redeemStatus.className = 'font-semibold mt-2 text-green-600';
             setTimeout(() => {
                 closeRedeemModal();
+                fetchUserData(accessCode);
             }, 1500);
-
         } catch (error) {
             console.error('Redemption error:', error);
             redeemStatus.textContent = `Error: ${error.message}`;
-            redeemStatus.className = 'font-semibold mt-2 text-red-500 visible';
+            redeemStatus.className = 'font-semibold mt-2 text-red-500';
         } finally {
             setTimeout(() => {
                 isRedeeming = false;
@@ -142,7 +121,6 @@
             }, 1500);
         }
     }
-
     function showRedeemModal(rewardButton) {
         const label = rewardButton.dataset.label;
         const cost = rewardButton.dataset.cost;
@@ -155,12 +133,7 @@
         redeemModal.classList.add('visible');
         redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, currentUserCode);
     }
-
-    function closeRedeemModal() { 
-        redeemModal.classList.remove('visible'); 
-        redeemModalConfirmBtn.onclick = null; 
-    }
-
+    function closeRedeemModal() { redeemModal.classList.remove('visible'); redeemModalConfirmBtn.onclick = null; }
     function showInfoModal(title, message) {
         infoModalTitle.textContent = title;
         infoModalMessage.textContent = message;
@@ -169,7 +142,6 @@
         infoModalCloseBtn.onclick = close;
         infoModal.onclick = (e) => { if (e.target === infoModal) close(); };
     }
-
     document.addEventListener('DOMContentLoaded', () => {
         currentUserCode = sessionStorage.getItem('currentUserCode');
         if (!currentUserCode) {
