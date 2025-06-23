@@ -81,7 +81,7 @@
             .py-4 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
             .px-8 { padding-left: 1.5rem; padding-right: 1.5rem; }
         }
-        @media (min-width: 768px) { /* Adjust for larger screens (tablets and desktops) */
+        @media (min-width: 768px) { /* Adjust for larger screens (tables and desktops) */
             #question-text {
                 font-size: 3.5rem; /* Larger question text */
             }
@@ -153,9 +153,10 @@
     <audio id="wrong-sound" src="https://www.soundjay.com/buttons/beep-06.mp3"></audio>
 
     <script>
-        // Store your Google Apps Script Web App URL here.
-        // You will get this URL after deploying your Google Apps Script.
-        const GOOGLE_SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUzt4TYVKj5KuQX7zLK_4yS3SUM8mgD8G2Mu3rPUHSDvX-x70WWbDYQBBVc8tQfi9p/exec";
+        // Store your SheetDB API ID here.
+        // You will get this ID after setting up your API on SheetDB.io.
+        // REPLACE "YOUR_SHEETDB_API_ID_HERE" with your actual ID.
+        const SHEETDB_API_ID = "YOUR_SHEETDB_API_ID_HERE";
 
         // Quiz questions data
         const questions = [
@@ -425,37 +426,89 @@
         }
 
         /**
-         * Sends game data to the Google Apps Script Web App.
+         * Sends game data to the Google Sheets via SheetDB.
          */
         async function sendDataToGoogleSheets() {
             gameActive = true; // Prevent multiple submissions
             sendingMessage.classList.remove('hidden');
 
-            const data = {
-                timestamp: new Date().toISOString(),
-                gameCode: "Game1"
+            // Check if API ID is configured
+            if (!SHEETDB_API_ID || SHEETDB_API_ID === "YOUR_SHEETDB_API_ID_HERE") {
+                console.error("SHEETDB_API_ID is not set. Please update the HTML file with your SheetDB API ID.");
+                // Using a custom modal/message box instead of alert()
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.classList.add('fixed', 'inset-0', 'bg-black', 'bg-opacity-50', 'flex', 'items-center', 'justify-center', 'z-50');
+                errorMessageDiv.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <p class="text-lg font-semibold mb-4">Error: SheetDB API ID is not configured.</p>
+                        <p class="text-md mb-4">Please update the HTML file's script section with your SheetDB API ID from sheetdb.io.</p>
+                        <button id="error-ok-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full mt-4">OK</button>
+                    </div>
+                `;
+                document.body.appendChild(errorMessageDiv);
+                document.getElementById('error-ok-button').addEventListener('click', () => {
+                    document.body.removeChild(errorMessageDiv);
+                    sendingMessage.classList.add('hidden');
+                    resetGame();
+                });
+                return;
+            }
+
+            // Data structure for SheetDB must match your Google Sheet column headers in Row 1
+            const dataToSend = {
+                "Timestamp": new Date().toLocaleString(), // Using toLocaleString for a more readable format
+                "Game Code": "Game1"
             };
 
             try {
-                const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                // SheetDB expects the data inside a 'data' key for POST requests
+                const response = await fetch(`https://sheetdb.io/api/v1/zxecz4p5698g7`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({ data: dataToSend })
                 });
 
                 if (response.ok) {
-                    const result = await response.text(); // Or .json() if script returns JSON
-                    console.log("Data sent successfully:", result);
-                    // You could show a success message here
+                    const result = await response.json(); // SheetDB returns JSON on success
+                    console.log("Data sent successfully to SheetDB:", result);
+                    // You could show a success message to the user here if needed
                 } else {
-                    console.error("Failed to send data:", response.status, response.statusText);
-                    // Show an error message to the user
+                    const errorDetails = await response.text(); // Get raw text for detailed error
+                    console.error("Failed to send data to SheetDB:", response.status, response.statusText, errorDetails);
+                    // Display a custom error message to the user
+                    const errorMessageDiv = document.createElement('div');
+                    errorMessageDiv.classList.add('fixed', 'inset-0', 'bg-black', 'bg-opacity-50', 'flex', 'items-center', 'justify-center', 'z-50');
+                    errorMessageDiv.innerHTML = `
+                        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                            <p class="text-lg font-semibold mb-4">Error sending data to Google Sheets.</p>
+                            <p class="text-md mb-2">Status: ${response.status} ${response.statusText}</p>
+                            <p class="text-sm text-gray-500 mb-4">Details: ${errorDetails.substring(0, 150)}...</p>
+                            <button id="error-ok-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full mt-4">OK</button>
+                        </div>
+                    `;
+                    document.body.appendChild(errorMessageDiv);
+                    document.getElementById('error-ok-button').addEventListener('click', () => {
+                        document.body.removeChild(errorMessageDiv);
+                    });
                 }
             } catch (error) {
-                console.error("Error sending data:", error);
-                // Show an error message to the user
+                console.error("Network error or issue connecting to SheetDB:", error);
+                // Display a custom error message for network issues
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.classList.add('fixed', 'inset-0', 'bg-black', 'bg-opacity-50', 'flex', 'items-center', 'justify-center', 'z-50');
+                errorMessageDiv.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <p class="text-lg font-semibold mb-4">Network error or issue connecting to SheetDB.</p>
+                        <p class="text-md mb-4">Please check your internet connection and browser console for details.</p>
+                        <button id="error-ok-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full mt-4">OK</button>
+                    </div>
+                `;
+                document.body.appendChild(errorMessageDiv);
+                document.getElementById('error-ok-button').addEventListener('click', () => {
+                    document.body.removeChild(errorMessageDiv);
+                });
             } finally {
                 sendingMessage.classList.add('hidden');
                 resetGame(); // Always reset game after attempt to send data
