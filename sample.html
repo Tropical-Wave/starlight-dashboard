@@ -2,388 +2,482 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Redeem Rewards - Starlight</title>
-
-    <meta name="theme-color" content="#EEF7F6"/>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Starlight">
-    <link rel="apple-touch-icon" href="https://placehold.co/192x192/4BA7AD/FFFFFF?text=S">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Pop Quiz</title>
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for check/cross icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Base styles copied from index.html for consistency */
-        html, body {
-            margin: 0; padding: 0; width: 100%; min-height: 100%;
-            background-color: #F8FAFC; /* Lighter bg for content pages */
-            font-family: 'Poppins', sans-serif;
-            color: #334155;
+        /* Custom CSS for animations and layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Prevent scrolling, especially on mobile landscape */
         }
-        :root {
-            --gradient-start: #4BA7AD;
-            --gradient-mid: #89B3D9;
-            --gradient-end: #837FD9;
-            --gradient-angle: 135deg;
-            --brand-color: #4BA7AD;
+
+        #app {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #EEF7F6;
+            transition: background-color 0.5s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: 0.75rem; /* rounded-xl for the whole app */
         }
-        .text-gradient {
-            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
-            -webkit-background-clip: text; background-clip: text;
-            -webkit-text-fill-color: transparent; color: transparent;
+
+        /* Red glow effect for the last 3 seconds */
+        .red-glow {
+            box-shadow: 0 0 30px 15px rgba(255, 0, 0, 0.7);
         }
-        .fullscreen-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 100; display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s ease-out;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+
+        /* Shake animation for incorrect answers */
+        .shake {
+            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
-        .fullscreen-overlay.visible {
-            display: flex; opacity: 1;
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
-        .popup-card {
-            background-color: white; border-radius: 1.5rem;
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex;
-            flex-direction: column; width: 90%; max-width: 400px;
-            max-height: 90vh; transform: scale(0.95); opacity: 0;
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+
+        /* Fade-in animation for screen transitions */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out forwards;
         }
-        .fullscreen-overlay.visible .popup-card {
-            transform: scale(1); opacity: 1;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .interactive-card {
-            background-color: white; border: 1px solid #E2E8F0;
-            border-radius: 1.5rem; /* More rounded squares */
-            transition: all 0.2s ease-out;
-            position: relative; overflow: hidden;
-            text-decoration: none;
+
+        /* Fade-out animation for screen transitions */
+        .animate-fade-out {
+            animation: fadeOut 0.5s ease-in-out forwards;
         }
-        .interactive-card:hover:not(:disabled) {
-            transform: translateY(-4px); 
-            border-color: #D1E0DE;
-            box-shadow: 0 8px 20px -5px rgba(0,0,0,0.12);
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
         }
-        .interactive-card:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: #F8FAFC;
+
+        /* Ensure quiz screen takes up vertical space in landscape */
+        #quiz-screen {
+            height: calc(100vh - 2rem); /* Full viewport height minus padding */
         }
-        .modal-button {
-            flex-grow: 1; text-align: center; padding: 1rem 1rem;
-            font-weight: 600; border-radius: 0.75rem;
-            transition: all 0.2s ease;
+
+        /* Responsive adjustments */
+        @media (orientation: landscape) and (max-height: 600px) {
+            #quiz-screen {
+                height: calc(100vh - 2rem); /* Maximize height for landscape on smaller screens */
+            }
+            .text-3xl { font-size: 2.25rem; }
+            .text-4xl { font-size: 2.5rem; }
+            .text-5xl { font-size: 3rem; }
+            .py-4 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+            .px-8 { padding-left: 1.5rem; padding-right: 1.5rem; }
         }
-        .modal-button.primary {
-            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));
-            color: white;
+        @media (min-width: 768px) { /* Adjust for larger screens (tablets and desktops) */
+            #question-text {
+                font-size: 3.5rem; /* Larger question text */
+            }
+            .answer-button {
+                font-size: 1.6rem; /* Larger button text */
+                padding: 1.5rem 2rem;
+            }
+            #timer {
+                font-size: 4rem; /* Larger timer */
+            }
+            #quiz-screen {
+                max-width: 900px; /* Max width for quiz content */
+                max-height: 650px; /* Max height for quiz content */
+            }
+            #instructions-screen, #end-screen {
+                max-width: 700px;
+            }
         }
-        .modal-button.primary:hover { opacity: 0.9; }
-        .modal-button.primary:disabled { background: #94A3B8; opacity: 0.7; cursor: wait; }
     </style>
 </head>
-<body class="antialiased">
-    
-    <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80">
-        <div class="text-center">
-            <svg class="animate-spin h-10 w-10 text-cyan-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <p class="mt-4 font-semibold text-slate-600">Loading...</p>
+<body>
+    <div id="app" class="relative w-full h-screen flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-500">
+        <!-- Instructions Screen -->
+        <div id="instructions-screen" class="max-w-3xl text-center p-8 bg-white rounded-xl shadow-lg transition-opacity duration-500">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 text-pink-600">💖 K-Pop Quiz! 💖</h1>
+            <p class="text-xl md:text-2xl mb-4">You will answer 5 easy K-Pop questions!</p>
+            <p class="text-xl md:text-2xl mb-4">Each question has 5 seconds to answer.</p>
+            <p class="text-xl md:text-2xl mb-4">Only a perfect score of 5 wins the game.</p>
+            <p class="text-xl md:text-2xl mb-8 font-bold text-red-500">Watch out! The screen glows red in the last 3 seconds!</p>
+            <button id="start-button" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95">
+                Start Quiz!
+            </button>
         </div>
-    </div>
-    
-    <div class="min-h-screen flex flex-col">
-        <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-10 flex-shrink-0">
-            <a href="index.html" class="text-slate-600 hover:text-slate-900 p-1 mr-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            </a>
-            <h1 class="flex-grow font-bold text-2xl text-slate-800 text-center">Redeem Rewards</h1>
-            <div id="userPointsContainer" class="text-right w-20">
-                <div class="text-xs text-slate-500">Your Points</div>
-                <div id="userPoints" class="text-2xl font-bold text-gradient">0</div>
-            </div>
-        </header>
-        
-        <main id="rewardsGrid" class="p-4 md:p-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 flex-grow">
-            <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="5" data-label="Candy" data-reward-code="Reward1">
-                <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=?" alt="Candy Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-red-100">
-                <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Candy</p>
-                <p class="text-sm font-bold text-cyan-600">5 pts</p>
-            </button>
-             <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="10" data-label="Cookie" data-reward-code="Reward2">
-                <img src="https://placehold.co/128x128/FFFBEB/D97706?text=?" alt="Cookie Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-amber-100">
-                <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Cookie</p>
-                <p class="text-sm font-bold text-cyan-600">10 pts</p>
-            </button>
-             <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="15" data-label="Ramen" data-reward-code="Reward3">
-                <img src="https://placehold.co/128x128/FFF7ED/F97316?text=?" alt="Ramen Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-orange-100">
-                <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Ramen</p>
-                <p class="text-sm font-bold text-cyan-600">15 pts</p>
-            </button>
-            <button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="20" data-label="Photocard" data-reward-code="Reward4">
-                <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=?" alt="Photocard Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-sky-100">
-                <p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Photocard</p>
-                <p class="text-sm font-bold text-cyan-600">20 pts</p>
-            </button>
-        </main>
-    </div>
 
-    <div id="redeemModal" class="fullscreen-overlay">
-        <div class="popup-card p-6 gap-4 text-center">
-             <button id="redeemModalBackBtn" class="absolute top-3 left-3 text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-            </button>
-            <img id="redeemModalImage" src="" alt="Reward Image" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl mx-auto">
-            <h3 id="redeemModalTitle" class="text-2xl font-bold text-slate-800"></h3>
-            <p class="text-slate-500">Redeem this reward for <strong id="redeemModalPoints" class="text-slate-700"></strong> points?</p>
-            <div class="flex items-center justify-center gap-4 mt-4 w-full">
-                <button id="redeemModalConfirmBtn" class="modal-button primary w-full">Redeem Now</button>
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden flex-grow w-full max-w-5xl bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between transition-opacity duration-500">
+            <!-- Top Half: Question & Timer -->
+            <div class="flex flex-col items-center justify-center h-1/2 p-4 relative">
+                <div id="timer" class="text-5xl md:text-6xl font-bold mb-4 text-pink-600 absolute top-4 right-4 z-10 select-none">5</div>
+                <h2 id="question-text" class="text-3xl md:text-4xl font-semibold text-center mb-4 transition-all duration-300">Question goes here?</h2>
             </div>
-            <p id="redeemStatus" class="text-green-600 font-semibold mt-2 hidden"></p>
+
+            <!-- Bottom Half: Answer Choices (2x2 Grid) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 h-1/2 p-4">
+                <button class="answer-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-lg text-lg sm:text-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center text-left"></button>
+                <button class="answer-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-lg text-lg sm:text-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center text-left"></button>
+                <button class="answer-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-lg text-lg sm:text-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center text-left"></button>
+                <button class="answer-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-lg text-lg sm:text-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center text-left"></button>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div id="end-screen" class="hidden max-w-3xl text-center p-8 bg-white rounded-xl shadow-lg transition-opacity duration-500">
+            <h2 id="end-message" class="text-3xl md:text-4xl font-bold mb-6 text-pink-600"></h2>
+            <div id="button-container" class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="done-button" class="hidden bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95">
+                    Done
+                </button>
+                <button id="return-to-instructions-button" class="hidden bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95">
+                    Return to Instructions
+                </button>
+            </div>
+            <p id="sending-message" class="text-lg text-gray-600 mt-4 hidden">Sending data...</p>
         </div>
     </div>
 
+    <!-- Audio Elements for sound effects -->
+    <audio id="correct-sound" src="https://www.soundjay.com/buttons/beep-07.mp3"></audio>
+    <audio id="wrong-sound" src="https://www.soundjay.com/buttons/beep-06.mp3"></audio>
 
-  <script>
-    // --- DOM Element Constants ---
-    const userPointsEl = document.getElementById('userPoints');
-    const rewardsGrid = document.getElementById('rewardsGrid');
-    const redeemModal = document.getElementById('redeemModal');
-    const redeemModalImage = document.getElementById('redeemModalImage');
-    const redeemModalTitle = document.getElementById('redeemModalTitle');
-    const redeemModalPoints = document.getElementById('redeemModalPoints');
-    const redeemModalBackBtn = document.getElementById('redeemModalBackBtn');
-    const redeemModalConfirmBtn = document.getElementById('redeemModalConfirmBtn');
-    const redeemStatus = document.getElementById('redeemStatus');
-    const loadingOverlay = document.getElementById('loadingOverlay');
+    <script>
+        // Store your Google Apps Script Web App URL here.
+        // You will get this URL after deploying your Google Apps Script.
+        const GOOGLE_SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUzt4TYVKj5KuQX7zLK_4yS3SUM8mgD8G2Mu3rPUHSDvX-x70WWbDYQBBVc8tQfi9p/exec";
 
-    // --- Configuration ---
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzaPQB4qtYGAs9GMRFwvo1iv_amxSfJQEGQOOCCdgsu14s2MDU3MQRmA9VJfUC6YK1kYQ/exec"; // <<< MAKE SURE THIS IS YOUR DEPLOYED WEB APP URL
-
-    // --- App State ---
-    let currentUserCode = null;
-    let isRedeeming = false; // Prevents multiple clicks
-
-    /**
-     * Shows a loading overlay.
-     * @param {boolean} isLoading - True to show, false to hide.
-     */
-    function showLoading(isLoading) {
-        loadingOverlay.style.display = isLoading ? 'flex' : 'none';
-    }
-
-    /**
-     * Fetches user data and updates the UI.
-     * @param {string} code - The user's access code.
-     */
-    async function fetchUserData(code) {
-        showLoading(true);
-        try {
-            const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`; // Bust cache
-            const res = await fetch(url);
-            if (!res.ok) {
-                const errorText = await res.text(); // Get raw error text from server
-                throw new Error(`Network response was not ok: ${res.status} ${res.statusText} - ${errorText}`);
+        // Quiz questions data
+        const questions = [
+            {
+                question: "Which K-Pop group debuted with 'No More Dream'?",
+                choices: ["EXO", "BTS", "SEVENTEEN", "TXT"],
+                correct: 1 // Index of correct answer (BTS)
+            },
+            {
+                question: "Which female K-Pop group is known for hits like 'DDU-DU DDU-DU' and 'Kill This Love'?",
+                choices: ["TWICE", "Red Velvet", "BLACKPINK", "ITZY"],
+                correct: 2 // BLACKPINK
+            },
+            {
+                question: "Who is the leader of Stray Kids?",
+                choices: ["Han", "Hyunjin", "Bang Chan", "Felix"],
+                correct: 2 // Bang Chan
+            },
+            {
+                question: "Which of these is NOT a member of ITZY?",
+                choices: ["Yeji", "Ryujin", "Minnie", "Lia"],
+                correct: 2 // Minnie (from (G)I-DLE)
+            },
+            {
+                question: "What is the official fandom name for BTS?",
+                choices: ["BLINK", "ARMY", "EXO-L", "Moomoo"],
+                correct: 1 // ARMY
             }
-            const json = await res.json();
+        ];
 
-            if (json.error || !json.user) throw new Error(json.error || "Invalid user data");
-            
-            updateUI(json.user);
-        } catch (error) {
-            console.error("Failed to fetch user data:", error);
-            // Using a custom message box instead of alert()
-            showInfoModal("Error", "Could not load your data. Redirecting to login. Details: " + error.message);
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 3000); // Give user time to read message
-        } finally {
-            showLoading(false);
-        }
-    }
-    
-    /**
-     * Updates the UI elements with the user's data.
-     * @param {object} userData - The user object from the fetched data.
-     */
-    function updateUI(userData) {
-        const userPoints = parseInt(userData.Points || "0", 10);
-        userPointsEl.textContent = userPoints;
-        
-        // Enable/disable reward buttons based on points
-        document.querySelectorAll('.reward-button').forEach(button => {
-            const cost = parseInt(button.dataset.cost, 10);
-            button.disabled = userPoints < cost;
-        });
-    }
+        // --- DOM Elements ---
+        const appContainer = document.getElementById('app');
+        const instructionsScreen = document.getElementById('instructions-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const endScreen = document.getElementById('end-screen');
+        const startButton = document.getElementById('start-button');
+        const questionText = document.getElementById('question-text');
+        const answerButtons = document.querySelectorAll('.answer-button');
+        const timerDisplay = document.getElementById('timer');
+        const endMessage = document.getElementById('end-message');
+        const doneButton = document.getElementById('done-button');
+        const returnToInstructionsButton = document.getElementById('return-to-instructions-button');
+        const sendingMessage = document.getElementById('sending-message');
 
-    /**
-     * Handles the redemption process by sending data to the Google Sheet.
-     * @param {string} rewardCode - The specific code for the reward being redeemed.
-     * @param {string} accessCode - The user's access code.
-     */
-    async function redeemReward(rewardCode, accessCode) {
-        if (isRedeeming) return;
-        isRedeeming = true;
-        redeemModalConfirmBtn.disabled = true;
-        redeemModalConfirmBtn.textContent = 'Redeeming...';
-        redeemStatus.classList.add('hidden'); // Hide any previous status
+        const correctSound = document.getElementById('correct-sound');
+        const wrongSound = document.getElementById('wrong-sound');
 
-        try {
-            const response = await fetch(GOOGLE_SHEET_URL, {
-                method: 'POST',
-                mode: 'cors',
-                // The 'redirect: follow' line has been removed as it causes the "Failed to fetch" error.
-                // The browser's default handling is now used, which works with the corrected Apps Script.
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'redeem',
-                    accessCode: accessCode,
-                    rewardCode: rewardCode
-                })
-            });
-
-            // Check if the response itself was successful (HTTP status 200-299)
-            if (!response.ok) {
-                const errorText = await response.text(); // Get raw error text from server
-                throw new Error(`Server responded with an error: ${response.status} ${response.statusText} - ${errorText}`);
-            }
-
-            const result = await response.json();
-
-            if (result.status !== 'success') {
-                throw new Error(result.message || 'Redemption failed with an unknown error.');
-            }
-            
-            // Show success message and close modal after a delay
-            redeemStatus.textContent = 'Success! Points updated.';
-            redeemStatus.classList.remove('hidden', 'text-red-500');
-            redeemStatus.classList.add('text-green-600');
-            
-            setTimeout(() => {
-                closeRedeemModal();
-                fetchUserData(accessCode); // Refresh points and button states from Users sheet
-            }, 1500);
-
-        } catch (error) {
-            console.error('Redemption error:', error);
-            redeemStatus.textContent = error.message || 'An error occurred during redemption.';
-            redeemStatus.classList.remove('hidden', 'text-green-600');
-            redeemStatus.classList.add('text-red-500');
-        } finally {
-            // Reset button after a delay, allowing user to see status
-            setTimeout(() => {
-                isRedeeming = false;
-                redeemModalConfirmBtn.disabled = false;
-                redeemModalConfirmBtn.textContent = 'Redeem Now';
-            }, 1500);
-        }
-    }
-    
-    /**
-     * Populates and shows the redemption modal.
-     * @param {Element} rewardButton - The button element that was clicked.
-     */
-    function showRedeemModal(rewardButton) {
-        const label = rewardButton.dataset.label;
-        const cost = rewardButton.dataset.cost;
-        const rewardCode = rewardButton.dataset.rewardCode;
-        const imgSrc = rewardButton.querySelector('img').src;
-
-        // Populate modal
-        redeemModalImage.src = imgSrc;
-        redeemModalTitle.textContent = label;
-        redeemModalPoints.textContent = cost;
-        redeemStatus.classList.add('hidden'); // Hide status message on new open
-
-        // Show modal
-        redeemModal.classList.add('visible');
-
-        // Set up one-time click handler for the confirmation
-        redeemModalConfirmBtn.onclick = () => {
-            redeemReward(rewardCode, currentUserCode);
-        };
-    }
-
-    /**
-     * Hides the redemption modal.
-     */
-    function closeRedeemModal() {
-        redeemModal.classList.remove('visible');
-        // Clear the one-time click handler
-        redeemModalConfirmBtn.onclick = null;
-    }
-
-    // --- Custom Info/Error Modal (replaces alert()) ---
-    const infoModalHtml = `
-        <div id="infoModal" class="fullscreen-overlay">
-            <div class="popup-card p-6 gap-4 text-center">
-                <h3 id="infoModalTitle" class="text-2xl font-bold text-slate-800"></h3>
-                <p id="infoModalMessage" class="text-slate-500 break-words"></p>
-                <div class="flex items-center justify-center gap-4 mt-4 w-full">
-                    <button id="infoModalCloseBtn" class="modal-button primary w-full">OK</button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', infoModalHtml);
-    const infoModal = document.getElementById('infoModal');
-    const infoModalTitle = document.getElementById('infoModalTitle');
-    const infoModalMessage = document.getElementById('infoModalMessage');
-    const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
-
-    function showInfoModal(title, message) {
-        infoModalTitle.textContent = title;
-        infoModalMessage.textContent = message;
-        infoModal.classList.add('visible');
-        infoModalCloseBtn.onclick = () => {
-            infoModal.classList.remove('visible');
-            infoModalCloseBtn.onclick = null; // Clear handler
-        };
-        infoModal.addEventListener('click', (e) => {
-            if (e.target === infoModal) {
-                infoModal.classList.remove('visible');
-                infoModalCloseBtn.onclick = null;
-            }
-        }, {once: true}); // Use once:true to auto-remove listener
-    }
-
-
-    // --- Page Initialization ---
-    document.addEventListener('DOMContentLoaded', () => {
-        currentUserCode = sessionStorage.getItem('currentUserCode');
-        
-        if (!currentUserCode) {
-            showInfoModal("Session Expired", "No active session found. Please log in first.");
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 3000);
-            return;
-        }
-
-        fetchUserData(currentUserCode);
+        // --- Game State Variables ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer = 5;
+        let intervalId;
+        let gameActive = false; // Flag to prevent rapid actions during transitions/checks
 
         // --- Event Listeners ---
-        rewardsGrid.addEventListener('click', (e) => {
-            const rewardButton = e.target.closest('.reward-button');
-            if (rewardButton && !rewardButton.disabled) {
-                showRedeemModal(rewardButton);
+        startButton.addEventListener('click', () => {
+            if (!gameActive) { // Prevent multiple clicks
+                startGame();
             }
         });
 
-        redeemModalBackBtn.addEventListener('click', closeRedeemModal);
-        redeemModal.addEventListener('click', (e) => {
-            // Close if the click is on the overlay itself, not the card
-            if (e.target === redeemModal) {
-                closeRedeemModal();
+        answerButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                if (gameActive) { // Only allow clicks if game is active
+                    checkAnswer(index);
+                }
+            });
+        });
+
+        doneButton.addEventListener('click', () => {
+            if (!gameActive) { // Ensure button is not clicked while processing
+                sendDataToGoogleSheets();
             }
         });
-    });
-  </script>
+
+        returnToInstructionsButton.addEventListener('click', () => {
+            if (!gameActive) {
+                resetGame();
+            }
+        });
+
+        // --- Core Game Functions ---
+
+        /**
+         * Initializes the game by showing the instructions screen and hiding others.
+         */
+        function initGame() {
+            instructionsScreen.classList.remove('hidden', 'animate-fade-out');
+            instructionsScreen.classList.add('animate-fade-in');
+            quizScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            appContainer.classList.remove('red-glow'); // Ensure no lingering red glow
+            gameActive = false;
+            sendingMessage.classList.add('hidden'); // Hide sending message initially
+        }
+
+        /**
+         * Starts the quiz game.
+         * Hides instructions, shows quiz screen, loads the first question.
+         */
+        function startGame() {
+            gameActive = true; // Set game to active
+            instructionsScreen.classList.remove('animate-fade-in');
+            instructionsScreen.classList.add('animate-fade-out');
+
+            setTimeout(() => {
+                instructionsScreen.classList.add('hidden');
+                quizScreen.classList.remove('hidden', 'animate-fade-out');
+                quizScreen.classList.add('animate-fade-in');
+                currentQuestionIndex = 0;
+                score = 0;
+                loadQuestion();
+            }, 500); // Wait for fade-out to complete
+        }
+
+        /**
+         * Loads the current question and its answer choices onto the screen.
+         * Resets button styles and starts the timer.
+         */
+        function loadQuestion() {
+            clearInterval(intervalId); // Clear any existing timer
+            timer = 5;
+            timerDisplay.textContent = timer;
+            appContainer.classList.remove('red-glow'); // Remove red glow
+
+            // Apply fade-out to current question/answers before updating
+            questionText.classList.add('opacity-0', 'translate-y-4');
+            answerButtons.forEach(button => {
+                button.classList.add('opacity-0', 'translate-y-4');
+            });
+
+            setTimeout(() => {
+                const q = questions[currentQuestionIndex];
+                questionText.textContent = q.question;
+
+                answerButtons.forEach((button, index) => {
+                    button.textContent = q.choices[index];
+                    button.classList.remove('bg-green-500', 'bg-red-500', 'text-white', 'cursor-not-allowed');
+                    button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+                    button.disabled = false; // Re-enable buttons
+                    button.innerHTML = button.textContent; // Clear any icons
+                });
+
+                // Apply fade-in after updating content
+                questionText.classList.remove('opacity-0', 'translate-y-4');
+                answerButtons.forEach(button => {
+                    button.classList.remove('opacity-0', 'translate-y-4');
+                });
+                questionText.classList.add('opacity-100', 'translate-y-0');
+                answerButtons.forEach(button => {
+                    button.classList.add('opacity-100', 'translate-y-0');
+                });
+
+                startTimer();
+                gameActive = true; // Game is ready for interaction
+            }, 300); // Short delay for visual effect
+        }
+
+        /**
+         * Starts the countdown timer for the current question.
+         */
+        function startTimer() {
+            intervalId = setInterval(() => {
+                timer--;
+                timerDisplay.textContent = timer;
+
+                if (timer <= 3) {
+                    appContainer.classList.add('red-glow'); // Screen glows red
+                } else {
+                    appContainer.classList.remove('red-glow');
+                }
+
+                if (timer === 0) {
+                    clearInterval(intervalId);
+                    checkAnswer(-1); // Time's up! No answer selected.
+                }
+            }, 1000);
+        }
+
+        /**
+         * Checks the selected answer against the correct answer.
+         * Provides visual and audio feedback.
+         * @param {number} selectedIndex - The index of the selected answer, or -1 if time ran out.
+         */
+        function checkAnswer(selectedIndex) {
+            gameActive = false; // Disable further interaction during check
+            clearInterval(intervalId); // Stop the timer
+
+            const q = questions[currentQuestionIndex];
+            const correctIndex = q.correct;
+
+            // Disable all answer buttons to prevent further clicks
+            answerButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.add('cursor-not-allowed');
+            });
+
+            // Handle correct answer
+            if (selectedIndex === correctIndex) {
+                answerButtons[selectedIndex].classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+                answerButtons[selectedIndex].classList.add('bg-green-500', 'text-white');
+                answerButtons[selectedIndex].innerHTML = `${q.choices[selectedIndex]} <i class="fas fa-check ml-2"></i>`;
+                correctSound.play();
+                score++;
+            }
+            // Handle incorrect answer or time's up
+            else {
+                wrongSound.play();
+                questionText.classList.add('shake'); // Shake question container
+                appContainer.classList.add('red-glow'); // Flash red glow
+
+                if (selectedIndex !== -1) { // If an answer was actually selected
+                    answerButtons[selectedIndex].classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+                    answerButtons[selectedIndex].classList.add('bg-red-500', 'text-white');
+                    answerButtons[selectedIndex].innerHTML = `${q.choices[selectedIndex]} <i class="fas fa-times ml-2"></i>`;
+                }
+
+                // Highlight the correct answer in green
+                answerButtons[correctIndex].classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+                answerButtons[correctIndex].classList.add('bg-green-500', 'text-white');
+            }
+
+            // Move to the next question after a short delay
+            setTimeout(() => {
+                questionText.classList.remove('shake'); // Remove shake animation
+                appContainer.classList.remove('red-glow'); // Remove red glow
+                nextQuestion();
+            }, 1500); // Delay to allow user to see feedback
+        }
+
+        /**
+         * Advances to the next question or ends the quiz if all questions are answered.
+         */
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        /**
+         * Displays the end screen with the quiz results.
+         */
+        function endQuiz() {
+            quizScreen.classList.remove('animate-fade-in');
+            quizScreen.classList.add('animate-fade-out');
+
+            setTimeout(() => {
+                quizScreen.classList.add('hidden');
+                endScreen.classList.remove('hidden', 'animate-fade-out');
+                endScreen.classList.add('animate-fade-in');
+
+                doneButton.classList.add('hidden');
+                returnToInstructionsButton.classList.add('hidden');
+
+                if (score === questions.length) {
+                    endMessage.textContent = "🎉 You won! You earned 5 points!";
+                    doneButton.classList.remove('hidden');
+                } else {
+                    endMessage.textContent = "You didn't get a perfect score.";
+                    returnToInstructionsButton.classList.remove('hidden');
+                }
+                gameActive = false; // Quiz ended, but not ready for new game until reset
+            }, 500); // Wait for fade-out
+        }
+
+        /**
+         * Sends game data to the Google Apps Script Web App.
+         */
+        async function sendDataToGoogleSheets() {
+            gameActive = true; // Prevent multiple submissions
+            sendingMessage.classList.remove('hidden');
+
+            const data = {
+                timestamp: new Date().toISOString(),
+                gameCode: "Game1"
+            };
+
+            try {
+                const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.text(); // Or .json() if script returns JSON
+                    console.log("Data sent successfully:", result);
+                    // You could show a success message here
+                } else {
+                    console.error("Failed to send data:", response.status, response.statusText);
+                    // Show an error message to the user
+                }
+            } catch (error) {
+                console.error("Error sending data:", error);
+                // Show an error message to the user
+            } finally {
+                sendingMessage.classList.add('hidden');
+                resetGame(); // Always reset game after attempt to send data
+            }
+        }
+
+        /**
+         * Resets the game to its initial instructions screen.
+         */
+        function resetGame() {
+            endScreen.classList.remove('animate-fade-in');
+            endScreen.classList.add('animate-fade-out');
+
+            setTimeout(() => {
+                endScreen.classList.add('hidden');
+                initGame(); // Go back to instructions screen
+            }, 500); // Wait for fade-out
+        }
+
+        // Initialize the game when the page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+
+    </script>
 </body>
 </html>
