@@ -155,7 +155,7 @@
     <script>
         // Store your SheetDB API ID here.
         // You will get this ID after setting up your API on SheetDB.io.
-        // REPLACE "YOUR_SHEETDB_API_ID_HERE" with your actual ID.
+        // IMPORTANT: REPLACE "YOUR_SHEETDB_API_ID_HERE" with your actual API ID.
         const SHEETDB_API_ID = "YOUR_SHEETDB_API_ID_HERE";
 
         // Quiz questions data
@@ -433,7 +433,7 @@
             sendingMessage.classList.remove('hidden');
 
             // Check if API ID is configured
-            if (!SHEETDB_API_ID || SHEETDB_API_ID === "YOUR_SHEETDB_API_ID_HERE") {
+            if (!SHEETDB_API_ID || SHEETDB_API_ID === "https://sheetdb.io/api/v1/zxecz4p5698g7") {
                 console.error("SHEETDB_API_ID is not set. Please update the HTML file with your SheetDB API ID.");
                 // Using a custom modal/message box instead of alert()
                 const errorMessageDiv = document.createElement('div');
@@ -462,7 +462,7 @@
 
             try {
                 // SheetDB expects the data inside a 'data' key for POST requests
-                const response = await fetch(`https://sheetdb.io/api/v1/zxecz4p5698g7`, {
+                const response = await fetch(`https://sheetdb.io/api/v1/${SHEETDB_API_ID}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
