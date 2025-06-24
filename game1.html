@@ -99,6 +99,12 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
+        #introScreen button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
         /* Back Button - Top Left */
         .back-button {
@@ -296,7 +302,6 @@
         #resultScreen .done-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            background-color: #387D82; /* A slightly darker shade of your brand color for hover */
         }
         #resultScreen .done-button:disabled {
             opacity: 0.6;
@@ -348,10 +353,48 @@
             }
             #gameScreen {
                 flex-direction: column; /* Still column for game sections */
+                height: 100%; /* Occupy full height in landscape */
             }
             .question-card, .choices-section {
                 width: 80%; /* Wider content area */
                 max-width: 1000px; /* Allow content to span more */
+            }
+             .question-card {
+                flex-grow: 0.5; /* Makes it take roughly the top half */
+                max-height: 50%; /* Explicitly set max height for card */
+            }
+            .choices-section {
+                flex-grow: 0.5; /* Makes it take roughly the bottom half */
+                padding-top: 0; /* No extra padding needed at top of choices section */
+                display: grid; /* Keep grid layout */
+                align-content: center; /* Vertically center grid items */
+            }
+            /* Adjust font sizes more aggressively for smaller landscape screens */
+            @media (max-height: 600px) { /* Example: for typical tablet landscape */
+                .question-text {
+                    font-size: clamp(1.4rem, 4.5vw, 2rem); /* Slightly smaller font */
+                }
+                .choice-button {
+                    font-size: clamp(0.9rem, 3vw, 1.3rem);
+                    padding: clamp(0.6rem, 2.5vw, 1rem);
+                }
+                #resultScreen .message {
+                    font-size: clamp(2rem, 6vw, 3rem);
+                }
+                #resultScreen .subtitle-message {
+                    font-size: clamp(1rem, 3.5vw, 1.3rem);
+                }
+                .points-earned-text {
+                    font-size: clamp(1.3rem, 4.5vw, 1.8rem);
+                }
+            }
+             @media (max-width: 900px) and (orientation: landscape) { /* Smaller landscape tablets */
+                .question-text {
+                    font-size: clamp(1.5rem, 5vw, 2.1rem);
+                }
+                .choice-button {
+                    font-size: clamp(0.9rem, 3.2vw, 1.35rem);
+                }
             }
         }
     </style>
@@ -375,7 +418,7 @@
                 <li>Each round lasts 7 seconds, with choices appearing only in the last 5 seconds.</li>
                 <li>Be quick to answer! Get all 5 correct to win!</li>
             </ul>
-            <button id="startButton" class="mt-12 text-white gradient-bg">Start Quiz</button>
+            <button id="startButton" class="mt-12 text-white gradient-bg" disabled>Quiz Not Ready</button>
         </div>
     </div>
 
@@ -405,8 +448,9 @@
         <div class="flex flex-col items-center justify-center h-full w-full">
             <h2 id="resultMessage" class="message"></h2>
             <p id="resultSubtitle" class="subtitle-message"></p>
+            <!-- New element for points earned text -->
             <p id="pointsEarnedText" class="points-earned-text hidden"></p>
-            <button id="doneButton" class="mt-8 bg-[var(--brand-color)] text-white">Done</button>
+            <button id="doneButton" class="mt-8 gradient-bg text-white">Done</button>
         </div>
     </div>
 
@@ -434,7 +478,7 @@
     const doneButton = document.getElementById('doneButton');
 
     // --- Sound Effects (using Tone.js) ---
-    // Tone.Player for local sound files
+    // Tone.Player for local sound files - These will be loaded before starting the game
     const correctSoundPlayer = new Tone.Player({
         url: 'correct.wav', // Local file path
         autostart: false,
@@ -488,6 +532,7 @@
     let choicesTimer = null; // Timer for when choices appear
     let countdownTimer = null; // Interval for the 5-second choices countdown
     let gameActive = false; // Flag to track if a game is in progress
+    let audioLoaded = false; // Flag to track if audio assets are loaded
 
     // --- Utility Functions ---
 
@@ -508,20 +553,46 @@
 
     /**
      * Initializes the game by loading questions and setting up the initial state.
+     * Also loads audio assets.
      */
     async function initializeGame() {
+        startButton.textContent = "Loading Quiz...";
+        startButton.disabled = true;
+
         try {
-            const response = await fetch('questions.json');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status} - Could not find questions.json`);
+            const [questionsResponse] = await Promise.all([
+                fetch('questions.json'),
+                // Ensure all Tone.Players are loaded
+                new Promise(resolve => {
+                    Tone.loaded().then(() => {
+                        audioLoaded = true;
+                        console.log("All audio assets loaded.");
+                        resolve();
+                    }).catch(e => {
+                        audioLoaded = false;
+                        console.error("Error loading audio assets:", e);
+                        // Still resolve to allow the game to start without sound
+                        resolve(); 
+                    });
+                })
+            ]);
+            
+            if (!questionsResponse.ok) {
+                throw new Error(`HTTP error! status: ${questionsResponse.status} - Could not find questions.json`);
             }
-            allQuestions = await response.json();
+            allQuestions = await questionsResponse.json();
             resetGame();
+            startButton.textContent = "Start Quiz";
+            startButton.disabled = false; // Enable start button once everything is loaded
+            console.log("Quiz questions and assets ready.");
+
         } catch (error) {
-            console.error('Could not load questions:', error);
-            // Instead of alert, display message in a dedicated area or popup
-            alert('Failed to load quiz questions. Please ensure questions.json is in the correct directory and try again later.');
-            window.location.href = 'index.html'; // Redirect back to index.html if questions fail to load
+            console.error('Failed to initialize game:', error);
+            startButton.textContent = "Quiz Not Ready"; // Changed from "Failed to Load"
+            // Optionally, show a more prominent error message to the user
+            alert('Failed to load quiz resources. Please check your files and internet connection.');
+            // Redirect or keep on error screen
+            window.location.href = 'index.html'; 
         }
     }
 
@@ -562,9 +633,16 @@
         resetGame(); // Reset game state for a fresh start
         showScreen(gameScreen);
         
-        // Start background music
-        await Tone.start(); // Ensure audio context is started
-        backgroundMusicPlayer.start();
+        // Start background music only if audio loaded and context started successfully
+        if (audioLoaded) {
+            try {
+                await Tone.start(); // Ensure audio context is started
+                backgroundMusicPlayer.start();
+            } catch (e) {
+                console.error("Failed to start Tone.js audio context or background music:", e);
+                // Continue game without music
+            }
+        }
 
         loadQuestion();
         // Prevent refresh or back during game
@@ -579,7 +657,7 @@
         if (gameActive) {
             const confirmExit = window.confirm("Exiting the quiz will reset your progress. Are you sure?");
             if (confirmExit) {
-                backgroundMusicPlayer.stop(); // Stop music on exit
+                if(backgroundMusicPlayer.state === 'started') backgroundMusicPlayer.stop(); // Stop music on exit
                 window.removeEventListener('popstate', handlePopState);
                 window.location.href = 'index.html';
             } else {
@@ -662,7 +740,7 @@
             countdownText.textContent = timeRemaining;
 
             // Play tick sound for last few seconds
-            if (timeRemaining <= 3 && timeRemaining >= 0) { // >= 0 to play on the 0 mark
+            if (timeRemaining <= 3 && timeRemaining >= 0 && audioLoaded) { // Only play if audio loaded
                 timerTickSound.triggerAttackRelease('G4', '16n'); // Play a specific note for the tick
             }
             
@@ -709,10 +787,12 @@
 
         if (correctlyAnswered) {
             score++;
-            correctSoundPlayer.start();
+            if(audioLoaded) correctSoundPlayer.start();
         } else {
-            wrongSoundPlayer.start();
-            buzzerSound.triggerAttackRelease('8n', 'C2'); // Play buzzer for wrong answer/timeout
+            if(audioLoaded) {
+                wrongSoundPlayer.start();
+                buzzerSound.triggerAttackRelease('8n', 'C2'); // Play buzzer for wrong answer/timeout
+            }
         }
 
         setTimeout(() => {
@@ -748,8 +828,8 @@
      */
     function endQuiz() {
         gameActive = false;
-        backgroundMusicPlayer.stop(); // Stop music when quiz ends
-        gameDoneSoundPlayer.start(); // Play game done sound
+        if(backgroundMusicPlayer.state === 'started') backgroundMusicPlayer.stop(); // Stop music when quiz ends
+        if(audioLoaded) gameDoneSoundPlayer.start(); // Play game done sound
         window.removeEventListener('popstate', handlePopState); // Remove popstate listener
 
         showScreen(resultScreen);
@@ -822,7 +902,7 @@
 
     // --- Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
-        initializeGame(); // Load questions on page load
+        initializeGame(); // Load questions and audio assets on page load
 
         startButton.addEventListener('click', startQuiz);
 
