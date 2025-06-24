@@ -169,7 +169,7 @@
 
     <div id="loginScreen" class="fullscreen-overlay">
         <div class="login-box">
-            <div class="w-20 h-20 mx-auto text-cyan-600"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></div>
+            <div class="w-20 h-20 mx-auto text-cyan-600"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></div>
             <h2 class="text-3xl font-bold text-slate-800 mt-4">Event Access</h2>
             <p class="text-slate-500 mt-1">Enter your code to view your dashboard</p>
             <div class="mt-8">
@@ -254,7 +254,8 @@
     const historyPopup = document.getElementById('historyPopup');
 
     // --- PART 1: SheetDB Configuration ---
-    const SHEETDB_API_ID = "5ss66fnmfz8vl"; // <-- IMPORTANT: REPLACE THIS
+    // IMPORTANT: Replace "YOUR_SHEETDB_API_ID_HERE" with your actual SheetDB API ID.
+    const SHEETDB_API_ID = "5ss66fnmfz8vl"; 
     const INACTIVITY_TIMEOUT = 30000;
     const AUTO_REFRESH_INTERVAL = 15000;
 
@@ -296,10 +297,12 @@
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
       try {
+        // Fetch Name, Points, and Event attendance from the 'Users' sheet
         const userFields = 'Name,Points,Event1,Event2,Event3';
-        const historyFields = 'Transaction,Points,Timestamp';
-
         const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
+        
+        // Fetch Transaction history from the 'History' sheet, sorted by Timestamp
+        const historyFields = 'Transaction,Points,Timestamp';
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
@@ -324,7 +327,8 @@
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        if (!isManualRefresh) showSplashScreen(); // Only logout on auto-refresh failure
+        // Only logout on auto-refresh failure if not a manual refresh
+        if (!isManualRefresh) showSplashScreen(); 
       } finally {
         if (isManualRefresh) {
             document.getElementById('refreshHistoryBtn')?.classList.remove('animate-spin');
@@ -345,10 +349,12 @@
       accessCodeEnterBtn.disabled = true;
 
       try {
+        // Fetch Name, Points, and Event attendance from the 'Users' sheet
         const userFields = 'Name,Points,Event1,Event2,Event3';
-        const historyFields = 'Transaction,Points,Timestamp';
-
         const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
+        
+        // Fetch Transaction history from the 'History' sheet, sorted by Timestamp
+        const historyFields = 'Transaction,Points,Timestamp';
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
