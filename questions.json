@@ -1,0 +1,52 @@
+[
+  {
+    "question": "Which K-Pop girl group is known for the hit song 'Cheer Up'?",
+    "choices": ["TWICE", "Red Velvet", "GFRIEND", "MAMAMOO"],
+    "correctAnswer": "TWICE"
+  },
+  {
+    "question": "Which male idol is the leader of BTS?",
+    "choices": ["Jin", "Jungkook", "J-Hope", "RM"],
+    "correctAnswer": "RM"
+  },
+  {
+    "question": "Which K-Pop group is known for the song 'Love Shot'?",
+    "choices": ["SEVENTEEN", "EXO", "NCT", "SHINee"],
+    "correctAnswer": "EXO"
+  },
+  {
+    "question": "What is the fandom name of BLACKPINK?",
+    "choices": ["Blink", "Pinkies", "Rosebuds", "Blackies"],
+    "correctAnswer": "Blink"
+  },
+  {
+    "question": "Which of these idols was originally part of the group Miss A?",
+    "choices": ["Sunmi", "HyunA", "Suzy", "IU"],
+    "correctAnswer": "Suzy"
+  },
+  {
+    "question": "Which K-Pop boy group is known for the song 'Call Me Baby'?",
+    "choices": ["BTS", "GOT7", "EXO", "MONSTA X"],
+    "correctAnswer": "EXO"
+  },
+  {
+    "question": "Which K-Pop group debuted under YG Entertainment in 2016?",
+    "choices": ["BLACKPINK", "TREASURE", "iKON", "2NE1"],
+    "correctAnswer": "BLACKPINK"
+  },
+  {
+    "question": "What is the official fandom name of TWICE?",
+    "choices": ["ONCE", "Twinkies", "Love", "Candy"],
+    "correctAnswer": "ONCE"
+  },
+  {
+    "question": "Which of the following is NOT a member of Red Velvet?",
+    "choices": ["Irene", "Joy", "Solar", "Seulgi"],
+    "correctAnswer": "Solar"
+  },
+  {
+    "question": "Which entertainment company is behind the group SEVENTEEN?",
+    "choices": ["YG Entertainment", "SM Entertainment", "Pledis Entertainment", "JYP Entertainment"],
+    "correctAnswer": "Pledis Entertainment"
+  }
+]

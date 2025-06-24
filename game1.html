@@ -2,155 +2,760 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game 1</title> <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>K-Pop Quiz</title>
+
+    <meta name="theme-color" content="#EEF7F6"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="K-Pop Quiz">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/4BA7AD/FFFFFF?text=Q">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tone.js for sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+
     <style>
-        /* Custom styles for the Inter font and overall body styling */
-        body {
-            font-family: "Inter", sans-serif;
+        /* Base styles for a light, modern kiosk interface */
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #EEF7F6;
+            font-family: 'Poppins', sans-serif; color: #334155;
+            /* Ensure landscape view is prioritized on tablets/phones */
+            min-height: 100dvh;
+        }
+
+        /* Gradient variables from index.html */
+        :root {
+            --gradient-start: #4BA7AD; --gradient-mid: #89B3D9;
+            --gradient-end: #837FD9; --gradient-angle: 135deg;
+            --brand-color: #4BA7AD;
+        }
+
+        .gradient-bg {
+            background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+        }
+
+        .screen-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.5s ease-out, visibility 0.5s;
+            overflow: hidden;
+        }
+        .screen-container.active {
+            opacity: 1; visibility: visible;
+        }
+
+        /* Intro Screen */
+        #introScreen {
+            background-color: #EEF7F6;
+            justify-content: space-around; /* Distribute space for content */
+            padding: 2rem;
+        }
+        #introScreen .title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 4rem; /* Larger title */
+            line-height: 1;
+            color: #2D3748; /* Darker tone for emphasis */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        #introScreen .subtitle {
+            font-size: 1.5rem;
+            color: #4A5568;
+        }
+        #introScreen .label {
+            font-weight: 700;
+            color: #2C7A7B; /* A more vibrant, light-colored label */
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px; /* Pill shape */
+            background-color: #B2F5EA; /* Light background for the label */
+            font-size: 1.25rem;
+            margin-top: 1rem;
+        }
+        #introScreen .instructions {
+            max-width: 80%;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #6B7280;
+            line-height: 1.6;
+            margin-top: 2rem;
+        }
+        #introScreen button {
+            padding: 1.25rem 3rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+        #introScreen button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Back Button - Top Left */
+        .back-button {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 9999px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: background-color 0.2s, transform 0.1s;
+            z-index: 10;
+        }
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+        }
+
+        /* Game Screen */
+        #gameScreen {
+            background-color: #EEF7F6;
+            justify-content: flex-start; /* Align header to top */
+            padding-top: 1rem; /* Space for header */
+        }
+        #gameScreen .header-quiz {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            color: #2D3748;
+            margin-bottom: 1rem;
+            width: 100%; /* Ensure it spans width */
+            text-align: center;
+        }
+        .question-section {
+            flex: 1; /* Takes up top half */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            max-width: 900px;
+            text-align: left; /* Question aligned to left */
+            padding: 1rem;
+        }
+        .question-text {
+            font-size: 2.2rem; /* Large and readable */
+            font-weight: 600;
+            color: #334155;
+            line-height: 1.4;
+        }
+        .choices-section {
+            flex: 1; /* Takes up bottom half */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
+            grid-template-rows: repeat(2, 1fr);
+            gap: 1.5rem; /* Space between buttons */
+            width: 90%;
+            max-width: 900px;
+            padding: 1rem;
+            opacity: 0; /* Hidden initially */
+            visibility: hidden;
+            transition: opacity 0.3s ease-in;
+            position: relative; /* For timer positioning */
+        }
+        .choices-section.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .choice-button {
+            background-color: white;
+            border: 2px solid #D1E0DE;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .choice-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            border-color: var(--brand-color);
+        }
+        .choice-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Answer feedback colors */
+        .choice-button.correct {
+            background-color: #D1FAE5; /* Light green */
+            border-color: #34D399; /* Green */
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.5); /* Green glow */
+        }
+        .choice-button.wrong {
+            background-color: #FEE2E2; /* Light red */
+            border-color: #EF4444; /* Red */
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); /* Red glow */
+        }
+
+        /* Countdown Timer */
+        .countdown-timer-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px; /* Size of the circular timer */
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #334155;
+            background-color: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            border: 4px solid #D1E0DE;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            z-index: 5; /* Above buttons */
+        }
+        .countdown-timer-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg); /* Start at top */
+            overflow: visible;
+        }
+        .countdown-circle-bg {
+            stroke: #E2E8F0;
+            stroke-width: 8;
+            fill: none;
+        }
+        .countdown-circle-progress {
+            stroke: var(--brand-color);
+            stroke-width: 8;
+            fill: none;
+            transition: stroke-dasharray linear; /* Smooth transition for countdown */
+        }
+
+        /* Result Screen */
+        #resultScreen {
+            background-color: #EEF7F6;
+            text-align: center;
+            padding: 2rem;
+        }
+        #resultScreen .message {
+            font-family: 'Oswald', sans-serif;
+            font-size: 3.5rem;
+            line-height: 1.2;
+            color: #2D3748;
+            margin-bottom: 1rem;
+        }
+        #resultScreen .subtitle-message {
+            font-size: 1.5rem;
+            color: #4A5568;
+            margin-bottom: 2rem;
+        }
+        #resultScreen .done-button {
+            padding: 1.25rem 3rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+        #resultScreen .done-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Points Popup */
+        .points-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+            background-color: var(--brand-color);
+            color: white;
+            padding: 2rem 3rem;
+            border-radius: 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.5s ease-out;
+        }
+        .points-popup.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .points-popup.hide {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        /* Generic utilities for hidden elements */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Ensure content is centered for all screens */
+        .flex.flex-col.h-full.w-full {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background-color: #f0f2f5; /* Light grey background */
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box; /* Include padding in element's total width and height */
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 15px; /* More rounded corners */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px; /* Space between elements */
+            height: 100%;
             width: 100%;
-            max-width: 400px; /* Max width for better appearance on larger screens */
         }
-        .button-primary {
-            background-color: #4f46e5; /* Indigo-500 */
-            color: white;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
-            text-decoration: none; /* Remove underline for links acting as buttons */
-            text-align: center;
-            width: 100%; /* Full width within the container */
-            max-width: 250px; /* Max width for buttons */
-        }
-        .button-primary:hover {
-            background-color: #4338ca; /* Indigo-600 */
-            transform: translateY(-2px);
-        }
-        .back-button-container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 100%;
-            max-width: 120px; /* Adjusted width for the back button */
-        }
-        .back-button {
-            background-color: #6b7280; /* Gray-500 */
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        .back-button:hover {
-            background-color: #4b5563; /* Gray-700 */
-            transform: translateY(-1px);
-        }
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-                margin: 0 15px; /* Add some horizontal margin on small screens */
+
+        /* Landscape specific adjustments */
+        @media (orientation: landscape) {
+            body {
+                flex-direction: row; /* For wider screens */
             }
-            .button-primary {
-                padding: 10px 20px;
+            .screen-container {
+                flex-direction: row; /* For wider screens */
             }
-            .back-button-container {
-                top: 15px;
-                left: 15px;
+            #introScreen {
+                padding: 1rem 4rem; /* More horizontal padding */
             }
-            .back-button {
-                padding: 7px 12px;
-                font-size: 0.9rem;
+            #introScreen .instructions {
+                max-width: 60%;
+            }
+            #gameScreen {
+                flex-direction: column; /* Still column for game sections */
+            }
+            .question-section, .choices-section {
+                width: 80%; /* Wider content area */
+                max-width: 1000px; /* Allow content to span more */
             }
         }
     </style>
 </head>
-<body>
-    <div class="back-button-container">
+<body class="flex flex-col h-full w-full">
+
+    <!-- Intro Screen -->
+    <div id="introScreen" class="screen-container active">
         <a href="index.html" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Back
         </a>
+        <div class="flex flex-col items-center justify-center h-full w-full">
+            <h1 class="title">K-Pop Quiz</h1>
+            <p class="subtitle font-semibold text-lg md:text-xl mt-2">(Multiple Choice)</p>
+            <span class="label">Easy</span>
+            <p class="instructions mt-8 text-center px-4">
+                Test your K-Pop knowledge! Answer 5 questions.
+                Each round lasts 8 seconds, but choices appear only in the last 5 seconds.
+                Be quick to answer! Get all 5 correct to win!
+            </p>
+            <button id="startButton" class="mt-12 text-white gradient-bg">Start Quiz</button>
+        </div>
     </div>
 
-    <div class="container">
-        <h1 class="text-3xl font-bold text-gray-800 mb-5">Welcome Game 1!</h1>
-        <p class="text-gray-600 text-center mb-8">Play this exciting game!</p>
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen-container hidden">
+        <h2 class="header-quiz">K-Pop Quiz</h2>
+        <div class="question-section">
+            <p id="questionText" class="question-text"></p>
+        </div>
+        <div id="choicesSection" class="choices-section">
+            <button class="choice-button" data-choice-index="0"></button>
+            <button class="choice-button" data-choice-index="1"></button>
+            <button class="choice-button" data-choice-index="2"></button>
+            <button class="choice-button" data-choice-index="3"></button>
 
-        <p class="text-lg font-semibold text-green-600">You earned +10 points!</p>
-
-        <button id="doneButton" class="button-primary">Done</button>
+            <div id="countdownTimerContainer" class="countdown-timer-container hidden">
+                <span id="countdownText">5</span>
+                <svg class="countdown-timer-svg" viewBox="0 0 36 36">
+                    <path class="countdown-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path id="countdownCircleProgress" class="countdown-circle-progress" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+            </div>
+        </div>
     </div>
 
-    <script>
-        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxzSOSZ5gutAkfDdCc1AYASQ1FRF-PxJuIE6gicu4KgBUEd0Cdh1zDL42l1Kh9SJ9nK/exec";
+    <!-- Result Screen -->
+    <div id="resultScreen" class="screen-container hidden">
+        <div class="flex flex-col items-center justify-center h-full w-full">
+            <h2 id="resultMessage" class="message"></h2>
+            <p id="resultSubtitle" class="subtitle-message"></p>
+            <button id="doneButton" class="mt-8 text-white gradient-bg">Done</button>
+        </div>
+    </div>
 
-        document.getElementById('doneButton').addEventListener('click', async () => {
-            const accessCode = sessionStorage.getItem('currentUserCode');
-            if (!accessCode) {
-                alert("You are not logged in. Please log in on the dashboard.");
-                window.location.href = "index.html"; // Redirect to login
+    <!-- Points Earned Popup -->
+    <div id="pointsPopup" class="points-popup">
+        You earned 5 points!
+    </div>
+
+<script>
+    // --- Constants and DOM Elements ---
+    const SHEETDB_API_ID = "5ss66fnmfz8vl"; // Replace with your SheetDB API ID
+    const GAME_POINTS = 5; // Points awarded for winning the game
+    const QUIZ_QUESTION_COUNT = 5; // Number of questions in the quiz
+
+    const introScreen = document.getElementById('introScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const startButton = document.getElementById('startButton');
+    const questionText = document.getElementById('questionText');
+    const choicesSection = document.getElementById('choicesSection');
+    const choiceButtons = document.querySelectorAll('.choice-button');
+    const countdownTimerContainer = document.getElementById('countdownTimerContainer');
+    const countdownText = document.getElementById('countdownText');
+    const countdownCircleProgress = document.getElementById('countdownCircleProgress');
+    const resultMessage = document.getElementById('resultMessage');
+    const resultSubtitle = document.getElementById('resultSubtitle');
+    const doneButton = document.getElementById('doneButton');
+    const pointsPopup = document.getElementById('pointsPopup');
+
+    // --- Sound Effects (using Tone.js) ---
+    const correctSound = new Tone.Synth().toDestination();
+    const wrongSound = new Tone.Synth().toDestination();
+    const timerTickSound = new Tone.MembraneSynth().toDestination();
+    const buzzerSound = new Tone.NoiseSynth().toDestination();
+
+    // Set basic sounds
+    correctSound.oscillator.type = 'triangle';
+    correctSound.envelope.attack = 0.05;
+    correctSound.envelope.release = 0.2;
+
+    wrongSound.oscillator.type = 'sawtooth';
+    wrongSound.envelope.attack = 0.01;
+    wrongSound.envelope.release = 0.3;
+
+    timerTickSound.envelope.attack = 0.001;
+    timerTickSound.envelope.decay = 0.1;
+    timerTickSound.envelope.sustain = 0.0;
+    timerTickSound.envelope.release = 0.1;
+
+    buzzerSound.envelope.attack = 0.005;
+    buzzerSound.envelope.decay = 0.2;
+    buzzerSound.envelope.sustain = 0;
+    buzzerSound.envelope.release = 0.3;
+
+    // --- Game State Variables ---
+    let allQuestions = [];
+    let shuffledQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let roundTimer = null; // Timer for the 8-second round
+    let countdownTimer = null; // Timer for the 5-second choices countdown
+    let gameActive = false; // Flag to track if a game is in progress
+
+    // --- Game Flow Functions ---
+
+    /**
+     * Initializes the game by loading questions and setting up the initial state.
+     */
+    async function initializeGame() {
+        try {
+            const response = await fetch('questions.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            allQuestions = await response.json();
+            // Shuffle questions and reset score for a new game
+            resetGame();
+        } catch (error) {
+            console.error('Could not load questions:', error);
+            alert('Failed to load quiz questions. Please try again later.');
+            // Redirect back to index.html if questions fail to load
+            window.location.href = 'index.html';
+        }
+    }
+
+    /**
+     * Resets game state variables and shuffles questions.
+     */
+    function resetGame() {
+        score = 0;
+        currentQuestionIndex = 0;
+        shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
+        // Ensure only QUIZ_QUESTION_COUNT questions are taken
+        shuffledQuestions = shuffledQuestions.slice(0, QUIZ_QUESTION_COUNT);
+    }
+
+    /**
+     * Shows a specific screen and hides others.
+     * @param {HTMLElement} screenToShow - The DOM element of the screen to activate.
+     */
+    function showScreen(screenToShow) {
+        // Hide all screens first
+        introScreen.classList.remove('active');
+        gameScreen.classList.remove('active');
+        resultScreen.classList.remove('active');
+
+        introScreen.classList.add('hidden');
+        gameScreen.classList.add('hidden');
+        resultScreen.classList.add('hidden');
+
+        // Show the desired screen
+        screenToShow.classList.remove('hidden');
+        setTimeout(() => {
+            screenToShow.classList.add('active');
+        }, 10); // Small delay for transition to apply
+    }
+
+    /**
+     * Starts the quiz game.
+     */
+    function startQuiz() {
+        gameActive = true;
+        resetGame(); // Reset game state for a fresh start
+        showScreen(gameScreen);
+        loadQuestion();
+        // Prevent refresh or back during game
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', handlePopState);
+    }
+
+    /**
+     * Handles the popstate event to prevent going back during the quiz.
+     */
+    function handlePopState() {
+        if (gameActive) {
+            alert("Exiting the quiz will reset your progress.");
+            window.removeEventListener('popstate', handlePopState); // Remove listener to avoid loop
+            window.location.href = 'index.html'; // Redirect to index.html
+        }
+    }
+    
+    /**
+     * Loads and displays the current question.
+     */
+    function loadQuestion() {
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+            endQuiz();
+            return;
+        }
+
+        const questionData = shuffledQuestions[currentQuestionIndex];
+        questionText.textContent = questionData.question;
+
+        // Hide choices and timer initially
+        choicesSection.classList.remove('visible');
+        countdownTimerContainer.classList.add('hidden');
+        resetChoiceButtons(); // Clear previous states
+
+        // Clear any existing timers
+        clearTimeout(roundTimer);
+        clearInterval(countdownTimer);
+
+        // Start the 8-second total round timer
+        roundTimer = setTimeout(() => {
+            displayChoices(questionData.choices); // Show choices after 3 seconds
+            startCountdownTimer(5); // Start 5-second countdown
+        }, 3000); // 8 seconds total - 5 seconds choices = 3 seconds initial delay for choices
+    }
+
+    /**
+     * Displays the answer choices.
+     * @param {string[]} choices - An array of answer choices.
+     */
+    function displayChoices(choices) {
+        choicesSection.classList.add('visible');
+        choiceButtons.forEach((button, index) => {
+            button.textContent = choices[index];
+            button.onclick = () => handleAnswer(button.textContent, choices[index] === shuffledQuestions[currentQuestionIndex].correctAnswer);
+            button.disabled = false; // Enable buttons when visible
+        });
+        countdownTimerContainer.classList.remove('hidden'); // Show timer
+    }
+
+    /**
+     * Starts the 5-second circular countdown timer.
+     * @param {number} duration - The duration of the countdown in seconds.
+     */
+    function startCountdownTimer(duration) {
+        let timeRemaining = duration;
+        const radius = 15.9155; // From SVG path
+        const circumference = 2 * Math.PI * radius;
+
+        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`;
+
+        function updateTimer() {
+            if (timeRemaining <= 0) {
+                clearInterval(countdownTimer);
+                handleAnswer(null, false); // Time ran out
                 return;
             }
 
-            const gameLabel = "Game 1 Completed";
-            const pointsEarned = 10; // Example: points for completing Game 1
+            countdownText.textContent = timeRemaining;
+            const progress = (timeRemaining / duration) * circumference;
+            countdownCircleProgress.style.strokeDasharray = `${progress}, ${circumference}`;
 
-            const url = new URL(GOOGLE_SHEET_URL);
-            url.searchParams.append('accessCode', accessCode);
-            url.searchParams.append('label', gameLabel);
-            url.searchParams.append('points', pointsEarned);
+            if (timeRemaining <= 3 && timeRemaining > 0) {
+                timerTickSound.triggerAttackRelease('C5', '8n'); // Play tick sound for last few seconds
+            }
+            timeRemaining--;
+        }
 
-            try {
-                // Using 'no-cors' mode as Apps Script doesn't return CORS headers for simple requests
-                await fetch(url, {
-                    method: 'POST',
-                    mode: 'no-cors'
-                });
-                console.log(`Successfully logged game completion: ${gameLabel} for ${pointsEarned} points.`);
-            } catch (error) {
-                console.error("Failed to log game completion:", error);
-                alert("There was an error saving your game progress. Please try again.");
-            } finally {
-                // Always redirect back to the dashboard regardless of success/failure
-                window.location.href = "index.html";
+        updateTimer(); // Initial call
+        countdownTimer = setInterval(updateTimer, 1000);
+    }
+
+    /**
+     * Handles the player's answer or time running out.
+     * @param {string|null} selectedAnswer - The text of the selected answer, or null if time ran out.
+     * @param {boolean} isCorrect - True if the selected answer is correct, false otherwise.
+     */
+    function handleAnswer(selectedAnswer, isCorrect) {
+        clearTimeout(roundTimer);
+        clearInterval(countdownTimer);
+        disableChoiceButtons();
+        countdownTimerContainer.classList.add('hidden'); // Hide timer immediately
+
+        const questionData = shuffledQuestions[currentQuestionIndex];
+        let correctlyAnswered = false;
+
+        // Show correct answer and wrong answers
+        choiceButtons.forEach(button => {
+            if (button.textContent === questionData.correctAnswer) {
+                button.classList.add('correct');
+                if (selectedAnswer === questionData.correctAnswer) {
+                    correctlyAnswered = true;
+                }
+            } else if (button.textContent === selectedAnswer) {
+                button.classList.add('wrong');
             }
         });
 
-        // Optional: If the back button should also log completion (less common for "done" logic)
-        document.querySelector('.back-button').addEventListener('click', (event) => {
-             // You might want to prevent the default behavior and add logic here
-             // if hitting 'back' should also log the game, even without hitting 'done'.
-             // For now, it just navigates back.
+        if (correctlyAnswered) {
+            score++;
+            correctSound.triggerAttackRelease('C4', '8n'); // Play C4 for 8th note
+        } else {
+            buzzerSound.triggerAttackRelease('8n', 'C2'); // Play buzzer for 8th note
+        }
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            loadQuestion();
+        }, 1500); // Short delay before next question
+    }
+
+    /**
+     * Disables all choice buttons.
+     */
+    function disableChoiceButtons() {
+        choiceButtons.forEach(button => {
+            button.disabled = true;
         });
-    </script>
+    }
+
+    /**
+     * Resets the visual state of choice buttons.
+     */
+    function resetChoiceButtons() {
+        choiceButtons.forEach(button => {
+            button.textContent = ''; // Clear text
+            button.classList.remove('correct', 'wrong'); // Remove color feedback
+            button.disabled = true; // Disable until choices are displayed again
+        });
+    }
+
+    /**
+     * Ends the quiz and displays the result screen.
+     */
+    function endQuiz() {
+        gameActive = false;
+        window.removeEventListener('popstate', handlePopState); // Remove popstate listener
+
+        showScreen(resultScreen);
+        if (score === QUIZ_QUESTION_COUNT) {
+            resultMessage.textContent = "Congratulations!";
+            resultSubtitle.textContent = "You got all 5 questions right!";
+            sendPointsToSheetDB(); // Send points if won
+        } else {
+            resultMessage.textContent = "Game Over!";
+            resultSubtitle.textContent = `You answered ${score} out of ${QUIZ_QUESTION_COUNT} correctly. Keep practicing!`;
+        }
+    }
+
+    /**
+     * Sends game data to SheetDB.
+     */
+    async function sendPointsToSheetDB() {
+        const currentUserCode = sessionStorage.getItem('currentUserCode');
+        if (!currentUserCode) {
+            console.error("No current user code found in session storage.");
+            return;
+        }
+
+        const data = {
+            "Access Code": currentUserCode,
+            "Timestamp": new Date().toISOString(),
+            "Code": "Game1"
+        };
+
+        try {
+            const response = await fetch(`https://sheetdb.io/api/v1/${SHEETDB_API_ID}/sheets/History`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`SheetDB API error: ${response.status} - ${errorBody}`);
+            }
+
+            const result = await response.json();
+            console.log('Points sent to SheetDB:', result);
+            showPointPopup();
+
+        } catch (error) {
+            console.error('Failed to send points to SheetDB:', error);
+            alert('Failed to save game data. Please check your internet connection.');
+        }
+    }
+
+    /**
+     * Displays an animated popup for points earned.
+     */
+    function showPointPopup() {
+        pointsPopup.classList.add('show');
+        setTimeout(() => {
+            pointsPopup.classList.remove('show');
+            pointsPopup.classList.add('hide');
+            setTimeout(() => {
+                pointsPopup.classList.remove('hide');
+                window.location.href = 'index.html'; // Redirect to index.html after animation
+            }, 500); // Duration of hide animation
+        }, 2000); // How long the popup is visible
+    }
+
+    // --- Event Listeners ---
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeGame();
+
+        startButton.addEventListener('click', startQuiz);
+        doneButton.addEventListener('click', () => {
+            window.location.href = 'index.html'; // Always redirect to index.html
+        });
+    });
+
+    // Handle browser back button during active game
+    window.addEventListener('beforeunload', (event) => {
+        if (gameActive) {
+            // Cancel the event to prompt the user (modern browsers often ignore custom messages)
+            event.preventDefault();
+            event.returnValue = ''; // Standard for browser to show its default message
+        }
+    });
+
+</script>
 </body>
 </html>
