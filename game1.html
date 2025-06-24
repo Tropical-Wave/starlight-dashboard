@@ -276,6 +276,9 @@
             background-color: #EEF7F6;
             text-align: center;
             padding: 2rem;
+            flex-direction: column; /* Ensure content is stacked vertically */
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
         }
         #resultScreen .message {
             font-family: 'Oswald', sans-serif;
@@ -289,6 +292,13 @@
             color: #4A5568;
             margin-bottom: 2rem;
         }
+        #resultScreen .done-button-container { /* New container for done button */
+            margin-top: 2rem; /* Add spacing above the button */
+            width: 100%; /* Allow it to take full width for centering */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         #resultScreen .done-button {
             padding: 1.25rem 3rem;
             font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive button text size */
@@ -298,6 +308,7 @@
             transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
             color: white;
             background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            /* Removed appearance: none; and border: none; as Tailwind handles this well and often not needed */
         }
         #resultScreen .done-button:hover {
             transform: translateY(-2px);
@@ -317,7 +328,7 @@
             color: #10B981; /* Green color for earned points */
             margin-top: -1rem; /* Adjust spacing */
             margin-bottom: 2rem;
-            text-align: left; /* Changed to left align */
+            text-align: center; /* Centered with other messages */
             width: 80%; /* Match max width of other content for consistent alignment */
             max-width: 900px;
         }
@@ -450,7 +461,9 @@
             <p id="resultSubtitle" class="subtitle-message"></p>
             <!-- New element for points earned text -->
             <p id="pointsEarnedText" class="points-earned-text hidden"></p>
-            <button id="doneButton" class="mt-8 gradient-bg text-white">Done</button>
+            <div class="done-button-container"> <!-- Separate container for the Done button -->
+                <button id="doneButton" class="gradient-bg text-white">Done</button>
+            </div>
         </div>
     </div>
 
@@ -787,11 +800,21 @@
 
         if (correctlyAnswered) {
             score++;
-            if(audioLoaded) correctSoundPlayer.start();
+            if(audioLoaded) {
+                try {
+                    correctSoundPlayer.start();
+                } catch (e) {
+                    console.error("Error playing correct sound:", e);
+                }
+            }
         } else {
             if(audioLoaded) {
-                wrongSoundPlayer.start();
-                buzzerSound.triggerAttackRelease('8n', 'C2'); // Play buzzer for wrong answer/timeout
+                try {
+                    wrongSoundPlayer.start();
+                    buzzerSound.triggerAttackRelease('8n', 'C2'); // Play buzzer for wrong answer/timeout
+                } catch (e) {
+                    console.error("Error playing wrong/buzzer sound:", e);
+                }
             }
         }
 
