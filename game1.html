@@ -296,6 +296,7 @@
         #resultScreen .done-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background-color: #387D82; /* A slightly darker shade of your brand color for hover */
         }
         #resultScreen .done-button:disabled {
             opacity: 0.6;
@@ -405,7 +406,7 @@
             <h2 id="resultMessage" class="message"></h2>
             <p id="resultSubtitle" class="subtitle-message"></p>
             <p id="pointsEarnedText" class="points-earned-text hidden"></p>
-            <button id="doneButton" class="mt-8 gradient-bg text-white">Done</button>
+            <button id="doneButton" class="mt-8 bg-[var(--brand-color)] text-white">Done</button>
         </div>
     </div>
 
