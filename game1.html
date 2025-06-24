@@ -9,7 +9,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="K-Pop Quiz">
-    <!-- Added a generic favicon link to prevent 404 error -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎶</text></svg>">
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/4BA7AD/FFFFFF?text=Q">
 
@@ -17,7 +16,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tone.js for sound effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
 
     <style>
@@ -333,6 +331,24 @@
             max-width: 900px;
         }
 
+        /* NEW: Result Screen Footer */
+        .result-footer {
+            position: absolute;
+            bottom: 1rem;
+            font-size: 0.8rem;
+            color: #9CA3AF; /* Soft gray color */
+            text-align: center;
+            width: 100%;
+            padding: 0 1rem;
+        }
+        .result-footer a {
+            color: #6B7280; /* Slightly darker gray for links */
+            text-decoration: underline;
+        }
+        .result-footer a:hover {
+            color: var(--brand-color);
+        }
+
         /* Generic utilities for hidden elements */
         .hidden {
             display: none !important;
@@ -412,7 +428,6 @@
 </head>
 <body class="flex flex-col h-full w-full">
 
-    <!-- Intro Screen -->
     <div id="introScreen" class="screen-container active">
         <a href="index.html" class="back-button">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -433,7 +448,6 @@
         </div>
     </div>
 
-    <!-- Game Screen -->
     <div id="gameScreen" class="screen-container hidden">
         <h2 class="header-quiz">K-Pop Quiz</h2>
         <div class="question-card">
@@ -454,15 +468,17 @@
         </div>
     </div>
 
-    <!-- Result Screen -->
     <div id="resultScreen" class="screen-container hidden">
         <div class="flex flex-col items-center justify-center h-full w-full">
             <h2 id="resultMessage" class="message"></h2>
             <p id="resultSubtitle" class="subtitle-message"></p>
-            <!-- New element for points earned text -->
             <p id="pointsEarnedText" class="points-earned-text hidden"></p>
-            <div class="done-button-container"> <button id="doneButton" class="done-button">Done</button>
+            <div class="done-button-container">
+                <button id="doneButton" class="done-button">Done</button>
             </div>
+            <footer class="result-footer">
+                Sound Effect by <a href="https://pixabay.com/users/n2kstudio-17715924/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">N2kStudio</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">Pixabay</a>
+            </footer>
         </div>
     </div>
 
@@ -677,6 +693,23 @@
             }
         }
     }
+
+    /**
+     * NEW: Adjusts the font size of the question text based on its length.
+     */
+    function adjustQuestionFontSize() {
+        const questionLength = questionText.textContent.length;
+        
+        // Reset to default defined in the stylesheet first
+        questionText.style.fontSize = '';
+
+        if (questionLength > 90) { // Very long question
+            questionText.style.fontSize = 'clamp(1.3rem, 4vw, 1.7rem)';
+        } else if (questionLength > 60) { // Long question
+            questionText.style.fontSize = 'clamp(1.5rem, 5vw, 2.0rem)';
+        }
+        // For shorter questions, the default CSS class style is automatically used.
+    }
     
     /**
      * Loads and displays the current question.
@@ -689,6 +722,9 @@
 
         const questionData = shuffledQuestions[currentQuestionIndex];
         questionText.textContent = questionData.question;
+        
+        // NEW: Call the function to adjust font size based on content length
+        adjustQuestionFontSize();
 
         choicesSection.classList.remove('visible'); // Hide choices
         countdownTimerContainer.classList.add('hidden'); // Hide timer
@@ -756,9 +792,6 @@
                 timerTickSound.triggerAttackRelease('G4', '16n'); // Play a specific note for the tick
             }
             
-            // This portion handles the visual countdown circle, which smoothly transitions
-            // The value 100 is for 100% of the circle (stroke-dasharray="progress_percentage, remaining_percentage")
-            // circumference is used because stroke-dasharray expects actual length values not percentages
             const progress = (timeRemaining / durationInSeconds) * circumference;
             countdownCircleProgress.style.strokeDasharray = `${progress}, ${circumference}`;
 
@@ -907,7 +940,6 @@
 
             const result = await response.json();
             console.log('Points sent to SheetDB:', result);
-            // Success: No popup, info already on screen.
 
         } catch (error) {
             console.error('Failed to send points to SheetDB:', error);
@@ -917,7 +949,6 @@
             } else if (error.message.includes("404")) {
                 errorMessage = "\n(Error saving points: API ID or Sheet Name not found.)";
             }
-            // Update the result screen to show the error
             resultSubtitle.textContent += errorMessage;
         }
     }
@@ -930,7 +961,6 @@
 
         doneButton.addEventListener('click', () => {
             doneButton.disabled = true; // Disable button to prevent multiple clicks
-            // Only redirect when done button is clicked
             window.location.href = 'index.html'; 
         });
     });
