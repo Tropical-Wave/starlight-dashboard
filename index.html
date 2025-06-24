@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Starlight Dashboard</title>
 
-    <!-- Meta tags for a kiosk-like experience -->
     <meta name="theme-color" content="#EEF7F6"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Starlight">
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/4BA7AD/FFFFFF?text=S">
 
-    <!-- Tailwind CSS and Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,14 +19,9 @@
     <style>
         /* Base styles for a light, modern kiosk interface */
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #EEF7F6;
-            font-family: 'Poppins', sans-serif;
-            color: #334155; /* Dark Slate Gray for text */
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #EEF7F6;
+            font-family: 'Poppins', sans-serif; color: #334155;
         }
 
         /* Custom scrollbar for popups */
@@ -37,54 +30,39 @@
         ::-webkit-scrollbar-thumb { background: #A8C5C1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #82A39F; }
         
-        /* Gradient variables for consistency */
+        /* Gradient variables */
         :root {
-            --gradient-start: #4BA7AD;
-            --gradient-mid: #89B3D9;
-            --gradient-end: #837FD9;
-            --gradient-angle: 135deg;
+            --gradient-start: #4BA7AD; --gradient-mid: #89B3D9;
+            --gradient-end: #837FD9; --gradient-angle: 135deg;
             --brand-color: #4BA7AD;
         }
         
-        /* Generic class for fullscreen overlays (used for popups) */
+        /* Fullscreen overlays (popups, login, splash) */
         .fullscreen-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 100; display: none; /* Hidden by default */
-            align-items: center; justify-content: center;
-            opacity: 0;
-            transition: opacity 0.5s ease-out, visibility 0.5s;
-            background-color: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
+            z-index: 100; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s ease-out, visibility 0.5s;
+            background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
         }
-        .fullscreen-overlay.visible {
-            display: flex;
-            opacity: 1;
-            visibility: visible;
-        }
+        .fullscreen-overlay.visible { display: flex; opacity: 1; visibility: visible; }
         
-        /* Styles for popup cards used in modals (e.g., History) */
+        /* Popup card styles */
         .popup-card {
             background-color: white; border-radius: 1.5rem;
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex;
-            flex-direction: column; width: 90%; max-width: 400px;
-            max-height: 90vh;
-            transform: scale(0.95);
-            opacity: 0;
+            flex-direction: column; width: 90%; max-width: 400px; max-height: 90vh;
+            transform: scale(0.95); opacity: 0;
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
         }
-        .fullscreen-overlay.visible .popup-card {
-            transform: scale(1);
-            opacity: 1;
-        }
+        .fullscreen-overlay.visible .popup-card { transform: scale(1); opacity: 1; }
         
-        /* --- Splash Screen / Screensaver --- */
+        /* --- Splash Screen --- */
         #splashScreen {
             background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
             z-index: 200;
         }
         .star-container svg {
-            width: 150px; 
-            height: 150px;
+            width: 150px; height: 150px;
             animation: pulseLogo 2.5s infinite ease-in-out;
         }
         @keyframes pulseLogo {
@@ -92,17 +70,14 @@
             50% { transform: scale(1.15); opacity: 1; }
         }
 
-        /* --- Login/Onboarding Screen --- */
+        /* --- Login Screen --- */
         #loginScreen {
-            flex-direction: column;
-            gap: 2rem;
-            background-color: rgba(255, 255, 255, 0.5);
+            flex-direction: column; gap: 2rem; background-color: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(8px);
         }
         .login-box {
             background-color: white; padding: 2.5rem; border-radius: 1.5rem; text-align: center;
-            width: 90%; max-width: 450px;
-            border: 1px solid #D1E0DE;
+            width: 90%; max-width: 450px; border: 1px solid #D1E0DE;
             box-shadow: 0 8px 24px 0 rgba(0,0,0, 0.08);
         }
         #accessCodeInput {
@@ -117,99 +92,81 @@
         /* --- Dashboard Container --- */
         #dashboard {
             display: none; height: 100dvh;
-            padding: 1rem; gap: 1rem;
-            opacity: 0; transition: opacity 0.5s ease-in;
-            flex-direction: column;
+            padding: 1rem; gap: 1rem; opacity: 0; transition: opacity 0.5s ease-in;
+            flex-direction: column; /* Mobile-first: single column */
         }
-        .left-panel, .right-panel {
-            width: 100%;
-        }
-
+        /* Landscape layout: 2 columns */
         @media (min-width: 1024px) and (orientation: landscape) {
             #dashboard { flex-direction: row; padding: 2rem; gap: 2rem; }
-            .left-panel { flex: 0 0 45%; max-width: 45%; }
-            .right-panel { flex: 1; }
+            .left-panel { flex: 1 1 50%; }
+            .right-panel { flex: 1 1 50%; }
         }
-
-        .dashboard-header { font-family: 'Oswald', sans-serif; color: #1E293B; }
-        
-        .progress-indicator {
-            position: relative; display: flex; align-items: center;
-            justify-content: space-between; width: 100%; max-width: 500px;
-            margin: 2rem auto 0;
-        }
-        .progress-indicator::before {
-            content: ''; position: absolute; top: 50%; left: 0; right: 0;
-            height: 6px; background-color: #CBD5E1;
-            transform: translateY(-50%); z-index: 0;
-        }
-        #progress-line-active {
-            position: absolute; top: 50%; left: 0;
-            height: 6px; background-color: var(--brand-color);
-            transform: translateY(-50%); z-index: 0;
-            width: 0%; transition: width 0.5s ease-out;
-        }
-        .progress-step { z-index: 1; }
-        
-        .progress-step .stamp-circle {
-            width: 60px; height: 60px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            background-color: #E2E8F0; color: #94A3B8;
-            border: 4px solid var(--brand-color);
-            transition: all 0.4s ease;
-            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.06);
-            position: relative; z-index: 1;
-        }
-        @media (min-width: 768px) {
-            .progress-step .stamp-circle { width: 80px; height: 80px; }
-        }
-        .progress-step.completed .stamp-circle {
-            background-color: white; 
-            border-color: var(--brand-color);
-            transform: scale(1.05);
-            box-shadow: 0 6px 10px -3px rgba(0, 0, 0, 0.08);
-        }
-        .event-label { margin-top: 0.75rem; font-weight: 600; color: #64748B; transition: all 0.3s ease; text-align: center; }
-        .progress-step.completed .event-label { color: #1E293B; }
-        .label-blurred { filter: blur(4px); opacity: 0.5; }
 
         .dashboard-card {
             background-color: white; border-radius: 1.5rem;
-            border: 1px solid #D1E0DE; padding: 1.5rem; display: flex;
-            flex-direction: column; flex-grow: 1;
+            border: 1px solid #D1E0DE; padding: 1.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
         .interactive-card {
-            background-color: #F8FAFC; border: 1px solid #E2E8F0;
-            border-radius: 1rem;
-            transition: all 0.2s ease-out;
-            position: relative;
-            overflow: hidden;
-            display: block; /* Important for <a> tags to behave like blocks */
-            text-decoration: none; /* Remove underline from links */
+            background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 1rem;
+            transition: all 0.2s ease-out; position: relative; overflow: hidden;
+            display: block; text-decoration: none;
         }
         .interactive-card:hover {
-            transform: translateY(-4px); 
-            border-color: #D1E0DE;
+            transform: translateY(-4px); border-color: #D1E0DE;
             box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
         }
-        #historyPopup.visible .popup-card {
-            transform: scale(1); opacity: 1; pointer-events: auto;
-        }
 
+        /* --- PART 3: Streak Tracker & Stamping Animation --- */
+        .streak-stamp .stamp-icon-wrapper {
+            width: 80px; height: 80px; /* Base size */
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            background-color: #E2E8F0; /* Default gray for unattended */
+            border: 4px solid #CBD5E1;
+            transition: all 0.4s ease;
+            position: relative; z-index: 1;
+        }
+        @media (min-width: 768px) {
+            .streak-stamp .stamp-icon-wrapper { width: 100px; height: 100px; }
+        }
+        
+        .event-label {
+            margin-top: 0.75rem; font-weight: 600; color: #94A3B8; /* Faded color for unattended */
+            transition: all 0.3s ease; text-align: center;
+            filter: blur(2px); opacity: 0.6; /* Blurred label for unattended */
+        }
+        
+        /* Styles for a completed stamp */
+        .streak-stamp.completed .stamp-icon-wrapper {
+            background-color: white; border-color: var(--brand-color);
+        }
+        .streak-stamp.completed .event-label {
+            color: #1E293B; filter: blur(0); opacity: 1;
+        }
+        
+        /* Stamping animation */
+        .stamp-icon {
+            opacity: 0; transform: translateY(-50px) scale(1.5);
+        }
+        .streak-stamp.is-stamping .stamp-icon {
+            animation: stamp-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes stamp-drop {
+            0% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+            60% { opacity: 1; transform: translateY(5px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
     </style>
 </head>
 <body class="antialiased">
     
-    <!-- Splash Screen -->
     <div id="splashScreen" class="fullscreen-overlay visible">
         <div class="star-container">
-            <svg fill="#EEF7F6" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.8711-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/></svg>
+            <svg fill="#EEF7F6" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.875-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/></svg>
         </div>
     </div>
 
-    <!-- Login Screen -->
     <div id="loginScreen" class="fullscreen-overlay">
         <div class="login-box">
             <div class="w-20 h-20 mx-auto text-cyan-600"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></div>
@@ -224,49 +181,43 @@
         </div>
     </div>
 
-    <!-- Main Dashboard -->
     <main id="dashboard" class="flex">
-        <!-- Left Panel -->
-        <div class="left-panel flex flex-col justify-center">
-             <div class="flex items-center gap-4">
-                <div>
-                    <header class="dashboard-header text-4xl md:text-5xl">Dashboard</header>
-                    <p class="text-xl md:text-2xl mt-1 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
-                </div>
+        <div class="left-panel flex flex-col gap-4 lg:gap-8">
+            <div class="dashboard-card flex-shrink-0">
+                 <header class="font-bold font-['Oswald'] text-4xl md:text-5xl text-slate-800">Dashboard</header>
+                 <p class="text-xl md:text-2xl mt-1 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
             </div>
-            <div class="flex-grow lg:flex-grow-0 lg:mt-24"></div>
-            <div class="mt-auto">
-                <h3 class="font-bold text-xl text-slate-800 text-center lg:text-left">Event Progress</h3>
-                <div id="progressContainer" class="progress-indicator"></div>
+            <div class="dashboard-card flex-grow flex flex-col">
+                <h3 class="font-bold text-xl text-slate-800 text-center mb-4 flex-shrink-0">Event Progress</h3>
+                <div id="streakTrackerContainer" class="flex-grow flex items-center justify-around">
+                    </div>
             </div>
         </div>
 
-        <!-- Right Panel -->
         <div class="right-panel">
-            <div class="dashboard-card h-full">
-                <!-- Points & Rewards -->
+            <div class="dashboard-card h-full flex flex-col">
                 <div class="flex justify-between items-center border-b border-slate-200 pb-4">
                     <div class="flex items-center gap-2 md:gap-3">
                         <span class="font-semibold text-base md:text-lg text-slate-600">Points:</span>
                         <span id="userPoints" class="text-3xl md:text-4xl font-bold text-slate-800">0</span>
-                        <button id="showHistoryBtn" class="text-slate-400 hover:text-cyan-500 transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg></button>
+                        <button id="showHistoryBtn" class="text-slate-400 hover:text-cyan-500 transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </button>
                     </div>
-                    <!-- UPDATED: "Rewards" button is now an <a> tag linking to rewards.html -->
                     <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full text-white hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Rewards</a>
                 </div>
-                <!-- Game Selection -->
                 <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
-                    <a href="game1.html" class="interactive-card p-2 text-center" data-label="Guess the Song (Easy)">
+                    <a href="game1.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="Guess the Song (Easy)">
                         <div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div>
                         <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span>
                         <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Easy</span>
                     </a>
-                    <a href="game2.html" class="interactive-card p-2 text-center" data-label="Guess the Song (Moderate)">
+                    <a href="game2.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="Guess the Song (Moderate)">
                         <div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div>
                         <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span>
                         <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Moderate</span>
                     </a>
-                    <a href="game3.html" class="interactive-card p-2 text-center" data-label="True or False (Hard)">
+                    <a href="game3.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="True or False (Hard)">
                         <div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div>
                         <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">True or False</span>
                         <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Hard</span>
@@ -276,7 +227,6 @@
         </div>
     </main>
     
-    <!-- Points History Pop-up -->
     <div id="historyPopup" class="fullscreen-overlay">
         <div class="popup-card">
             <div class="p-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
@@ -299,12 +249,12 @@
     const loadingIndicator = document.getElementById('loadingIndicator');
     const userNameEl = document.getElementById('userName');
     const userPointsEl = document.getElementById('userPoints');
-    const progressContainer = document.getElementById('progressContainer');
+    const streakTrackerContainer = document.getElementById('streakTrackerContainer');
     const historyList = document.getElementById('historyList');
     const historyPopup = document.getElementById('historyPopup');
 
-    // --- Configuration ---
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwpYBXR7QNwrBzCQrKhbm451v1uQdfQFBmQYWucYL7wz1pxmLwUjLwUVZAhZG5FKW4lxg/exec";
+    // --- PART 1: SheetDB Configuration ---
+    const SHEETDB_API_ID = "87n48guq4hks1"; // <-- IMPORTANT: REPLACE THIS
     const INACTIVITY_TIMEOUT = 30000;
     const AUTO_REFRESH_INTERVAL = 15000;
 
@@ -346,20 +296,26 @@
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
       try {
-        const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Network error: ${res.statusText}`);
-        const json = await res.json();
+        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&t=${Date.now()}`;
+        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&t=${Date.now()}`;
+        
+        const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
-        if (json.error || !json.user || !json.user.Name) {
-          throw new Error(json.error || "Invalid user data");
+        if (!userRes.ok) throw new Error(`Network error fetching user: ${userRes.statusText}`);
+        if (!historyRes.ok) throw new Error(`Network error fetching history: ${historyRes.statusText}`);
+
+        const userJson = await userRes.json();
+        const historyJson = await historyRes.json();
+
+        if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
+            throw new Error("Invalid user data received from API.");
         }
         
-        updateDashboardUI(json.user, json.history);
+        updateDashboardUI(userJson[0], historyJson);
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        if (!isManualRefresh) showSplashScreen();
+        if (!isManualRefresh) showSplashScreen(); // Only logout on auto-refresh failure
       } finally {
         if (isManualRefresh) {
             document.getElementById('refreshHistoryBtn')?.classList.remove('animate-spin');
@@ -368,7 +324,7 @@
     }
 
     async function handleLogin() {
-      const code = accessCodeInput.value.trim();
+      const code = accessCodeInput.value.trim().toUpperCase(); // Often codes are not case-sensitive
       if (!code) {
         accessCodeError.textContent = "Please enter a code.";
         accessCodeError.classList.remove('hidden');
@@ -380,17 +336,23 @@
       accessCodeEnterBtn.disabled = true;
 
       try {
-        const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Network error`);
-        const json = await res.json();
+        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&t=${Date.now()}`;
+        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&t=${Date.now()}`;
+        
+        const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
-        if (json.error || !json.user || !json.user.Name) {
-          throw new Error(json.error || "Invalid code");
+        if (!userRes.ok) throw new Error(`Network error`);
+        
+        const userJson = await userRes.json();
+        const historyJson = await historyRes.json();
+
+        // Use first result since access codes are unique
+        if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
+            throw new Error("Invalid access code");
         }
+        const userData = userJson[0];
         
         currentUserCode = code;
-        // Store code in session storage for other pages (like rewards.html)
         sessionStorage.setItem('currentUserCode', code);
 
         loginScreen.classList.remove('visible');
@@ -400,7 +362,7 @@
             resetInactivityTimer();
         }, 50);
 
-        updateDashboardUI(json.user, json.history);
+        updateDashboardUI(userData, historyJson);
 
         clearInterval(autoRefreshInterval);
         autoRefreshInterval = setInterval(() => {
@@ -423,18 +385,13 @@
     // --- UI Rendering Functions ---
     function updateDashboardUI(userData, historyData) {
       userNameEl.textContent = userData.Name || "Guest";
-      const userPoints = parseInt(userData.Points || "0", 10);
-      userPointsEl.textContent = userPoints;
-
-      renderProgressBar(userData);
+      userPointsEl.textContent = parseInt(userData.Points || "0", 10);
+      renderStreakTracker(userData);
       renderHistoryList(historyData || []);
     }
 
-    function renderProgressBar(data) {
-      progressContainer.innerHTML = '';
-      const activeLine = document.createElement('div');
-      activeLine.id = 'progress-line-active';
-      progressContainer.appendChild(activeLine);
+    function renderStreakTracker(data) {
+      streakTrackerContainer.innerHTML = '';
 
       const steps = [
         { key: 'Event1', label: 'Onboarding' },
@@ -442,43 +399,53 @@
         { key: 'Event3', label: 'Touchdown' }
       ];
       const tierIcons = {
-        'Tier1': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#10B981"/></svg>`,
-        'Tier2': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>`,
-        'Tier3': `<svg class="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>`
+        'Tier1': `<svg class="w-10 h-10 md:w-12 md:h-12 stamp-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#10B981"/></svg>`,
+        'Tier2': `<svg class="w-10 h-10 md:w-12 md:h-12 stamp-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>`,
+        'Tier3': `<svg class="w-10 h-10 md:w-12 md:h-12 stamp-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>`
       };
-
-      let completedCount = 0;
+      
+      let animationDelay = 0;
       steps.forEach((step, index) => {
         const tier = data[step.key];
         const isCompleted = tier && tierIcons[tier];
-        if (isCompleted) completedCount++;
 
-        const stepEl = document.createElement('div');
-        stepEl.className = `progress-step flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
-        stepEl.innerHTML = `
-          <div class="stamp-circle">${isCompleted ? tierIcons[tier] : `<span class="text-2xl md:text-3xl font-bold">${index + 1}</span>`}</div>
-          <div class="event-label ${!isCompleted ? 'label-blurred' : ''}">${step.label}</div>
+        const stampEl = document.createElement('div');
+        stampEl.className = `streak-stamp flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
+        stampEl.innerHTML = `
+          <div class="stamp-icon-wrapper">
+            ${isCompleted ? tierIcons[tier] : ''}
+          </div>
+          <div class="event-label">${step.label}</div>
         `;
-        progressContainer.appendChild(stepEl);
+        streakTrackerContainer.appendChild(stampEl);
+
+        if (isCompleted) {
+            setTimeout(() => {
+                stampEl.classList.add('is-stamping');
+            }, animationDelay);
+            animationDelay += 300; // Stagger the animation for each stamp
+        }
       });
-      
-      activeLine.style.width = completedCount > 1 ? `${(completedCount - 1) * 50}%` : '0%';
     }
 
     function renderHistoryList(historyData) {
-        historyList.innerHTML = !historyData || historyData.length === 0 
-            ? '<p class="text-center text-slate-500 py-8">No points history recorded.</p>'
-            : '';
-        if (!historyData || historyData.length === 0) return;
+        // Handle case where history might be null or empty
+        if (!historyData || historyData.length === 0) {
+            historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history recorded.</p>';
+            return;
+        }
         
+        historyList.innerHTML = ''; // Clear previous list
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
+
+        // Sort by timestamp (newest first) and then render
         historyData.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp)).forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
             row.innerHTML = `
-                <span class="font-semibold text-slate-800 text-left">${item.Label || 'Event'}</span>
+                <span class="font-semibold text-slate-800 text-left">${item.Transaction || 'Event'}</span>
                 <span class="font-bold text-lg text-right ${points >= 0 ? 'text-cyan-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
             `;
             container.appendChild(row);
