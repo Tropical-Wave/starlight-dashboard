@@ -1,23 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Redeem Rewards - Starlight</title>
+    <meta name="theme-color" content="#EEF7F6"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            min-height: 100vh; /* Changed to min-height */
+            background-color: #F8FAFC; 
+            font-family: 'Poppins', sans-serif; 
+            color: #334155; 
+        }
+        :root { 
+            --gradient-start: #4BA7AD; 
+            --gradient-mid: #89B3D9; 
+            --gradient-end: #837FD9; 
+            --gradient-angle: 135deg;
+            --brand-color: #4BA7AD;
+        }
+        .text-gradient { 
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end)); 
+            -webkit-background-clip: text; 
+            background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            color: transparent; 
+        }
+        
+        /* --- Overlays and Modals --- */
+        .fullscreen-overlay { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            z-index: 100; 
+            display: flex; /* Changed from none */
+            align-items: center; 
+            justify-content: center; 
+            opacity: 0; 
+            visibility: hidden; /* Use visibility for accessibility */
+            transition: opacity 0.3s ease-out, visibility 0s 0.3s; 
+            background-color: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(5px); 
+        }
+        .fullscreen-overlay.visible { 
+            opacity: 1; 
+            visibility: visible;
+            transition: opacity 0.3s ease-out;
+        }
+        .popup-card { 
+            background-color: white; 
+            border-radius: 1.5rem; 
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); 
+            display: flex; 
+            flex-direction: column; 
+            width: 90%; 
+            max-width: 400px; 
+            max-height: 90vh; 
+            transform: scale(0.95); 
+            opacity: 0; 
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out; 
+        }
+        .fullscreen-overlay.visible .popup-card { 
+            transform: scale(1); 
+            opacity: 1; 
+        }
+        
+        /* --- Reward Button Overhaul --- */
+        .reward-button {
+            background-color: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 1.5rem;
+            transition: all 0.2s ease-out;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(0.75rem, 3vw, 1.5rem); /* Responsive padding */
+            aspect-ratio: 1 / 1; /* Maintain square shape */
+        }
+        .reward-button:hover:not(:disabled) { 
+            transform: translateY(-4px); 
+            border-color: var(--brand-color);
+            box-shadow: 0 8px 20px -5px rgba(75, 167, 173, 0.2); 
+        }
+        .reward-button:disabled { 
+            cursor: not-allowed; 
+            background-color: #F8FAFC; 
+        }
+        /* Content inside the button */
+        .reward-button img {
+            width: clamp(3.5rem, 18vw, 5rem); /* Slightly smaller image */
+            height: clamp(3.5rem, 18vw, 5rem);
+            object-fit: cover;
+            border-radius: 0.75rem;
+        }
+        .reward-button .label {
+            margin-top: 0.5rem;
+            font-weight: 600;
+            color: #1E293B; /* Darker for better contrast */
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+        }
+        .reward-button .points {
+            font-size: clamp(0.8rem, 3.5vw, 1rem);
+            font-weight: 700;
+            color: var(--brand-color);
+        }
+        .reward-button .quantity {
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            font-weight: 500;
+            color: #64748B;
+            margin-top: 2px;
+        }
+
+        /* --- Disabled State Overlay --- */
+        .reward-button .disabled-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: grayscale(80%) blur(1px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 600;
+            color: #475569;
+            opacity: 0;
+            transition: opacity 0.2s ease-out;
+            pointer-events: none;
+        }
+        .reward-button:disabled .disabled-overlay {
+            opacity: 1;
+        }
+        
+        /* --- Modal Buttons --- */
+        .modal-button { 
+            flex-grow: 1; 
+            text-align: center; 
+            padding: 1rem; 
+            font-weight: 600; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .modal-button.primary { 
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid)); 
+            color: white; 
+        }
+        .modal-button.primary:hover:not(:disabled) { 
+            opacity: 0.9; 
+            box-shadow: 0 4px 15px -5px rgba(0,0,0,0.2);
+        }
+        .modal-button.primary:disabled { 
+            background: #94A3B8; 
+            opacity: 0.7; 
+            cursor: wait; 
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110]">
+        <div class="text-center">
+            <svg class="animate-spin h-10 w-10 text-cyan-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <p id="loadingText" class="mt-4 font-semibold text-slate-600">Loading Data...</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="min-h-screen flex flex-col">
+        <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-50 flex-shrink-0">
+            <a href="index.html" class="text-slate-600 hover:text-slate-900 p-1 mr-3 rounded-full hover:bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            </a>
+            <h1 class="flex-grow font-bold text-2xl text-slate-800 text-center">Redeem Rewards</h1>
+            <div class="text-right w-24">
+                <div class="text-xs text-slate-500">Your Points</div>
+                <div id="userPoints" class="text-3xl font-bold text-gradient">0</div>
+            </div>
+        </header>
+        
+        <!-- Rewards Grid -->
+        <main id="rewardsGrid" class="p-4 md:p-8 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 flex-grow mx-auto w-full max-w-screen-lg">
+            <!-- Reward buttons will be dynamically checked by JS -->
+            <button class="reward-button" data-cost="5" data-label="Candy" data-reward-code="Reward1">
+                <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=混" alt="Candy Icon" class="bg-red-100">
+                <p class="label">Candy</p>
+                <p class="points">5 pts</p>
+                <p class="quantity"><span class="quantity-value">--</span> left</p>
+                <div class="disabled-overlay">Not enough<br>points</div>
+            </button>
+            <button class="reward-button" data-cost="10" data-label="Cookie" data-reward-code="Reward2">
+                <img src="https://placehold.co/128x128/FFFBEB/D97706?text=根" alt="Cookie Icon" class="bg-amber-100">
+                <p class="label">Cookie</p>
+                <p class="points">10 pts</p>
+                <p class="quantity"><span class="quantity-value">--</span> left</p>
+                <div class="disabled-overlay">Not enough<br>points</div>
+            </button>
+            <button class="reward-button" data-cost="15" data-label="Ramen" data-reward-code="Reward3">
+                <img src="https://placehold.co/128x128/FFF7ED/F97316?text=骨" alt="Ramen Icon" class="bg-orange-100">
+                <p class="label">Ramen</p>
+                <p class="points">15 pts</p>
+                <p class="quantity"><span class="quantity-value">--</span> left</p>
+                <div class="disabled-overlay">Not enough<br>points</div>
+            </button>
+            <button class="reward-button" data-cost="20" data-label="Photocard" data-reward-code="Reward4">
+                <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=萄" alt="Photocard Icon" class="bg-sky-100">
+                <p class="label">Photocard</p>
+                <p class="points">20 pts</p>
+                <p class="quantity"><span class="quantity-value">--</span> left</p>
+                <div class="disabled-overlay">Not enough<br>points</div>
+            </button>
+        </main>
+    </div>
+
+    <!-- Redeem Confirmation Modal -->
+    <div id="redeemModal" class="fullscreen-overlay">
+        <div class="popup-card p-6 gap-4 text-center">
+            <button id="redeemModalCloseBtn" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+            </button>
+            <img id="redeemModalImage" src="" alt="Reward Image" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl mx-auto">
+            <h3 id="redeemModalTitle" class="text-2xl font-bold text-slate-800"></h3>
+            <p class="text-slate-500">Redeem this reward for <strong id="redeemModalPoints" class="text-slate-700"></strong> points?</p>
+            <div id="redeemStatus" class="font-semibold mt-2 hidden h-6"></div>
+            <div class="flex items-center justify-center gap-4 mt-2 w-full">
+                <button id="redeemModalConfirmBtn" class="modal-button primary w-full">Redeem Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Info Modal (for errors, session expiry etc.) -->
+    <div id="infoModal" class="fullscreen-overlay">
+        <div class="popup-card p-6 gap-4 text-center">
+            <h3 id="infoModalTitle" class="text-2xl font-bold text-slate-800"></h3>
+            <p id="infoModalMessage" class="text-slate-500 break-words"></p>
+            <div class="flex items-center justify-center gap-4 mt-4 w-full">
+                <button id="infoModalCloseBtn" class="modal-button primary w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
 <script>
-    // --- DOM Elements ---
-    const dom = {
-        userPoints: document.getElementById('userPoints'),
-        rewardsGrid: document.getElementById('rewardsGrid'),
-        redeemModal: document.getElementById('redeemModal'),
-        redeemModalImage: document.getElementById('redeemModalImage'),
-        redeemModalTitle: document.getElementById('redeemModalTitle'),
-        redeemModalPoints: document.getElementById('redeemModalPoints'),
-        redeemModalCloseBtn: document.getElementById('redeemModalCloseBtn'),
-        redeemModalConfirmBtn: document.getElementById('redeemModalConfirmBtn'), 
-        redeemStatus: document.getElementById('redeemStatus'),
-        loadingOverlay: document.getElementById('loadingOverlay'),
-        loadingText: document.getElementById('loadingText'),
-        infoModal: document.getElementById('infoModal'),
-        infoModalTitle: document.getElementById('infoModalTitle'),
-        infoModalMessage: document.getElementById('infoModalMessage'),
-        infoModalCloseBtn: document.getElementById('infoModalCloseBtn'),
-        rewardButtons: document.querySelectorAll('.reward-button') // Select all reward buttons
-    };
+    // --- DOM Elements (Declared globally, but assigned within initialize to ensure DOM readiness) ---
+    const dom = {}; // Initialize as an empty object globally
 
     // --- Configuration ---
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID
@@ -36,8 +274,17 @@
     // --- UI Update Functions ---
     
     function showLoading(isLoading, text = "Loading Data...") { 
-        dom.loadingText.textContent = text;
-        dom.loadingOverlay.classList.toggle('visible', isLoading); 
+        // Ensure dom.loadingText and dom.loadingOverlay exist before attempting to use them
+        if (dom.loadingText) {
+            dom.loadingText.textContent = text;
+        } else {
+            console.error("Error: dom.loadingText is null in showLoading.");
+        }
+        if (dom.loadingOverlay) {
+            dom.loadingOverlay.classList.toggle('visible', isLoading); 
+        } else {
+            console.error("Error: dom.loadingOverlay is null in showLoading.");
+        }
     }
     
     /**
@@ -47,7 +294,11 @@
     function updateRewardsUI() {
         if (!state.isDataLoaded) return; // Don't update UI until all data is fetched
 
-        dom.userPoints.textContent = state.currentPoints;
+        if (dom.userPoints) {
+            dom.userPoints.textContent = state.currentPoints;
+        } else {
+            console.error("Error: dom.userPoints is null in updateRewardsUI.");
+        }
         
         dom.rewardButtons.forEach(button => {
             const cost = parseInt(button.dataset.cost, 10);
@@ -81,18 +332,23 @@
         const { label, cost, rewardCode } = rewardButton.dataset;
         const imgSrc = rewardButton.querySelector('img').src;
         
-        dom.redeemModalImage.src = imgSrc;
-        dom.redeemModalTitle.textContent = label;
-        dom.redeemModalPoints.textContent = cost;
-        dom.redeemStatus.classList.add('hidden');
-        dom.redeemModal.classList.add('visible');
+        // Add null checks for redeem modal elements
+        if (dom.redeemModalImage) dom.redeemModalImage.src = imgSrc;
+        if (dom.redeemModalTitle) dom.redeemModalTitle.textContent = label;
+        if (dom.redeemModalPoints) dom.redeemModalPoints.textContent = cost;
+        if (dom.redeemStatus) dom.redeemStatus.classList.add('hidden');
+        if (dom.redeemModal) dom.redeemModal.classList.add('visible');
         
-        dom.redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, parseInt(cost, 10));
+        if (dom.redeemModalConfirmBtn) {
+            dom.redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, parseInt(cost, 10));
+        } else {
+            console.error("Error: dom.redeemModalConfirmBtn is null in showRedeemModal.");
+        }
     }
 
     function closeRedeemModal() { 
-        dom.redeemModal.classList.remove('visible'); 
-        dom.redeemModalConfirmBtn.onclick = null; 
+        if (dom.redeemModal) dom.redeemModal.classList.remove('visible'); 
+        if (dom.redeemModalConfirmBtn) dom.redeemModalConfirmBtn.onclick = null; 
     }
 
     function showInfoModal(title, message, onOk) {
@@ -124,7 +380,7 @@
             if (dom.infoModalCloseBtn) {
                 dom.infoModalCloseBtn.onclick = null;
             } else {
-                console.error("Error: infoModalCloseBtn element not found during close action.");
+                console.error("Error: dom.infoModalCloseBtn element not found during close action.");
             }
             if (onOk) onOk();
         };
@@ -132,7 +388,7 @@
         if (dom.infoModalCloseBtn) {
             dom.infoModalCloseBtn.onclick = close;
         } else {
-            console.error("Error: infoModalCloseBtn element not found for setting click handler.");
+            console.error("Error: dom.infoModalCloseBtn element not found for setting click handler.");
         }
     }
 
@@ -202,8 +458,13 @@
         if (state.isRedeeming) return;
 
         state.isRedeeming = true;
-        dom.redeemModalConfirmBtn.disabled = true;
-        dom.redeemModalConfirmBtn.textContent = 'Redeeming...';
+        if (dom.redeemModalConfirmBtn) {
+            dom.redeemModalConfirmBtn.disabled = true;
+            dom.redeemModalConfirmBtn.textContent = 'Redeeming...';
+        } else {
+            console.error("Error: dom.redeemModalConfirmBtn is null in redeemReward.");
+        }
+
 
         const originalPoints = state.currentPoints;
         // Make a deep copy of inventory to easily rollback
@@ -241,9 +502,13 @@
             console.log('Redemption logged successfully:', await response.json());
 
             // 3. Success Feedback
-            dom.redeemStatus.textContent = 'Success! Reward redeemed.';
-            dom.redeemStatus.className = 'font-semibold mt-2 text-green-600';
-            dom.redeemStatus.classList.remove('hidden');
+            if (dom.redeemStatus) {
+                dom.redeemStatus.textContent = 'Success! Reward redeemed.';
+                dom.redeemStatus.className = 'font-semibold mt-2 text-green-600';
+                dom.redeemStatus.classList.remove('hidden');
+            } else {
+                console.error("Error: dom.redeemStatus is null after successful redemption.");
+            }
 
             setTimeout(() => {
                 closeRedeemModal();
@@ -257,15 +522,22 @@
             state.inventory = originalInventory;
             updateRewardsUI(); // Revert UI to original state
 
-            dom.redeemStatus.textContent = `Error: Could not redeem.`;
-            dom.redeemStatus.className = 'font-semibold mt-2 text-red-500';
-            dom.redeemStatus.classList.remove('hidden');
+            if (dom.redeemStatus) {
+                dom.redeemStatus.textContent = `Error: Could not redeem.`;
+                dom.redeemStatus.className = 'font-semibold mt-2 text-red-500';
+                dom.redeemStatus.classList.remove('hidden');
+            } else {
+                console.error("Error: dom.redeemStatus is null after failed redemption.");
+            }
+
         } finally {
             // 6. Reset Modal State and re-sync with server after a delay
             setTimeout(() => {
                 state.isRedeeming = false;
-                dom.redeemModalConfirmBtn.disabled = false;
-                dom.redeemModalConfirmBtn.textContent = 'Redeem Now';
+                if (dom.redeemModalConfirmBtn) {
+                    dom.redeemModalConfirmBtn.disabled = false;
+                    dom.redeemModalConfirmBtn.textContent = 'Redeem Now';
+                }
                 // Full re-sync to ensure data consistency after optimistic update/rollback
                 fetchAllData(); 
             }, 2000);
@@ -276,7 +548,7 @@
      * Main data fetching and initialization function
      */
     async function fetchAllData() {
-        showLoading(true);
+        showLoading(true); // Call showLoading first to display loading indicator
         try {
             // Fetch user points and inventory in parallel for speed
             await Promise.all([
@@ -291,13 +563,42 @@
                 window.location.href = 'index.html';
             });
         } finally {
-            showLoading(false);
+            showLoading(false); // Hide loading indicator
         }
     }
     
     // --- Initialization ---
     
     function initialize() {
+        // Assign DOM elements to the 'dom' object AFTER the DOM is fully loaded
+        dom.userPoints = document.getElementById('userPoints');
+        dom.rewardsGrid = document.getElementById('rewardsGrid');
+        dom.redeemModal = document.getElementById('redeemModal');
+        dom.redeemModalImage = document.getElementById('redeemModalImage');
+        dom.redeemModalTitle = document.getElementById('redeemModalTitle');
+        dom.redeemModalPoints = document.getElementById('redeemModalPoints');
+        dom.redeemModalCloseBtn = document.getElementById('redeemModalCloseBtn');
+        dom.redeemModalConfirmBtn = document.getElementById('redeemModalConfirmBtn'); 
+        dom.redeemStatus = document.getElementById('redeemStatus');
+        dom.loadingOverlay = document.getElementById('loadingOverlay');
+        dom.loadingText = document.getElementById('loadingText');
+        dom.infoModal = document.getElementById('infoModal');
+        dom.infoModalTitle = document.getElementById('infoModalTitle');
+        dom.infoModalMessage = document.getElementById('infoModalMessage');
+        dom.infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
+        dom.rewardButtons = document.querySelectorAll('.reward-button'); // Select all reward buttons
+
+        // Perform basic null checks for crucial elements before proceeding
+        // If any of these are null, it means there's an issue with the HTML structure/IDs.
+        if (!dom.loadingText || !dom.loadingOverlay || !dom.rewardsGrid || 
+            !dom.redeemModalCloseBtn || !dom.redeemModal || !dom.infoModal || 
+            !dom.infoModalTitle || !dom.infoModalMessage || !dom.infoModalCloseBtn) {
+            console.error("CRITICAL ERROR: One or more essential DOM elements are missing. Please ensure their IDs are correct and they exist in the HTML.");
+            // We can prevent further errors by stopping execution here if critical elements are not found.
+            showInfoModal("Setup Error", "A critical part of the page could not load. Please contact support if this persists.");
+            return; // Stop initialization if critical elements are not found
+        }
+
         state.currentUserCode = sessionStorage.getItem('currentUserCode');
         if (!state.currentUserCode) {
             showInfoModal("Session Expired", "No active user session found. Please log in to continue.", () => {
@@ -309,6 +610,7 @@
         fetchAllData(); // Start fetching all necessary data
 
         // Event Listeners for reward buttons
+        // These can now be safely added as dom.rewardsGrid is guaranteed to be non-null
         dom.rewardsGrid.addEventListener('click', (e) => {
             const rewardButton = e.target.closest('.reward-button');
             if (rewardButton && !rewardButton.disabled) {
@@ -317,10 +619,12 @@
         });
 
         // Event Listeners for modals
+        // These can now be safely added as dom.redeemModalCloseBtn and dom.redeemModal are guaranteed to be non-null
         dom.redeemModalCloseBtn.addEventListener('click', closeRedeemModal);
         dom.redeemModal.addEventListener('click', (e) => {
             if (e.target === dom.redeemModal) closeRedeemModal();
         });
+        // Also ensure dom.infoModalCloseBtn exists before attaching its listener
         dom.infoModalCloseBtn.addEventListener('click', () => showInfoModal('Info', 'Operation complete.', null)); // Generic close for info modal
     }
 
