@@ -145,17 +145,23 @@
             color: #1E293B; filter: blur(0); opacity: 1;
         }
         
-        /* Stamping animation */
+        /* Fade-in animation for icons */
         .stamp-icon {
-            opacity: 0; transform: translateY(-50px) scale(1.5);
+            opacity: 0; /* Start invisible */
+            transform: scale(0.8); /* Start slightly smaller */
         }
         .streak-stamp.is-stamping .stamp-icon {
-            animation: stamp-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation: fade-in-scale 0.5s ease-out forwards; /* Fade in and scale up */
         }
-        @keyframes stamp-drop {
-            0% { opacity: 0; transform: translateY(-50px) scale(1.5); }
-            60% { opacity: 1; transform: translateY(5px) scale(0.9); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes fade-in-scale {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
@@ -184,11 +190,11 @@
     <main id="dashboard" class="flex">
         <div class="left-panel flex flex-col gap-4 lg:gap-8">
             <div class="dashboard-card flex-shrink-0">
-                 <header class="font-bold font-['Oswald'] text-4xl md:text-5xl text-slate-800">Dashboard</header>
+                 <header class="font-bold font-['Oswald'] text-4xl md:text-5xl text-slate-800">Starlight Dashboard</header>
                  <p class="text-xl md:text-2xl mt-1 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
             </div>
             <div class="dashboard-card flex-grow flex flex-col">
-                <h3 class="font-bold text-xl text-slate-800 text-center mb-4 flex-shrink-0">Event Progress</h3>
+                <h3 class="font-bold text-xl text-slate-800 text-center mb-4 flex-shrink-0">Event Stamps</h3>
                 <div id="streakTrackerContainer" class="flex-grow flex items-center justify-around">
                     </div>
             </div>
@@ -207,20 +213,23 @@
                     <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full text-white hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Rewards</a>
                 </div>
                 <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
-                    <a href="game1.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="Guess the Song (Easy)">
+                    <a href="game1.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="K-Pop Quiz (Easy)">
                         <div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div>
-                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span>
+                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">K-Pop Quiz</span>
                         <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Easy</span>
+                        <span class="card-points block text-xs md:text-sm font-medium text-green-500">+5 Pts</span>
                     </a>
                     <a href="game2.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="Guess the Song (Moderate)">
                         <div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div>
                         <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span>
                         <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Moderate</span>
+                        <span class="card-points block text-xs md:text-sm font-medium text-green-500">+10 Pts</span>
                     </a>
                     <a href="game3.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="True or False (Hard)">
                         <div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div>
                         <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">True or False</span>
                         <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Hard</span>
+                        <span class="card-points block text-xs md:text-sm font-medium text-green-500">+20 Pts</span>
                     </a>
                 </div>
             </div>
@@ -298,12 +307,13 @@
       }
       try {
         // Fetch Name, Points, and Event attendance from the 'Users' sheet
-        const userFields = 'Name,Points,Event1,Event2,Event3';
-        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
+        // Removed the 'fields' parameter and the cache-busting 't' parameter from the URL.
+        // SheetDB's search endpoint returns the full row, from which we can extract the necessary fields.
+        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users`;
         
         // Fetch Transaction history from the 'History' sheet, sorted by Timestamp
-        const historyFields = 'Transaction,Points,Timestamp';
-        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
+        // Removed the 'fields' parameter and the cache-busting 't' parameter from the URL.
+        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&sort_by=Timestamp&sort_order=desc`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
@@ -320,7 +330,7 @@
         const historyJson = await historyRes.json();
 
         if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
-            throw new Error("Invalid user data received from API during refresh.");
+            throw new Error("Invalid user data received from API during refresh. No user found or data format incorrect.");
         }
         
         updateDashboardUI(userJson[0], historyJson);
@@ -350,12 +360,12 @@
 
       try {
         // Fetch Name, Points, and Event attendance from the 'Users' sheet
-        const userFields = 'Name,Points,Event1,Event2,Event3';
-        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
+        // Removed the 'fields' parameter and the cache-busting 't' parameter from the URL.
+        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users`;
         
         // Fetch Transaction history from the 'History' sheet, sorted by Timestamp
-        const historyFields = 'Transaction,Points,Timestamp';
-        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
+        // Removed the 'fields' parameter and the cache-busting 't' parameter from the URL.
+        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&sort_by=Timestamp&sort_order=desc`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
@@ -372,7 +382,7 @@
         const historyJson = await historyRes.json();
 
         if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
-            throw new Error("Invalid access code or user data format.");
+            throw new Error("Invalid access code or user data format. No user found or data format incorrect.");
         }
         const userData = userJson[0];
         
@@ -395,7 +405,14 @@
 
       } catch (error) {
         console.error("Login failed:", error);
-        accessCodeError.textContent = "Login failed. Please check the code or try again later.";
+        // Provide a more user-friendly error message if it's a 404 from SheetDB specifically
+        if (error.message.includes("404") && (error.message.includes("Undefined column: fields") || error.message.includes("Undefined column: t"))) {
+            accessCodeError.textContent = "Configuration error: The SheetDB API might be set up incorrectly (sheet name, column name, or API ID).";
+        } else if (error.message.includes("Invalid access code") || error.message.includes("No user found")) {
+            accessCodeError.textContent = "Invalid Access Code. Please try again.";
+        } else {
+            accessCodeError.textContent = "Login failed. Please check the code or try again later.";
+        }
         accessCodeError.classList.remove('hidden');
         currentUserCode = null;
         sessionStorage.removeItem('currentUserCode');
@@ -408,7 +425,7 @@
 
     // --- UI Rendering Functions ---
     function updateDashboardUI(userData, historyData) {
-      userNameEl.textContent = userData.Name || "Guest";
+      userNameEl.textContent = `${userData.Name || "Guest"}!`; // Added exclamation mark
       userPointsEl.textContent = parseInt(userData.Points || "0", 10);
       renderStreakTracker(userData);
       renderHistoryList(historyData || []);
@@ -428,7 +445,13 @@
         'Tier3': `<svg class="w-10 h-10 md:w-12 md:h-12 stamp-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>`
       };
       
-      let animationDelay = 0;
+      // Initial delay before the first stamp animation
+      let animationInitialDelay = 500; 
+      // Delay between sequential stamp animations
+      let animationStaggerDelay = 700; 
+
+      let currentAnimationDelay = animationInitialDelay;
+
       steps.forEach((step, index) => {
         const tier = data[step.key];
         const isCompleted = tier && tierIcons[tier];
@@ -446,8 +469,8 @@
         if (isCompleted) {
             setTimeout(() => {
                 stampEl.classList.add('is-stamping');
-            }, animationDelay);
-            animationDelay += 300; // Stagger the animation for each stamp
+            }, currentAnimationDelay);
+            currentAnimationDelay += animationStaggerDelay; // Increment delay for the next stamp
         }
       });
     }
@@ -467,9 +490,10 @@
             const points = parseInt(item.Points, 10) || 0;
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
+            // Changed text-cyan-600 to text-green-600 for positive points
             row.innerHTML = `
                 <span class="font-semibold text-slate-800 text-left">${item.Transaction || 'Event'}</span>
-                <span class="font-bold text-lg text-right ${points >= 0 ? 'text-cyan-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
+                <span class="font-bold text-lg text-right ${points >= 0 ? 'text-green-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
             `;
             container.appendChild(row);
         });
