@@ -296,8 +296,10 @@
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
       try {
-        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&t=${Date.now()}`;
-        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&t=${Date.now()}`;
+        const userFields = 'Name,Points,Event1,Event2,Event3';
+        const historyFields = 'Transaction,Points,Timestamp';
+        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
+        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
@@ -336,8 +338,10 @@
       accessCodeEnterBtn.disabled = true;
 
       try {
-        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&t=${Date.now()}`;
-        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&t=${Date.now()}`;
+        const userFields = 'Name,Points,Event1,Event2,Event3';
+        const historyFields = 'Transaction,Points,Timestamp';
+        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
+        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
@@ -439,8 +443,8 @@
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
 
-        // Sort by timestamp (newest first) and then render
-        historyData.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp)).forEach(item => {
+        // Data is pre-sorted by the API (newest first)
+        historyData.forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
