@@ -296,24 +296,28 @@
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
       try {
-        // --- MODIFICATION: Explicitly define the columns to fetch ---
         const userFields = 'Name,Points,Event1,Event2,Event3';
         const historyFields = 'Transaction,Points,Timestamp';
 
-        // --- MODIFICATION: Add 'fields' and 'sort' parameters to the API URLs ---
         const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
-        if (!userRes.ok) throw new Error(`Network error fetching user: ${userRes.statusText}`);
-        if (!historyRes.ok) throw new Error(`Network error fetching history: ${historyRes.statusText}`);
+        if (!userRes.ok) {
+            const errorText = await userRes.text();
+            throw new Error(`User data refresh failed: ${userRes.status} ${userRes.statusText}. Details: ${errorText}`);
+        }
+        if (!historyRes.ok) {
+            const errorText = await historyRes.text();
+            throw new Error(`History data refresh failed: ${historyRes.status} ${historyRes.statusText}. Details: ${errorText}`);
+        }
 
         const userJson = await userRes.json();
         const historyJson = await historyRes.json();
 
         if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
-            throw new Error("Invalid user data received from API.");
+            throw new Error("Invalid user data received from API during refresh.");
         }
         
         updateDashboardUI(userJson[0], historyJson);
@@ -341,24 +345,28 @@
       accessCodeEnterBtn.disabled = true;
 
       try {
-        // --- MODIFICATION: Explicitly define the columns to fetch during login ---
         const userFields = 'Name,Points,Event1,Event2,Event3';
         const historyFields = 'Transaction,Points,Timestamp';
 
-        // --- MODIFICATION: Add 'fields' and 'sort' parameters to the API URLs during login ---
         const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
-        if (!userRes.ok) throw new Error(`Network error`);
+        if (!userRes.ok) {
+            const errorText = await userRes.text();
+            throw new Error(`User data fetch failed: ${userRes.status} ${userRes.statusText}. Details: ${errorText}`);
+        }
+        if (!historyRes.ok) {
+            const errorText = await historyRes.text();
+            throw new Error(`History data fetch failed: ${historyRes.status} ${historyRes.statusText}. Details: ${errorText}`);
+        }
         
         const userJson = await userRes.json();
         const historyJson = await historyRes.json();
 
-        // Use first result since access codes are unique
         if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
-            throw new Error("Invalid access code");
+            throw new Error("Invalid access code or user data format.");
         }
         const userData = userJson[0];
         
@@ -381,7 +389,7 @@
 
       } catch (error) {
         console.error("Login failed:", error);
-        accessCodeError.textContent = "Invalid Access Code. Please try again.";
+        accessCodeError.textContent = "Login failed. Please check the code or try again later.";
         accessCodeError.classList.remove('hidden');
         currentUserCode = null;
         sessionStorage.removeItem('currentUserCode');
