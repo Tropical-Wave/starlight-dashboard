@@ -294,31 +294,13 @@
             box-shadow: none;
         }
 
-        /* Points Popup */
-        .points-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            opacity: 0;
-            background-color: var(--brand-color);
-            color: white;
-            padding: 2rem 3rem;
-            border-radius: 1.5rem;
-            font-size: 2rem;
+        /* Points Earned Text for Result Screen */
+        .points-earned-text {
+            font-size: 2rem; /* Larger font size for points */
             font-weight: bold;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            z-index: 1000;
-            transition: all 0.5s ease-out;
-        }
-        .points-popup.show {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-        .points-popup.hide {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.8);
+            color: #10B981; /* Green color for earned points */
+            margin-top: -1rem; /* Adjust spacing */
+            margin-bottom: 2rem;
         }
 
         /* Generic utilities for hidden elements */
@@ -356,6 +338,21 @@
             .question-card, .choices-section {
                 width: 80%; /* Wider content area */
                 max-width: 1000px; /* Allow content to span more */
+            }
+            /* Adjust question text size for smaller landscape screens */
+            @media (max-height: 500px) { /* Example: for very short landscape screens */
+                .question-text {
+                    font-size: 1.8rem; /* Slightly smaller font */
+                }
+            }
+            @media (max-width: 800px) and (orientation: landscape) {
+                .question-text {
+                    font-size: 1.8rem; /* Adjust for smaller landscape width */
+                }
+                .choice-button {
+                    font-size: 1.2rem;
+                    padding: 1rem;
+                }
             }
         }
     </style>
@@ -408,13 +405,10 @@
         <div class="flex flex-col items-center justify-center h-full w-full">
             <h2 id="resultMessage" class="message"></h2>
             <p id="resultSubtitle" class="subtitle-message"></p>
+            <!-- New element for points earned text -->
+            <p id="pointsEarnedText" class="points-earned-text hidden"></p>
             <button id="doneButton" class="mt-8 gradient-bg text-white">Done</button>
         </div>
-    </div>
-
-    <!-- Points Earned Popup -->
-    <div id="pointsPopup" class="points-popup">
-        You earned 5 points!
     </div>
 
 <script>
@@ -437,8 +431,8 @@
     const countdownCircleProgress = document.getElementById('countdownCircleProgress');
     const resultMessage = document.getElementById('resultMessage');
     const resultSubtitle = document.getElementById('resultSubtitle');
+    const pointsEarnedText = document.getElementById('pointsEarnedText'); // New element
     const doneButton = document.getElementById('doneButton');
-    const pointsPopup = document.getElementById('pointsPopup');
 
     // --- Sound Effects (using Tone.js) ---
     // Tone.Player for local sound files
@@ -724,8 +718,8 @@
 
         setTimeout(() => {
             currentQuestionIndex++;
-            gameActive = true; // Reactivate game for next question
-            loadQuestion();
+            gameActive = true; // Re-activate game for next question
+            loadQuestion(); // Load the next question
         }, 1500); // Short delay before next question
     }
 
@@ -760,16 +754,18 @@
         window.removeEventListener('popstate', handlePopState); // Remove popstate listener
 
         showScreen(resultScreen);
-        doneButton.disabled = false; // Enable done button
+        doneButton.disabled = false; // Enable done button when on result screen
 
         if (score === QUIZ_QUESTION_COUNT) {
-            resultMessage.textContent = "Congratulations!";
+            resultMessage.textContent = "Congratulations you won!";
             resultSubtitle.textContent = "You got all 5 questions right!";
+            pointsEarnedText.textContent = `You earned ${GAME_POINTS} points!`; // Set points text
+            pointsEarnedText.classList.remove('hidden'); // Show points text
             sendPointsToSheetDB(); // Attempt to send points if won
         } else {
             resultMessage.textContent = "Game Over!";
             resultSubtitle.textContent = `You answered ${score} out of ${QUIZ_QUESTION_COUNT} correctly. Keep practicing!`;
-            // If lost, no points to send. User stays until Done is pressed.
+            pointsEarnedText.classList.add('hidden'); // Hide points text if lost
         }
     }
 
@@ -777,13 +773,11 @@
      * Sends game data to SheetDB. Only called if the user wins.
      */
     async function sendPointsToSheetDB() {
-        // This function is only called if score === QUIZ_QUESTION_COUNT
-        // so we can assume points are earned.
-        
         const currentUserCode = sessionStorage.getItem('currentUserCode');
         if (!currentUserCode) {
             console.error("No current user code found in session storage. Cannot send points.");
-            showPointPopup("Error: No user found. Cannot save points."); // Show error in popup
+            // Update the result screen to show a subtle error message instead of popup
+            resultSubtitle.textContent += "\n(Error: Could not save points - no user code)";
             return;
         }
 
@@ -812,38 +806,19 @@
 
             const result = await response.json();
             console.log('Points sent to SheetDB:', result);
-            showPointPopup(`You earned ${GAME_POINTS} points!`); // Show success message
+            // Success: No popup, info already on screen.
 
         } catch (error) {
             console.error('Failed to send points to SheetDB:', error);
-            let errorMessage = "Failed to save points. Please try again.";
+            let errorMessage = "\n(Error saving points: Please try again.)";
             if (error.message.includes("405")) {
-                errorMessage = "Error: Method Not Allowed. Check SheetDB API configuration (POST permissions for 'History' sheet).";
+                errorMessage = "\n(Error saving points: Method Not Allowed. Check SheetDB API config.)";
             } else if (error.message.includes("404")) {
-                errorMessage = "Error: API ID or Sheet Name not found. Check SheetDB ID and sheet names.";
+                errorMessage = "\n(Error saving points: API ID or Sheet Name not found.)";
             }
-            showPointPopup(errorMessage); // Show specific error message in popup
+            // Update the result screen to show the error
+            resultSubtitle.textContent += errorMessage;
         }
-    }
-
-    /**
-     * Displays an animated popup for a message and then redirects.
-     * This function is always called upon winning or when "Done" is pressed (if lost).
-     * @param {string} message - The message to display in the popup.
-     */
-    function showPointPopup(message) {
-        pointsPopup.textContent = message;
-        pointsPopup.classList.add('show');
-        doneButton.disabled = true; // Disable button when popup is active to prevent double click
-
-        setTimeout(() => {
-            pointsPopup.classList.remove('show');
-            pointsPopup.classList.add('hide');
-            setTimeout(() => {
-                pointsPopup.classList.remove('hide');
-                window.location.href = 'index.html'; // Redirect AFTER popup animation
-            }, 500); // Duration of hide animation
-        }, 3000); // Popup visible for 3 seconds
     }
 
     // --- Event Listeners ---
@@ -853,16 +828,9 @@
         startButton.addEventListener('click', startQuiz);
 
         doneButton.addEventListener('click', () => {
-            // If the user lost, and clicks 'Done', just redirect.
-            // If the user won, sendPointsToSheetDB was already called by endQuiz,
-            // and it already calls showPointPopup which handles redirection.
-            // We only need to handle the lost scenario here.
-            if (score < QUIZ_QUESTION_COUNT) {
-                 window.location.href = 'index.html';
-            }
-            // If score === QUIZ_QUESTION_COUNT, showPointPopup has already been called
-            // by sendPointsToSheetDB, and it will handle the redirection.
-            // No action needed for 'won' scenario as it's already in motion.
+            doneButton.disabled = true; // Disable button to prevent multiple clicks
+            // Only redirect when done button is clicked
+            window.location.href = 'index.html'; 
         });
     });
 
