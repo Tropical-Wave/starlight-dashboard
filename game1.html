@@ -59,13 +59,13 @@
         }
         #introScreen .title {
             font-family: 'Oswald', sans-serif;
-            font-size: 4rem; /* Larger title */
+            font-size: clamp(3rem, 10vw, 4rem); /* Responsive title size */
             line-height: 1;
             color: #2D3748; /* Darker tone for emphasis */
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
         #introScreen .subtitle {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive subtitle size */
             color: #4A5568;
         }
         #introScreen .label {
@@ -74,20 +74,22 @@
             padding: 0.25rem 0.75rem;
             border-radius: 9999px; /* Pill shape */
             background-color: #B2F5EA; /* Light background for the label */
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 3vw, 1.25rem); /* Responsive label size */
             margin-top: 1rem;
         }
-        #introScreen .instructions {
+        #introScreen .instructions-list { /* Changed from .instructions to .instructions-list */
             max-width: 80%;
-            text-align: center;
-            font-size: 1.1rem;
+            text-align: left; /* Changed to left align for bullet points */
+            font-size: clamp(0.9rem, 2.8vw, 1.1rem); /* Responsive font size */
             color: #6B7280;
             line-height: 1.6;
             margin-top: 2rem;
+            list-style: disc; /* Use disc for bullet points */
+            padding-left: 20px; /* Indent for bullet points */
         }
         #introScreen button {
             padding: 1.25rem 3rem;
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive button text size */
             font-weight: bold;
             border-radius: 0.75rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -123,10 +125,11 @@
             background-color: #EEF7F6;
             justify-content: flex-start; /* Align header to top */
             padding-top: 1rem; /* Space for header */
+            flex-direction: column; /* Ensure column layout for content below header */
         }
         #gameScreen .header-quiz {
             font-family: 'Oswald', sans-serif;
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 7vw, 2.5rem); /* Responsive header size */
             color: #2D3748;
             margin-bottom: 1rem;
             width: 100%; /* Ensure it spans width */
@@ -138,28 +141,34 @@
             background-color: white;
             border-radius: 1.5rem;
             border: 1px solid #D1E0DE;
-            padding: 1.5rem;
+            padding: clamp(1rem, 4vw, 1.5rem); /* Responsive padding */
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             width: 90%;
             max-width: 900px;
+            /* Flex properties for vertical space distribution */
+            flex-grow: 1; /* Allows it to grow and take space */
+            flex-basis: 0; /* Flexible base size */
             margin-bottom: 1.5rem; /* Space between question card and choices */
             position: relative; /* For absolute positioning of timer */
-            display: flex; /* For centering question text within the card */
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 180px; /* Ensure card has some height */
+            min-height: 150px; /* Minimum height for smaller screens */
+            max-height: 45%; /* Fixed to take top half (approx) */
+            box-sizing: border-box; /* Include padding/border in height */
         }
 
         .question-text {
-            font-size: 2.2rem; /* Large and readable */
+            font-size: clamp(1.6rem, 5.5vw, 2.2rem); /* Responsive font size */
             font-weight: 600;
             color: #334155;
             line-height: 1.4;
-            text-align: left; /* Question aligned to left within the card */
+            text-align: center; /* Changed to center align */
             padding-right: 70px; /* Make space for the timer */
+            width: 100%; /* Ensure text fills container width */
         }
         .choices-section {
-            flex: 1; /* Takes up bottom half */
+            flex-grow: 1; /* Takes up bottom half */
             display: grid;
             grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
             grid-template-rows: repeat(2, 1fr);
@@ -170,6 +179,7 @@
             opacity: 0; /* Hidden initially */
             visibility: hidden;
             transition: opacity 0.3s ease-in;
+            box-sizing: border-box;
         }
         .choices-section.visible {
             opacity: 1;
@@ -179,8 +189,8 @@
             background-color: white;
             border: 2px solid #D1E0DE;
             border-radius: 1rem;
-            padding: 1.25rem;
-            font-size: 1.4rem;
+            padding: clamp(0.8rem, 3vw, 1.25rem); /* Responsive padding */
+            font-size: clamp(1rem, 3.5vw, 1.4rem); /* Responsive font size */
             font-weight: 500;
             color: #334155;
             display: flex;
@@ -190,6 +200,7 @@
             cursor: pointer;
             transition: all 0.2s ease-out;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            min-height: 80px; /* Ensure buttons have min height */
         }
         .choice-button:hover:not(:disabled) {
             transform: translateY(-3px);
@@ -262,24 +273,23 @@
         }
         #resultScreen .message {
             font-family: 'Oswald', sans-serif;
-            font-size: 3.5rem;
+            font-size: clamp(2.5rem, 8vw, 3.5rem); /* Responsive message size */
             line-height: 1.2;
             color: #2D3748;
             margin-bottom: 1rem;
         }
         #resultScreen .subtitle-message {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive subtitle size */
             color: #4A5568;
             margin-bottom: 2rem;
         }
         #resultScreen .done-button {
             padding: 1.25rem 3rem;
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive button text size */
             font-weight: bold;
             border-radius: 0.75rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-            /* Added styling to match start button */
             color: white;
             background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
         }
@@ -296,11 +306,14 @@
 
         /* Points Earned Text for Result Screen */
         .points-earned-text {
-            font-size: 2rem; /* Larger font size for points */
+            font-size: clamp(1.5rem, 5vw, 2rem); /* Responsive font size */
             font-weight: bold;
             color: #10B981; /* Green color for earned points */
             margin-top: -1rem; /* Adjust spacing */
             margin-bottom: 2rem;
+            text-align: left; /* Changed to left align */
+            width: 80%; /* Match max width of other content for consistent alignment */
+            max-width: 900px;
         }
 
         /* Generic utilities for hidden elements */
@@ -329,7 +342,7 @@
             #introScreen {
                 padding: 1rem 4rem; /* More horizontal padding */
             }
-            #introScreen .instructions {
+            #introScreen .instructions-list { /* Apply landscape adjustments */
                 max-width: 60%;
             }
             #gameScreen {
@@ -338,21 +351,6 @@
             .question-card, .choices-section {
                 width: 80%; /* Wider content area */
                 max-width: 1000px; /* Allow content to span more */
-            }
-            /* Adjust question text size for smaller landscape screens */
-            @media (max-height: 500px) { /* Example: for very short landscape screens */
-                .question-text {
-                    font-size: 1.8rem; /* Slightly smaller font */
-                }
-            }
-            @media (max-width: 800px) and (orientation: landscape) {
-                .question-text {
-                    font-size: 1.8rem; /* Adjust for smaller landscape width */
-                }
-                .choice-button {
-                    font-size: 1.2rem;
-                    padding: 1rem;
-                }
             }
         }
     </style>
@@ -370,11 +368,12 @@
             <h1 class="title">K-Pop Quiz</h1>
             <p class="subtitle font-semibold text-lg md:text-xl mt-2">(Multiple Choice)</p>
             <span class="label">Easy</span>
-            <p class="instructions mt-8 text-center px-4">
-                Test your K-Pop knowledge! Answer 5 questions.
-                Each round lasts 7 seconds, with choices appearing only in the last 5 seconds.
-                Be quick to answer! Get all 5 correct to win!
-            </p>
+            <ul class="instructions-list mt-8 px-4">
+                <li>Test your K-Pop knowledge!</li>
+                <li>Answer 5 questions.</li>
+                <li>Each round lasts 7 seconds, with choices appearing only in the last 5 seconds.</li>
+                <li>Be quick to answer! Get all 5 correct to win!</li>
+            </ul>
             <button id="startButton" class="mt-12 text-white gradient-bg">Start Quiz</button>
         </div>
     </div>
@@ -758,7 +757,7 @@
 
         if (score === QUIZ_QUESTION_COUNT) {
             resultMessage.textContent = "Congratulations you won!";
-            resultSubtitle.textContent = "You got all 5 questions right!";
+            resultSubtitle.textContent = ""; // Removed: "You got all 5 questions right!"
             pointsEarnedText.textContent = `You earned ${GAME_POINTS} points!`; // Set points text
             pointsEarnedText.classList.remove('hidden'); // Show points text
             sendPointsToSheetDB(); // Attempt to send points if won

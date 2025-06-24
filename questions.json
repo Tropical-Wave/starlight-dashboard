@@ -48,5 +48,55 @@
     "question": "Which entertainment company is behind the group SEVENTEEN?",
     "choices": ["YG Entertainment", "SM Entertainment", "Pledis Entertainment", "JYP Entertainment"],
     "correctAnswer": "Pledis Entertainment"
+  },
+  {
+    "question": "Which group has a sub‑unit named ‘Odd Eye Circle’?",
+    "choices": ["Red Velvet", "LOONA", "TWICE", "aespa"],
+    "correctAnswer": "LOONA"
+  },
+  {
+    "question": "Which BTS member is nicknamed the 'Golden Maknae'?",
+    "choices": ["V", "Jimin", "Jungkook", "J‑Hope"],
+    "correctAnswer": "Jungkook"
+  },
+  {
+    "question": "Which girl group debuted with the song ‘Dalla Dalla’?",
+    "choices": ["ITZY", "Blackpink", "GFriend", "Mamamoo"],
+    "correctAnswer": "ITZY"
+  },
+  {
+    "question": "In what year did BoA debut?",
+    "choices": ["1998", "2000", "2002", "2004"],
+    "correctAnswer": "2000"
+  },
+  {
+    "question": "Which EXO member acted in the Chinese film ‘So I Married an Anti‑fan’?",
+    "choices": ["Suho", "Chanyeol", "Baekhyun", "Chen"],
+    "correctAnswer": "Chanyeol"
+  },
+  {
+    "question": "Which group was the first K‑Pop group to be featured on the Billboard 200?",
+    "choices": ["BTS", "Blackpink", "Wonder Girls", "Bigbang"],
+    "correctAnswer": "Wonder Girls"
+  },
+  {
+    "question": "Which legendary solo artist is often called the ‘King of K‑Pop’?",
+    "choices": ["Rain", "G‑Dragon", "PSY", "BoA"],
+    "correctAnswer": "Rain"
+  },
+  {
+    "question": "Which boy group debuted in 1992 and is considered the first idol group?",
+    "choices": ["H.O.T.", "Seo Taiji and Boys", "Shinhwa", "DBSK"],
+    "correctAnswer": "Seo Taiji and Boys"
+  },
+  {
+    "question": "Which K‑Pop group has 13 members and 3 sub‑units?",
+    "choices": ["SEVENTEEN", "NCT 127", "EXO", "Stray Kids"],
+    "correctAnswer": "SEVENTEEN"
+  },
+  {
+    "question": "Which soloist is known for the hit song ‘Gashina’?",
+    "choices": ["Chungha", "Sunmi", "IU", "Taeyeon"],
+    "correctAnswer": "Sunmi"
   }
 ]
