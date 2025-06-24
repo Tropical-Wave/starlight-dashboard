@@ -132,21 +132,31 @@
             width: 100%; /* Ensure it spans width */
             text-align: center;
         }
-        .question-section {
-            flex: 1; /* Takes up top half */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+
+        /* New Card for Question and Timer */
+        .question-card {
+            background-color: white;
+            border-radius: 1.5rem;
+            border: 1px solid #D1E0DE;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             width: 90%;
             max-width: 900px;
-            text-align: left; /* Question aligned to left */
-            padding: 1rem;
+            margin-bottom: 1.5rem; /* Space between question card and choices */
+            position: relative; /* For absolute positioning of timer */
+            display: flex; /* For centering question text within the card */
+            align-items: center;
+            justify-content: center;
+            min-height: 180px; /* Ensure card has some height */
         }
+
         .question-text {
             font-size: 2.2rem; /* Large and readable */
             font-weight: 600;
             color: #334155;
             line-height: 1.4;
+            text-align: left; /* Question aligned to left within the card */
+            padding-right: 70px; /* Make space for the timer */
         }
         .choices-section {
             flex: 1; /* Takes up bottom half */
@@ -160,7 +170,6 @@
             opacity: 0; /* Hidden initially */
             visibility: hidden;
             transition: opacity 0.3s ease-in;
-            position: relative; /* For timer positioning */
         }
         .choices-section.visible {
             opacity: 1;
@@ -206,9 +215,9 @@
 
         /* Countdown Timer */
         .countdown-timer-container {
-            position: absolute;
-            top: 0;
-            right: 0;
+            position: absolute; /* Positioned relative to .question-card */
+            top: 1rem;
+            right: 1rem;
             width: 60px; /* Size of the circular timer */
             height: 60px;
             display: flex;
@@ -344,7 +353,7 @@
             #gameScreen {
                 flex-direction: column; /* Still column for game sections */
             }
-            .question-section, .choices-section {
+            .question-card, .choices-section {
                 width: 80%; /* Wider content area */
                 max-width: 1000px; /* Allow content to span more */
             }
@@ -366,7 +375,7 @@
             <span class="label">Easy</span>
             <p class="instructions mt-8 text-center px-4">
                 Test your K-Pop knowledge! Answer 5 questions.
-                Each round lasts 8 seconds, but choices appear only in the last 5 seconds.
+                Each round lasts 7 seconds, with choices appearing only in the last 5 seconds.
                 Be quick to answer! Get all 5 correct to win!
             </p>
             <button id="startButton" class="mt-12 text-white gradient-bg">Start Quiz</button>
@@ -376,15 +385,8 @@
     <!-- Game Screen -->
     <div id="gameScreen" class="screen-container hidden">
         <h2 class="header-quiz">K-Pop Quiz</h2>
-        <div class="question-section">
+        <div class="question-card">
             <p id="questionText" class="question-text"></p>
-        </div>
-        <div id="choicesSection" class="choices-section">
-            <button class="choice-button" data-choice-index="0"></button>
-            <button class="choice-button" data-choice-index="1"></button>
-            <button class="choice-button" data-choice-index="2"></button>
-            <button class="choice-button" data-choice-index="3"></button>
-
             <div id="countdownTimerContainer" class="countdown-timer-container hidden">
                 <span id="countdownText">5</span>
                 <svg class="countdown-timer-svg" viewBox="0 0 36 36">
@@ -393,6 +395,12 @@
                 </svg>
             </div>
         </div>
+        <div id="choicesSection" class="choices-section">
+            <button class="choice-button" data-choice-index="0"></button>
+            <button class="choice-button" data-choice-index="1"></button>
+            <button class="choice-button" data-choice-index="2"></button>
+            <button class="choice-button" data-choice-index="3"></button>
+        </div>
     </div>
 
     <!-- Result Screen -->
@@ -400,7 +408,7 @@
         <div class="flex flex-col items-center justify-center h-full w-full">
             <h2 id="resultMessage" class="message"></h2>
             <p id="resultSubtitle" class="subtitle-message"></p>
-            <button id="doneButton" class="mt-8 text-white gradient-bg">Done</button>
+            <button id="doneButton" class="mt-8 gradient-bg text-white">Done</button>
         </div>
     </div>
 
@@ -414,6 +422,8 @@
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; // Replace with your SheetDB API ID
     const GAME_POINTS = 5; // Points awarded for winning the game
     const QUIZ_QUESTION_COUNT = 5; // Number of questions in the quiz
+    const TOTAL_ROUND_DURATION = 7000; // 7 seconds total per round (7000 ms)
+    const CHOICES_DISPLAY_DURATION = 5000; // Choices appear for the last 5 seconds (5000 ms)
 
     const introScreen = document.getElementById('introScreen');
     const gameScreen = document.getElementById('gameScreen');
@@ -431,38 +441,75 @@
     const pointsPopup = document.getElementById('pointsPopup');
 
     // --- Sound Effects (using Tone.js) ---
-    const correctSound = new Tone.Synth().toDestination();
-    const wrongSound = new Tone.Synth().toDestination();
-    const timerTickSound = new Tone.MembraneSynth().toDestination();
+    // Tone.Player for local sound files
+    const correctSoundPlayer = new Tone.Player({
+        url: 'correct.wav', // Local file path
+        autostart: false,
+    }).toDestination();
+
+    const wrongSoundPlayer = new Tone.Player({
+        url: 'wrong.wav', // Local file path
+        autostart: false,
+    }).toDestination();
+
+    const backgroundMusicPlayer = new Tone.Player({
+        url: 'music-for-game-fun-kid-game-163649.mp3', // Local file path
+        loop: true, // Loop the background music
+        autostart: false // Start manually when quiz begins
+    }).toDestination();
+
+    const gameDoneSoundPlayer = new Tone.Player({
+        url: 'done.wav', // Local file path
+        autostart: false,
+    }).toDestination();
+
+    // Tone.Synth for timer tick - Adjusted for softer/cuter sound
+    const timerTickSound = new Tone.MembraneSynth({
+        pitchDecay: 0.05, // Slight pitch decay for a softer "boop"
+        octaves: 0.5,
+        oscillator: {
+            type: 'sine' // Softer waveform
+        },
+        envelope: {
+            attack: 0.002, // Very quick attack
+            decay: 0.2, // Slightly longer decay for softness
+            sustain: 0.0,
+            release: 0.05 // Quick release
+        }
+    }).toDestination();
+    
+    // Tone.NoiseSynth for buzzer (for wrong/timeout)
     const buzzerSound = new Tone.NoiseSynth().toDestination();
-
-    // Set basic sounds
-    correctSound.oscillator.type = 'triangle';
-    correctSound.envelope.attack = 0.05;
-    correctSound.envelope.release = 0.2;
-
-    wrongSound.oscillator.type = 'sawtooth';
-    wrongSound.envelope.attack = 0.01;
-    wrongSound.envelope.release = 0.3;
-
-    timerTickSound.envelope.attack = 0.001;
-    timerTickSound.envelope.decay = 0.1;
-    timerTickSound.envelope.sustain = 0.0;
-    timerTickSound.envelope.release = 0.1;
-
     buzzerSound.envelope.attack = 0.005;
     buzzerSound.envelope.decay = 0.2;
     buzzerSound.envelope.sustain = 0;
     buzzerSound.envelope.release = 0.3;
+
 
     // --- Game State Variables ---
     let allQuestions = [];
     let shuffledQuestions = [];
     let currentQuestionIndex = 0;
     let score = 0;
-    let roundTimer = null; // Timer for the 8-second round
-    let countdownTimer = null; // Timer for the 5-second choices countdown
+    let roundTimer = null; // Timer for the total round duration
+    let choicesTimer = null; // Timer for when choices appear
+    let countdownTimer = null; // Interval for the 5-second choices countdown
     let gameActive = false; // Flag to track if a game is in progress
+
+    // --- Utility Functions ---
+
+    /**
+     * Shuffles an array in place using the Fisher-Yates (Knuth) algorithm.
+     * @param {Array} array - The array to shuffle.
+     * @returns {Array} The shuffled array.
+     */
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
 
     // --- Game Flow Functions ---
 
@@ -473,17 +520,15 @@
         try {
             const response = await fetch('questions.json');
             if (!response.ok) {
-                // If questions.json is not found, attempt to load from a relative path or handle error
                 throw new Error(`HTTP error! status: ${response.status} - Could not find questions.json`);
             }
             allQuestions = await response.json();
-            // Shuffle questions and reset score for a new game
             resetGame();
         } catch (error) {
             console.error('Could not load questions:', error);
+            // Instead of alert, display message in a dedicated area or popup
             alert('Failed to load quiz questions. Please ensure questions.json is in the correct directory and try again later.');
-            // Redirect back to index.html if questions fail to load
-            window.location.href = 'index.html';
+            window.location.href = 'index.html'; // Redirect back to index.html if questions fail to load
         }
     }
 
@@ -493,9 +538,8 @@
     function resetGame() {
         score = 0;
         currentQuestionIndex = 0;
-        shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
-        // Ensure only QUIZ_QUESTION_COUNT questions are taken
-        shuffledQuestions = shuffledQuestions.slice(0, QUIZ_QUESTION_COUNT);
+        // Shuffle all questions initially and then slice for quiz_question_count
+        shuffledQuestions = shuffleArray([...allQuestions]).slice(0, QUIZ_QUESTION_COUNT);
     }
 
     /**
@@ -503,7 +547,6 @@
      * @param {HTMLElement} screenToShow - The DOM element of the screen to activate.
      */
     function showScreen(screenToShow) {
-        // Hide all screens first
         introScreen.classList.remove('active');
         gameScreen.classList.remove('active');
         resultScreen.classList.remove('active');
@@ -512,20 +555,24 @@
         gameScreen.classList.add('hidden');
         resultScreen.classList.add('hidden');
 
-        // Show the desired screen
         screenToShow.classList.remove('hidden');
         setTimeout(() => {
             screenToShow.classList.add('active');
-        }, 10); // Small delay for transition to apply
+        }, 10);
     }
 
     /**
      * Starts the quiz game.
      */
-    function startQuiz() {
+    async function startQuiz() {
         gameActive = true;
         resetGame(); // Reset game state for a fresh start
         showScreen(gameScreen);
+        
+        // Start background music
+        await Tone.start(); // Ensure audio context is started
+        backgroundMusicPlayer.start();
+
         loadQuestion();
         // Prevent refresh or back during game
         history.pushState(null, null, location.href);
@@ -537,11 +584,11 @@
      */
     function handlePopState() {
         if (gameActive) {
-            // Display custom modal/message instead of alert()
             const confirmExit = window.confirm("Exiting the quiz will reset your progress. Are you sure?");
             if (confirmExit) {
-                window.removeEventListener('popstate', handlePopState); // Remove listener to avoid loop
-                window.location.href = 'index.html'; // Redirect to index.html
+                backgroundMusicPlayer.stop(); // Stop music on exit
+                window.removeEventListener('popstate', handlePopState);
+                window.location.href = 'index.html';
             } else {
                 history.pushState(null, null, location.href); // Stay on current page
             }
@@ -560,20 +607,25 @@
         const questionData = shuffledQuestions[currentQuestionIndex];
         questionText.textContent = questionData.question;
 
-        // Hide choices and timer initially
-        choicesSection.classList.remove('visible');
-        countdownTimerContainer.classList.add('hidden');
-        resetChoiceButtons(); // Clear previous states
+        choicesSection.classList.remove('visible'); // Hide choices
+        countdownTimerContainer.classList.add('hidden'); // Hide timer
+        resetChoiceButtons(); // Reset buttons to clear previous states
 
         // Clear any existing timers
         clearTimeout(roundTimer);
+        clearTimeout(choicesTimer);
         clearInterval(countdownTimer);
 
-        // Start the 8-second total round timer
+        // Schedule showing choices and starting countdown
+        choicesTimer = setTimeout(() => {
+            displayChoices(questionData.choices);
+            startCountdownTimer(CHOICES_DISPLAY_DURATION / 1000); // Pass duration in seconds
+        }, TOTAL_ROUND_DURATION - CHOICES_DISPLAY_DURATION); // Choices appear after 2 seconds (7-5)
+
+        // Set a timer for the entire round (7 seconds). If it expires, handle as wrong answer.
         roundTimer = setTimeout(() => {
-            displayChoices(questionData.choices); // Show choices after 3 seconds
-            startCountdownTimer(5); // Start 5-second countdown
-        }, 3000); // 8 seconds total - 5 seconds choices = 3 seconds initial delay for choices
+            handleAnswer(null, false); // Time ran out
+        }, TOTAL_ROUND_DURATION);
     }
 
     /**
@@ -582,45 +634,54 @@
      */
     function displayChoices(choices) {
         choicesSection.classList.add('visible');
+        const shuffledCurrentChoices = shuffleArray([...choices]); // Shuffle choices for this question
+
         choiceButtons.forEach((button, index) => {
-            button.textContent = choices[index];
-            button.onclick = () => handleAnswer(button.textContent, choices[index] === shuffledQuestions[currentQuestionIndex].correctAnswer);
+            button.textContent = shuffledCurrentChoices[index];
+            // The original index in questionData.choices is used to check correctness, not the shuffled index
+            button.onclick = () => handleAnswer(button.textContent, button.textContent === shuffledQuestions[currentQuestionIndex].correctAnswer);
             button.disabled = false; // Enable buttons when visible
         });
         countdownTimerContainer.classList.remove('hidden'); // Show timer
     }
 
     /**
-     * Starts the 5-second circular countdown timer.
-     * @param {number} duration - The duration of the countdown in seconds.
+     * Starts the circular countdown timer.
+     * @param {number} durationInSeconds - The duration of the countdown in seconds.
      */
-    function startCountdownTimer(duration) {
-        let timeRemaining = duration;
+    function startCountdownTimer(durationInSeconds) {
+        let timeRemaining = durationInSeconds;
         const radius = 15.9155; // From SVG path
         const circumference = 2 * Math.PI * radius;
 
-        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`;
+        countdownCircleProgress.style.transition = `stroke-dasharray ${durationInSeconds}s linear`;
+        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`; // Start filled (100% of circumference)
 
-        function updateTimer() {
-            if (timeRemaining <= 0) {
+        countdownText.textContent = timeRemaining; // Display initial time
+
+        countdownTimer = setInterval(() => {
+            timeRemaining--;
+            if (timeRemaining < 0) {
                 clearInterval(countdownTimer);
-                handleAnswer(null, false); // Time ran out
+                // handleAnswer(null, false) is called by roundTimer if time runs out
                 return;
             }
-
             countdownText.textContent = timeRemaining;
-            const progress = (timeRemaining / duration) * circumference;
+
+            // Play tick sound for last few seconds
+            if (timeRemaining <= 3 && timeRemaining >= 0) { // >= 0 to play on the 0 mark
+                timerTickSound.triggerAttackRelease('G4', '16n'); // Play a specific note for the tick
+            }
+            
+            // This portion handles the visual countdown circle, which smoothly transitions
+            // The value 100 is for 100% of the circle (stroke-dasharray="progress_percentage, remaining_percentage")
+            // circumference is used because stroke-dasharray expects actual length values not percentages
+            const progress = (timeRemaining / durationInSeconds) * circumference;
             countdownCircleProgress.style.strokeDasharray = `${progress}, ${circumference}`;
 
-            if (timeRemaining <= 3 && timeRemaining > 0) {
-                timerTickSound.triggerAttackRelease('C5', '8n'); // Play tick sound for last few seconds
-            }
-            timeRemaining--;
-        }
-
-        updateTimer(); // Initial call
-        countdownTimer = setInterval(updateTimer, 1000);
+        }, 1000); // Update every second
     }
+
 
     /**
      * Handles the player's answer or time running out.
@@ -628,9 +689,13 @@
      * @param {boolean} isCorrect - True if the selected answer is correct, false otherwise.
      */
     function handleAnswer(selectedAnswer, isCorrect) {
+        // Prevent multiple calls if already handled
+        if (!gameActive) return; 
+        gameActive = false; // Temporarily deactivate game to prevent further clicks/timeouts
+
         clearTimeout(roundTimer);
+        clearTimeout(choicesTimer); // Clear choices display timer too
         clearInterval(countdownTimer);
-        disableChoiceButtons();
         countdownTimerContainer.classList.add('hidden'); // Hide timer immediately
 
         const questionData = shuffledQuestions[currentQuestionIndex];
@@ -646,17 +711,20 @@
             } else if (button.textContent === selectedAnswer) {
                 button.classList.add('wrong');
             }
+            button.disabled = true; // Disable all buttons after an answer is chosen or time runs out
         });
 
         if (correctlyAnswered) {
             score++;
-            correctSound.triggerAttackRelease('C4', '8n'); // Play C4 for 8th note
+            correctSoundPlayer.start();
         } else {
-            buzzerSound.triggerAttackRelease('8n', 'C2'); // Play buzzer for 8th note
+            wrongSoundPlayer.start();
+            buzzerSound.triggerAttackRelease('8n', 'C2'); // Play buzzer for wrong answer/timeout
         }
 
         setTimeout(() => {
             currentQuestionIndex++;
+            gameActive = true; // Reactivate game for next question
             loadQuestion();
         }, 1500); // Short delay before next question
     }
@@ -683,33 +751,35 @@
 
     /**
      * Ends the quiz and displays the result screen.
+     * User stays on this screen until they press the "Done" button.
      */
     function endQuiz() {
         gameActive = false;
+        backgroundMusicPlayer.stop(); // Stop music when quiz ends
+        gameDoneSoundPlayer.start(); // Play game done sound
         window.removeEventListener('popstate', handlePopState); // Remove popstate listener
 
         showScreen(resultScreen);
+        doneButton.disabled = false; // Enable done button
+
         if (score === QUIZ_QUESTION_COUNT) {
             resultMessage.textContent = "Congratulations!";
             resultSubtitle.textContent = "You got all 5 questions right!";
-            sendPointsToSheetDB(); // Send points if won
+            sendPointsToSheetDB(); // Attempt to send points if won
         } else {
             resultMessage.textContent = "Game Over!";
             resultSubtitle.textContent = `You answered ${score} out of ${QUIZ_QUESTION_COUNT} correctly. Keep practicing!`;
-            // If lost, no points to send, so redirect immediately after a short display
-            doneButton.disabled = false; // Ensure button is clickable if we are directly redirecting
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000); // Increased display time to 2 seconds before redirect for "Game Over"
+            // If lost, no points to send. User stays until Done is pressed.
         }
     }
 
     /**
-     * Sends game data to SheetDB.
+     * Sends game data to SheetDB. Only called if the user wins.
      */
     async function sendPointsToSheetDB() {
-        doneButton.disabled = true; // Disable button while sending data
-
+        // This function is only called if score === QUIZ_QUESTION_COUNT
+        // so we can assume points are earned.
+        
         const currentUserCode = sessionStorage.getItem('currentUserCode');
         if (!currentUserCode) {
             console.error("No current user code found in session storage. Cannot send points.");
@@ -717,7 +787,6 @@
             return;
         }
 
-        // SheetDB requires the sheet name to be part of the payload when POSTing to the base API ID
         const payload = {
             sheet: "History", // Explicitly target the 'History' sheet
             data: [{
@@ -754,49 +823,52 @@
                 errorMessage = "Error: API ID or Sheet Name not found. Check SheetDB ID and sheet names.";
             }
             showPointPopup(errorMessage); // Show specific error message in popup
-        } finally {
-            // No need to re-enable doneButton here, showPointPopup handles redirection.
         }
     }
 
     /**
      * Displays an animated popup for a message and then redirects.
+     * This function is always called upon winning or when "Done" is pressed (if lost).
      * @param {string} message - The message to display in the popup.
      */
     function showPointPopup(message) {
         pointsPopup.textContent = message;
         pointsPopup.classList.add('show');
-        doneButton.disabled = true; // Ensure done button remains disabled during popup
+        doneButton.disabled = true; // Disable button when popup is active to prevent double click
 
         setTimeout(() => {
             pointsPopup.classList.remove('show');
             pointsPopup.classList.add('hide');
             setTimeout(() => {
                 pointsPopup.classList.remove('hide');
-                window.location.href = 'index.html'; // Redirect after popup animation
+                window.location.href = 'index.html'; // Redirect AFTER popup animation
             }, 500); // Duration of hide animation
-        }, 3000); // Popup visible for 3 seconds (increased to ensure visibility)
+        }, 3000); // Popup visible for 3 seconds
     }
 
     // --- Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
-        initializeGame();
+        initializeGame(); // Load questions on page load
 
         startButton.addEventListener('click', startQuiz);
+
         doneButton.addEventListener('click', () => {
-            // Re-attempt sending points only if the user won AND it previously failed or was not attempted
-            if (score === QUIZ_QUESTION_COUNT) {
-                 sendPointsToSheetDB();
-            } else {
-                window.location.href = 'index.html'; // Directly redirect if lost and done is clicked
+            // If the user lost, and clicks 'Done', just redirect.
+            // If the user won, sendPointsToSheetDB was already called by endQuiz,
+            // and it already calls showPointPopup which handles redirection.
+            // We only need to handle the lost scenario here.
+            if (score < QUIZ_QUESTION_COUNT) {
+                 window.location.href = 'index.html';
             }
+            // If score === QUIZ_QUESTION_COUNT, showPointPopup has already been called
+            // by sendPointsToSheetDB, and it will handle the redirection.
+            // No action needed for 'won' scenario as it's already in motion.
         });
     });
 
     // Handle browser back button during active game
     window.addEventListener('beforeunload', (event) => {
         if (gameActive) {
-            // Cancel the event to prompt the user (modern browsers often ignore custom messages)
             event.preventDefault();
             event.returnValue = ''; // Standard for browser to show its default message
         }
