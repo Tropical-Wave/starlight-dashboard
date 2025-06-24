@@ -99,21 +99,27 @@
         }
         /* Content inside the button */
         .reward-button img {
-            width: clamp(4rem, 20vw, 6rem); /* Responsive image size */
-            height: clamp(4rem, 20vw, 6rem);
+            width: clamp(3.5rem, 18vw, 5rem); /* Slightly smaller image */
+            height: clamp(3.5rem, 18vw, 5rem);
             object-fit: cover;
             border-radius: 0.75rem;
         }
         .reward-button .label {
-            margin-top: 0.75rem;
+            margin-top: 0.5rem;
             font-weight: 600;
             color: #1E293B; /* Darker for better contrast */
             font-size: clamp(0.9rem, 4vw, 1.1rem);
         }
         .reward-button .points {
-            font-size: clamp(0.8rem, 3vw, 1rem);
+            font-size: clamp(0.8rem, 3.5vw, 1rem);
             font-weight: 700;
             color: var(--brand-color);
+        }
+        .reward-button .quantity {
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            font-weight: 500;
+            color: #64748B;
+            margin-top: 2px;
         }
 
         /* --- Disabled State Overlay --- */
@@ -169,7 +175,7 @@
     <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110]">
         <div class="text-center">
             <svg class="animate-spin h-10 w-10 text-cyan-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <p class="mt-4 font-semibold text-slate-600">Loading Your Data...</p>
+            <p id="loadingText" class="mt-4 font-semibold text-slate-600">Loading Data...</p>
         </div>
     </div>
 
@@ -193,24 +199,28 @@
                 <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=🍬" alt="Candy Icon" class="bg-red-100">
                 <p class="label">Candy</p>
                 <p class="points">5 pts</p>
+                <p class="quantity"><span class="quantity-value">--</span> left</p>
                 <div class="disabled-overlay">Not enough<br>points</div>
             </button>
             <button class="reward-button" data-cost="10" data-label="Cookie" data-reward-code="Reward2">
                 <img src="https://placehold.co/128x128/FFFBEB/D97706?text=🍪" alt="Cookie Icon" class="bg-amber-100">
                 <p class="label">Cookie</p>
                 <p class="points">10 pts</p>
+                <p class="quantity"><span class="quantity-value">--</span> left</p>
                 <div class="disabled-overlay">Not enough<br>points</div>
             </button>
             <button class="reward-button" data-cost="15" data-label="Ramen" data-reward-code="Reward3">
                 <img src="https://placehold.co/128x128/FFF7ED/F97316?text=🍜" alt="Ramen Icon" class="bg-orange-100">
                 <p class="label">Ramen</p>
                 <p class="points">15 pts</p>
+                <p class="quantity"><span class="quantity-value">--</span> left</p>
                 <div class="disabled-overlay">Not enough<br>points</div>
             </button>
             <button class="reward-button" data-cost="20" data-label="Photocard" data-reward-code="Reward4">
                 <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=📸" alt="Photocard Icon" class="bg-sky-100">
                 <p class="label">Photocard</p>
                 <p class="points">20 pts</p>
+                <p class="quantity"><span class="quantity-value">--</span> left</p>
                 <div class="disabled-overlay">Not enough<br>points</div>
             </button>
         </main>
@@ -256,6 +266,7 @@
         redeemModalConfirmBtn: document.getElementById('redeemModalConfirmBtn'), 
         redeemStatus: document.getElementById('redeemStatus'),
         loadingOverlay: document.getElementById('loadingOverlay'),
+        loadingText: document.getElementById('loadingText'),
         infoModal: document.getElementById('infoModal'),
         infoModalTitle: document.getElementById('infoModalTitle'),
         infoModalMessage: document.getElementById('infoModalMessage'),
@@ -270,26 +281,48 @@
     let state = {
         currentUserCode: null,
         currentPoints: 0,
-        isRedeeming: false
+        inventory: {}, // NEW: To store reward quantities { Reward1: 10, Reward2: 5, ... }
+        isRedeeming: false,
+        isDataLoaded: false,
     };
 
     // --- UI Update Functions ---
     
-    function showLoading(isLoading) { 
+    function showLoading(isLoading, text = "Loading Data...") { 
+        dom.loadingText.textContent = text;
         dom.loadingOverlay.classList.toggle('visible', isLoading); 
     }
     
     /**
-     * Updates the entire UI based on the current point total.
-     * Disables buttons for rewards that the user cannot afford.
+     * Updates the entire UI based on the current state (points and inventory).
+     * Disables buttons and sets appropriate overlay messages.
      */
-    function updateUserUI(points) {
-        state.currentPoints = points;
+    function updateRewardsUI() {
+        if (!state.isDataLoaded) return; // Don't update UI until all data is fetched
+
         dom.userPoints.textContent = state.currentPoints;
         
         dom.rewardButtons.forEach(button => {
             const cost = parseInt(button.dataset.cost, 10);
-            button.disabled = state.currentPoints < cost;
+            const rewardCode = button.dataset.rewardCode;
+            const quantity = state.inventory[rewardCode] ?? 0; // Use ?? for modern nullish coalescing
+
+            const quantityValueEl = button.querySelector('.quantity-value');
+            if (quantityValueEl) {
+                quantityValueEl.textContent = quantity;
+            }
+
+            const disabledOverlay = button.querySelector('.disabled-overlay');
+            
+            if (quantity <= 0) {
+                button.disabled = true;
+                if (disabledOverlay) disabledOverlay.innerHTML = "Out of Stock";
+            } else if (state.currentPoints < cost) {
+                button.disabled = true;
+                if (disabledOverlay) disabledOverlay.innerHTML = "Not enough<br>points";
+            } else {
+                button.disabled = false;
+            }
         });
     }
 
@@ -330,27 +363,38 @@
 
     /**
      * Fetches user data from the SheetDB API.
-     * This is the source of truth for user points.
      */
     async function fetchUserData(code) {
-        showLoading(true);
-        try {
-            const url = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?sheet=Users&Access%20Code=${encodeURIComponent(code)}&casesensitive=false`;
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`Network error: ${res.statusText}`);
-            
-            const data = await res.json();
-            if (!data || data.length === 0) throw new Error("Access code not found.");
-            
-            updateUserUI(parseInt(data[0].Points || "0", 10));
-        } catch (error) {
-            console.error("Failed to fetch user data:", error);
-            showInfoModal("Error", `Could not load your data. Please log in again. (Details: ${error.message})`, () => {
-                window.location.href = 'index.html';
-            });
-        } finally {
-            showLoading(false);
-        }
+        const url = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?sheet=Users&Access%20Code=${encodeURIComponent(code)}&casesensitive=false`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Network error fetching user data: ${res.statusText}`);
+        
+        const data = await res.json();
+        if (!data || data.length === 0) throw new Error("Access code not found.");
+        
+        state.currentPoints = parseInt(data[0].Points || "0", 10);
+    }
+    
+    /**
+     * NEW: Fetches inventory data from the SheetDB API.
+     * Assumes "Inventory" sheet has "Reward Code" and "Remaining Qty" columns.
+     */
+    async function fetchInventoryData() {
+        const url = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}?sheet=Inventory`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Network error fetching inventory: ${res.statusText}`);
+        
+        const data = await res.json();
+        // Transform array into a key-value map for easy lookup
+        state.inventory = data.reduce((acc, item) => {
+            // SheetDB might return keys with spaces. Adjust if necessary.
+            const rewardCode = item["Reward Code"];
+            const quantity = item["Remaining Qty"];
+            if (rewardCode) {
+                acc[rewardCode] = parseInt(quantity || "0", 10);
+            }
+            return acc;
+        }, {});
     }
 
     /**
@@ -364,9 +408,12 @@
         dom.redeemModalConfirmBtn.textContent = 'Redeeming...';
 
         const originalPoints = state.currentPoints;
+        const originalInventory = { ...state.inventory };
 
-        // 1. Optimistic UI Update: Deduct points immediately on the frontend
-        updateUserUI(originalPoints - cost);
+        // 1. Optimistic UI Update: Deduct points and quantity immediately
+        state.currentPoints -= cost;
+        state.inventory[rewardCode]--;
+        updateRewardsUI();
 
         const payload = {
             sheet: "History",
@@ -399,29 +446,54 @@
 
             setTimeout(() => {
                 closeRedeemModal();
-                // 4. Sync with Server: Re-fetch data to ensure points are accurate
-                // This accounts for any other point changes that might have happened.
-                fetchUserData(state.currentUserCode); 
             }, 1500);
 
         } catch (error) {
             console.error('Redemption error:', error);
             
             // 5. Rollback UI on Failure
-            updateUserUI(originalPoints); // Restore points
-            dom.redeemStatus.textContent = `Error: Could not redeem. Please try again.`;
+            state.currentPoints = originalPoints;
+            state.inventory = originalInventory;
+            updateRewardsUI();
+
+            dom.redeemStatus.textContent = `Error: Could not redeem.`;
             dom.redeemStatus.className = 'font-semibold mt-2 text-red-500';
             dom.redeemStatus.classList.remove('hidden');
         } finally {
-            // 6. Reset Modal State
+            // 6. Reset Modal State and re-sync with server after a delay
             setTimeout(() => {
                 state.isRedeeming = false;
                 dom.redeemModalConfirmBtn.disabled = false;
                 dom.redeemModalConfirmBtn.textContent = 'Redeem Now';
-            }, 1500);
+                // Full re-sync to ensure data consistency
+                fetchAllData(); 
+            }, 2000);
         }
     }
 
+    /**
+     * NEW: Main data fetching and initialization function
+     */
+    async function fetchAllData() {
+        showLoading(true);
+        try {
+            // Fetch user points and inventory in parallel for speed
+            await Promise.all([
+                fetchUserData(state.currentUserCode),
+                fetchInventoryData()
+            ]);
+            state.isDataLoaded = true;
+            updateRewardsUI();
+        } catch (error) {
+             console.error("Failed to load initial data:", error);
+            showInfoModal("Error", `Could not load page data. Please try again or log in. (Details: ${error.message})`, () => {
+                window.location.href = 'index.html';
+            });
+        } finally {
+            showLoading(false);
+        }
+    }
+    
     // --- Initialization ---
     
     function initialize() {
@@ -433,7 +505,7 @@
             return;
         }
 
-        fetchUserData(state.currentUserCode);
+        fetchAllData();
 
         // Event Listeners
         dom.rewardsGrid.addEventListener('click', (e) => {
