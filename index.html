@@ -296,8 +296,11 @@
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
       try {
+        // --- MODIFICATION: Explicitly define the columns to fetch ---
         const userFields = 'Name,Points,Event1,Event2,Event3';
         const historyFields = 'Transaction,Points,Timestamp';
+
+        // --- MODIFICATION: Add 'fields' and 'sort' parameters to the API URLs ---
         const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
         
@@ -338,8 +341,11 @@
       accessCodeEnterBtn.disabled = true;
 
       try {
+        // --- MODIFICATION: Explicitly define the columns to fetch during login ---
         const userFields = 'Name,Points,Event1,Event2,Event3';
         const historyFields = 'Transaction,Points,Timestamp';
+
+        // --- MODIFICATION: Add 'fields' and 'sort' parameters to the API URLs during login ---
         const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users&fields=${userFields}&t=${Date.now()}`;
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&fields=${historyFields}&sort_by=Timestamp&sort_order=desc&t=${Date.now()}`;
         
@@ -433,17 +439,16 @@
     }
 
     function renderHistoryList(historyData) {
-        // Handle case where history might be null or empty
         if (!historyData || historyData.length === 0) {
             historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history recorded.</p>';
             return;
         }
         
-        historyList.innerHTML = ''; // Clear previous list
+        historyList.innerHTML = ''; 
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
 
-        // Data is pre-sorted by the API (newest first)
+        // Data is now pre-sorted by the API, so no need to sort here.
         historyData.forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
             const row = document.createElement('div');
