@@ -10,152 +10,447 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        html, body { margin: 0; padding: 0; width: 100%; min-height: 100%; background-color: #F8FAFC; font-family: 'Poppins', sans-serif; color: #334155; }
-        :root { --gradient-start: #4BA7AD; --gradient-mid: #89B3D9; --gradient-end: #837FD9; --gradient-angle: 135deg; }
-        .text-gradient { background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
-        .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease-out; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); }
-        .fullscreen-overlay.visible { display: flex; opacity: 1; }
-        .popup-card { background-color: white; border-radius: 1.5rem; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex; flex-direction: column; width: 90%; max-width: 400px; max-height: 90vh; transform: scale(0.95); opacity: 0; transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
-        .fullscreen-overlay.visible .popup-card { transform: scale(1); opacity: 1; }
-        .interactive-card { background-color: white; border: 1px solid #E2E8F0; border-radius: 1.5rem; transition: all 0.2s ease-out; position: relative; overflow: hidden; text-decoration: none; }
-        .interactive-card:hover:not(:disabled) { transform: translateY(-4px); border-color: #D1E0DE; box-shadow: 0 8px 20px -5px rgba(0,0,0,0.12); }
-        .interactive-card:disabled { opacity: 0.5; cursor: not-allowed; background-color: #F8FAFC; }
-        .modal-button { flex-grow: 1; text-align: center; padding: 1rem 1rem; font-weight: 600; border-radius: 0.75rem; transition: all 0.2s ease; }
-        .modal-button.primary { background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid)); color: white; }
-        .modal-button.primary:hover { opacity: 0.9; }
-        .modal-button.primary:disabled { background: #94A3B8; opacity: 0.7; cursor: wait; }
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            min-height: 100vh; /* Changed to min-height */
+            background-color: #F8FAFC; 
+            font-family: 'Poppins', sans-serif; 
+            color: #334155; 
+        }
+        :root { 
+            --gradient-start: #4BA7AD; 
+            --gradient-mid: #89B3D9; 
+            --gradient-end: #837FD9; 
+            --gradient-angle: 135deg;
+            --brand-color: #4BA7AD;
+        }
+        .text-gradient { 
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end)); 
+            -webkit-background-clip: text; 
+            background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            color: transparent; 
+        }
+        
+        /* --- Overlays and Modals --- */
+        .fullscreen-overlay { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            z-index: 100; 
+            display: flex; /* Changed from none */
+            align-items: center; 
+            justify-content: center; 
+            opacity: 0; 
+            visibility: hidden; /* Use visibility for accessibility */
+            transition: opacity 0.3s ease-out, visibility 0s 0.3s; 
+            background-color: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(5px); 
+        }
+        .fullscreen-overlay.visible { 
+            opacity: 1; 
+            visibility: visible;
+            transition: opacity 0.3s ease-out;
+        }
+        .popup-card { 
+            background-color: white; 
+            border-radius: 1.5rem; 
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); 
+            display: flex; 
+            flex-direction: column; 
+            width: 90%; 
+            max-width: 400px; 
+            max-height: 90vh; 
+            transform: scale(0.95); 
+            opacity: 0; 
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out; 
+        }
+        .fullscreen-overlay.visible .popup-card { 
+            transform: scale(1); 
+            opacity: 1; 
+        }
+        
+        /* --- Reward Button Overhaul --- */
+        .reward-button {
+            background-color: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 1.5rem;
+            transition: all 0.2s ease-out;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(0.75rem, 3vw, 1.5rem); /* Responsive padding */
+            aspect-ratio: 1 / 1; /* Maintain square shape */
+        }
+        .reward-button:hover:not(:disabled) { 
+            transform: translateY(-4px); 
+            border-color: var(--brand-color);
+            box-shadow: 0 8px 20px -5px rgba(75, 167, 173, 0.2); 
+        }
+        .reward-button:disabled { 
+            cursor: not-allowed; 
+            background-color: #F8FAFC; 
+        }
+        /* Content inside the button */
+        .reward-button img {
+            width: clamp(4rem, 20vw, 6rem); /* Responsive image size */
+            height: clamp(4rem, 20vw, 6rem);
+            object-fit: cover;
+            border-radius: 0.75rem;
+        }
+        .reward-button .label {
+            margin-top: 0.75rem;
+            font-weight: 600;
+            color: #1E293B; /* Darker for better contrast */
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+        }
+        .reward-button .points {
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            font-weight: 700;
+            color: var(--brand-color);
+        }
+
+        /* --- Disabled State Overlay --- */
+        .reward-button .disabled-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: grayscale(80%) blur(1px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 600;
+            color: #475569;
+            opacity: 0;
+            transition: opacity 0.2s ease-out;
+            pointer-events: none;
+        }
+        .reward-button:disabled .disabled-overlay {
+            opacity: 1;
+        }
+        
+        /* --- Modal Buttons --- */
+        .modal-button { 
+            flex-grow: 1; 
+            text-align: center; 
+            padding: 1rem; 
+            font-weight: 600; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .modal-button.primary { 
+            background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid)); 
+            color: white; 
+        }
+        .modal-button.primary:hover:not(:disabled) { 
+            opacity: 0.9; 
+            box-shadow: 0 4px 15px -5px rgba(0,0,0,0.2);
+        }
+        .modal-button.primary:disabled { 
+            background: #94A3B8; 
+            opacity: 0.7; 
+            cursor: wait; 
+        }
     </style>
 </head>
 <body class="antialiased">
-    <div id="loadingOverlay" class="fullscreen-overlay visible !bg-white/80">
-        <div class="text-center"><svg class="animate-spin h-10 w-10 text-cyan-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="mt-4 font-semibold text-slate-600">Loading...</p></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110]">
+        <div class="text-center">
+            <svg class="animate-spin h-10 w-10 text-cyan-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <p class="mt-4 font-semibold text-slate-600">Loading Your Data...</p>
+        </div>
     </div>
+
+    <!-- Main Content -->
     <div class="min-h-screen flex flex-col">
-        <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-10 flex-shrink-0"><a href="index.html" class="text-slate-600 hover:text-slate-900 p-1 mr-3"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg></a><h1 class="flex-grow font-bold text-2xl text-slate-800 text-center">Redeem Rewards</h1><div id="userPointsContainer" class="text-right w-20"><div class="text-xs text-slate-500">Your Points</div><div id="userPoints" class="text-2xl font-bold text-gradient">0</div></div></header>
-        <main id="rewardsGrid" class="p-4 md:p-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 flex-grow"><button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="5" data-label="Candy" data-reward-code="Reward1"><img src="https://placehold.co/128x128/FEF2F2/DC2626?text=?" alt="Candy Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-red-100"><p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Candy</p><p class="text-sm font-bold text-cyan-600">5 pts</p></button><button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="10" data-label="Cookie" data-reward-code="Reward2"><img src="https://placehold.co/128x128/FFFBEB/D97706?text=?" alt="Cookie Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-amber-100"><p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Cookie</p><p class="text-sm font-bold text-cyan-600">10 pts</p></button><button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="15" data-label="Ramen" data-reward-code="Reward3"><img src="https://placehold.co/128x128/FFF7ED/F97316?text=?" alt="Ramen Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-orange-100"><p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Ramen</p><p class="text-sm font-bold text-cyan-600">15 pts</p></button><button class="reward-button interactive-card text-center aspect-square flex flex-col items-center justify-center p-2" data-cost="20" data-label="Photocard" data-reward-code="Reward4"><img src="https://placehold.co/128x128/F0F9FF/0284C7?text=?" alt="Photocard Icon" class="h-16 w-16 md:h-24 md:w-24 object-cover rounded-lg bg-sky-100"><p class="mt-3 font-semibold text-slate-700 text-base md:text-lg">Photocard</p><p class="text-sm font-bold text-cyan-600">20 pts</p></button></main>
+        <header class="p-4 flex items-center border-b bg-white/80 backdrop-blur-sm w-full sticky top-0 z-50 flex-shrink-0">
+            <a href="index.html" class="text-slate-600 hover:text-slate-900 p-1 mr-3 rounded-full hover:bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            </a>
+            <h1 class="flex-grow font-bold text-2xl text-slate-800 text-center">Redeem Rewards</h1>
+            <div class="text-right w-24">
+                <div class="text-xs text-slate-500">Your Points</div>
+                <div id="userPoints" class="text-3xl font-bold text-gradient">0</div>
+            </div>
+        </header>
+        
+        <!-- Rewards Grid -->
+        <main id="rewardsGrid" class="p-4 md:p-8 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 flex-grow mx-auto w-full max-w-screen-lg">
+            <!-- Reward buttons will be dynamically checked by JS -->
+            <button class="reward-button" data-cost="5" data-label="Candy" data-reward-code="Reward1">
+                <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=🍬" alt="Candy Icon" class="bg-red-100">
+                <p class="label">Candy</p>
+                <p class="points">5 pts</p>
+                <div class="disabled-overlay">Not enough<br>points</div>
+            </button>
+            <button class="reward-button" data-cost="10" data-label="Cookie" data-reward-code="Reward2">
+                <img src="https://placehold.co/128x128/FFFBEB/D97706?text=🍪" alt="Cookie Icon" class="bg-amber-100">
+                <p class="label">Cookie</p>
+                <p class="points">10 pts</p>
+                <div class="disabled-overlay">Not enough<br>points</div>
+            </button>
+            <button class="reward-button" data-cost="15" data-label="Ramen" data-reward-code="Reward3">
+                <img src="https://placehold.co/128x128/FFF7ED/F97316?text=🍜" alt="Ramen Icon" class="bg-orange-100">
+                <p class="label">Ramen</p>
+                <p class="points">15 pts</p>
+                <div class="disabled-overlay">Not enough<br>points</div>
+            </button>
+            <button class="reward-button" data-cost="20" data-label="Photocard" data-reward-code="Reward4">
+                <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=📸" alt="Photocard Icon" class="bg-sky-100">
+                <p class="label">Photocard</p>
+                <p class="points">20 pts</p>
+                <div class="disabled-overlay">Not enough<br>points</div>
+            </button>
+        </main>
     </div>
-    <div id="redeemModal" class="fullscreen-overlay"><div class="popup-card p-6 gap-4 text-center"><button id="redeemModalBackBtn" class="absolute top-3 left-3 text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></button><img id="redeemModalImage" src="" alt="Reward Image" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl mx-auto"><h3 id="redeemModalTitle" class="text-2xl font-bold text-slate-800"></h3><p class="text-slate-500">Redeem this reward for <strong id="redeemModalPoints" class="text-slate-700"></strong> points?</p><div class="flex items-center justify-center gap-4 mt-4 w-full"><button id="redeemModalConfirmBtn" class="modal-button primary w-full">Redeem Now</button></div><p id="redeemStatus" class="text-green-600 font-semibold mt-2 hidden"></p></div></div>
-    <div id="infoModal" class="fullscreen-overlay"><div class="popup-card p-6 gap-4 text-center"><h3 id="infoModalTitle" class="text-2xl font-bold text-slate-800"></h3><p id="infoModalMessage" class="text-slate-500 break-words"></p><div class="flex items-center justify-center gap-4 mt-4 w-full"><button id="infoModalCloseBtn" class="modal-button primary w-full">OK</button></div></div></div>
-  <script>
-    const userPointsEl = document.getElementById('userPoints');
-    const rewardsGrid = document.getElementById('rewardsGrid');
-    const redeemModal = document.getElementById('redeemModal');
-    const redeemModalImage = document.getElementById('redeemModalImage');
-    const redeemModalTitle = document.getElementById('redeemModalTitle');
-    const redeemModalPoints = document.getElementById('redeemModalPoints');
-    const redeemModalBackBtn = document.getElementById('redeemModalBackBtn');
-    const redeemModalConfirmBtn = document.getElementById('redeemModalConfirmBtn');
-    const redeemStatus = document.getElementById('redeemStatus');
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const infoModal = document.getElementById('infoModal');
-    const infoModalTitle = document.getElementById('infoModalTitle');
-    const infoModalMessage = document.getElementById('infoModalMessage');
-    const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
+
+    <!-- Redeem Confirmation Modal -->
+    <div id="redeemModal" class="fullscreen-overlay">
+        <div class="popup-card p-6 gap-4 text-center">
+            <button id="redeemModalCloseBtn" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+            </button>
+            <img id="redeemModalImage" src="" alt="Reward Image" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-xl mx-auto">
+            <h3 id="redeemModalTitle" class="text-2xl font-bold text-slate-800"></h3>
+            <p class="text-slate-500">Redeem this reward for <strong id="redeemModalPoints" class="text-slate-700"></strong> points?</p>
+            <div id="redeemStatus" class="font-semibold mt-2 hidden h-6"></div>
+            <div class="flex items-center justify-center gap-4 mt-2 w-full">
+                <button id="redeemModalConfirmBtn" class="modal-button primary w-full">Redeem Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Info Modal (for errors, session expiry etc.) -->
+    <div id="infoModal" class="fullscreen-overlay">
+        <div class="popup-card p-6 gap-4 text-center">
+            <h3 id="infoModalTitle" class="text-2xl font-bold text-slate-800"></h3>
+            <p id="infoModalMessage" class="text-slate-500 break-words"></p>
+            <div class="flex items-center justify-center gap-4 mt-4 w-full">
+                <button id="infoModalCloseBtn" class="modal-button primary w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- DOM Elements ---
+    const dom = {
+        userPoints: document.getElementById('userPoints'),
+        rewardsGrid: document.getElementById('rewardsGrid'),
+        redeemModal: document.getElementById('redeemModal'),
+        redeemModalImage: document.getElementById('redeemModalImage'),
+        redeemModalTitle: document.getElementById('redeemModalTitle'),
+        redeemModalPoints: document.getElementById('redeemModalPoints'),
+        redeemModalCloseBtn: document.getElementById('redeemModalCloseBtn'),
+        redeemModalConfirmBtn: document.getElementById('redeemModalConfirmBtn'), 
+        redeemStatus: document.getElementById('redeemStatus'),
+        loadingOverlay: document.getElementById('loadingOverlay'),
+        infoModal: document.getElementById('infoModal'),
+        infoModalTitle: document.getElementById('infoModalTitle'),
+        infoModalMessage: document.getElementById('infoModalMessage'),
+        infoModalCloseBtn: document.getElementById('infoModalCloseBtn'),
+        rewardButtons: document.querySelectorAll('.reward-button')
+    };
+
+    // --- Configuration ---
+    const SHEETDB_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID
     
-    // --- IMPORTANT --- 
-    // PASTE YOUR NEW WEB APP URL (FROM GOOGLE APPS SCRIPT DEPLOYMENT) HERE
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwpYBXR7QNwrBzCQrKhbm451v1uQdfQFBmQYWucYL7wz1pxmLwUjLwUVZAhZG5FKW4lxg/exec"; 
+    // --- State ---
+    let state = {
+        currentUserCode: null,
+        currentPoints: 0,
+        isRedeeming: false
+    };
+
+    // --- UI Update Functions ---
     
-    let currentUserCode = null;
-    let isRedeeming = false;
-    function showLoading(isLoading) { loadingOverlay.classList.toggle('visible', isLoading); }
+    function showLoading(isLoading) { 
+        dom.loadingOverlay.classList.toggle('visible', isLoading); 
+    }
+    
+    /**
+     * Updates the entire UI based on the current point total.
+     * Disables buttons for rewards that the user cannot afford.
+     */
+    function updateUserUI(points) {
+        state.currentPoints = points;
+        dom.userPoints.textContent = state.currentPoints;
+        
+        dom.rewardButtons.forEach(button => {
+            const cost = parseInt(button.dataset.cost, 10);
+            button.disabled = state.currentPoints < cost;
+        });
+    }
+
+    // --- Modal Functions ---
+
+    function showRedeemModal(rewardButton) {
+        const { label, cost, rewardCode } = rewardButton.dataset;
+        const imgSrc = rewardButton.querySelector('img').src;
+        
+        dom.redeemModalImage.src = imgSrc;
+        dom.redeemModalTitle.textContent = label;
+        dom.redeemModalPoints.textContent = cost;
+        dom.redeemStatus.classList.add('hidden');
+        dom.redeemModal.classList.add('visible');
+        
+        dom.redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, parseInt(cost, 10));
+    }
+
+    function closeRedeemModal() { 
+        dom.redeemModal.classList.remove('visible'); 
+        dom.redeemModalConfirmBtn.onclick = null; 
+    }
+
+    function showInfoModal(title, message, onOk) {
+        dom.infoModalTitle.textContent = title;
+        dom.infoModalMessage.textContent = message;
+        dom.infoModal.classList.add('visible');
+
+        const close = () => { 
+            dom.infoModal.classList.remove('visible'); 
+            dom.infoModalCloseBtn.onclick = null;
+            if (onOk) onOk();
+        };
+        dom.infoModalCloseBtn.onclick = close;
+    }
+
+    // --- API & Data Functions ---
+
+    /**
+     * Fetches user data from the SheetDB API.
+     * This is the source of truth for user points.
+     */
     async function fetchUserData(code) {
         showLoading(true);
         try {
-            if (!GOOGLE_SHEET_URL.includes("macros/s")) {
-                throw new Error("The Google Apps Script URL is invalid. Please deploy your script and paste the correct URL.");
-            }
-            const url = `${GOOGLE_SHEET_URL}?code=${code}&t=${Date.now()}`;
+            const url = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?sheet=Users&Access%20Code=${encodeURIComponent(code)}&casesensitive=false`;
             const res = await fetch(url);
-            if (!res.ok) { throw new Error(`Network response was not ok: ${res.status}`); }
-            const json = await res.json();
-            if (json.error) { throw new Error(json.error); }
-            if (!json.user) { throw new Error("No user data returned from script."); }
-            updateUI(json.user);
+            if (!res.ok) throw new Error(`Network error: ${res.statusText}`);
+            
+            const data = await res.json();
+            if (!data || data.length === 0) throw new Error("Access code not found.");
+            
+            updateUserUI(parseInt(data[0].Points || "0", 10));
         } catch (error) {
             console.error("Failed to fetch user data:", error);
-            showInfoModal("Error", `Could not load your data. Redirecting to login. Details: ${error.message}`);
-            setTimeout(() => { window.location.href = 'index.html'; }, 4000);
+            showInfoModal("Error", `Could not load your data. Please log in again. (Details: ${error.message})`, () => {
+                window.location.href = 'index.html';
+            });
         } finally {
             showLoading(false);
         }
     }
-    function updateUI(userData) {
-        const userPoints = parseInt(userData.Points || "0", 10);
-        userPointsEl.textContent = userPoints;
-        document.querySelectorAll('.reward-button').forEach(button => {
-            const cost = parseInt(button.dataset.cost, 10);
-            button.disabled = userPoints < cost;
-        });
-    }
-    async function redeemReward(rewardCode, accessCode) {
-        if (isRedeeming) return;
-        isRedeeming = true;
-        redeemModalConfirmBtn.disabled = true;
-        redeemModalConfirmBtn.textContent = 'Redeeming...';
-        redeemStatus.classList.add('hidden');
+
+    /**
+     * Handles the reward redemption process with optimistic UI updates.
+     */
+    async function redeemReward(rewardCode, cost) {
+        if (state.isRedeeming) return;
+
+        state.isRedeeming = true;
+        dom.redeemModalConfirmBtn.disabled = true;
+        dom.redeemModalConfirmBtn.textContent = 'Redeeming...';
+
+        const originalPoints = state.currentPoints;
+
+        // 1. Optimistic UI Update: Deduct points immediately on the frontend
+        updateUserUI(originalPoints - cost);
+
+        const payload = {
+            sheet: "History",
+            data: [{
+                "Access Code": state.currentUserCode,
+                "Timestamp": new Date().toISOString(),
+                "Code": rewardCode
+            }]
+        };
+
         try {
-            const response = await fetch(GOOGLE_SHEET_URL, {
-                method: 'POST', mode: 'cors',
+            // 2. API Call: Send redemption record to SheetDB
+            const response = await fetch(`https://sheetdb.io/api/v1/${SHEETDB_API_ID}`, {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'redeem', accessCode: accessCode, rewardCode: rewardCode })
+                body: JSON.stringify(payload)
             });
-            if (!response.ok) { throw new Error(`Server responded with an error: ${response.status}`); }
-            const result = await response.json();
-            if (result.status !== 'success') { throw new Error(result.message || 'Redemption failed.'); }
-            redeemStatus.textContent = 'Success! Points updated.';
-            redeemStatus.className = 'font-semibold mt-2 text-green-600';
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`API Error: ${response.status} - ${errorBody}`);
+            }
+
+            console.log('Redemption logged successfully:', await response.json());
+
+            // 3. Success Feedback
+            dom.redeemStatus.textContent = 'Success! Reward redeemed.';
+            dom.redeemStatus.className = 'font-semibold mt-2 text-green-600';
+            dom.redeemStatus.classList.remove('hidden');
+
             setTimeout(() => {
                 closeRedeemModal();
-                fetchUserData(accessCode);
+                // 4. Sync with Server: Re-fetch data to ensure points are accurate
+                // This accounts for any other point changes that might have happened.
+                fetchUserData(state.currentUserCode); 
             }, 1500);
+
         } catch (error) {
             console.error('Redemption error:', error);
-            redeemStatus.textContent = `Error: ${error.message}`;
-            redeemStatus.className = 'font-semibold mt-2 text-red-500';
+            
+            // 5. Rollback UI on Failure
+            updateUserUI(originalPoints); // Restore points
+            dom.redeemStatus.textContent = `Error: Could not redeem. Please try again.`;
+            dom.redeemStatus.className = 'font-semibold mt-2 text-red-500';
+            dom.redeemStatus.classList.remove('hidden');
         } finally {
+            // 6. Reset Modal State
             setTimeout(() => {
-                isRedeeming = false;
-                redeemModalConfirmBtn.disabled = false;
-                redeemModalConfirmBtn.textContent = 'Redeem Now';
+                state.isRedeeming = false;
+                dom.redeemModalConfirmBtn.disabled = false;
+                dom.redeemModalConfirmBtn.textContent = 'Redeem Now';
             }, 1500);
         }
     }
-    function showRedeemModal(rewardButton) {
-        const label = rewardButton.dataset.label;
-        const cost = rewardButton.dataset.cost;
-        const rewardCode = rewardButton.dataset.rewardCode;
-        const imgSrc = rewardButton.querySelector('img').src;
-        redeemModalImage.src = imgSrc;
-        redeemModalTitle.textContent = label;
-        redeemModalPoints.textContent = cost;
-        redeemStatus.classList.add('hidden');
-        redeemModal.classList.add('visible');
-        redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, currentUserCode);
-    }
-    function closeRedeemModal() { redeemModal.classList.remove('visible'); redeemModalConfirmBtn.onclick = null; }
-    function showInfoModal(title, message) {
-        infoModalTitle.textContent = title;
-        infoModalMessage.textContent = message;
-        infoModal.classList.add('visible');
-        const close = () => { infoModal.classList.remove('visible'); infoModalCloseBtn.onclick = null; }
-        infoModalCloseBtn.onclick = close;
-        infoModal.onclick = (e) => { if (e.target === infoModal) close(); };
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-        currentUserCode = sessionStorage.getItem('currentUserCode');
-        if (!currentUserCode) {
-            showInfoModal("Session Expired", "No active session found. Please log in first.");
-            setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+
+    // --- Initialization ---
+    
+    function initialize() {
+        state.currentUserCode = sessionStorage.getItem('currentUserCode');
+        if (!state.currentUserCode) {
+            showInfoModal("Session Expired", "No active user session found. Please log in to continue.", () => {
+                window.location.href = 'index.html';
+            });
             return;
         }
-        fetchUserData(currentUserCode);
-        rewardsGrid.addEventListener('click', (e) => {
+
+        fetchUserData(state.currentUserCode);
+
+        // Event Listeners
+        dom.rewardsGrid.addEventListener('click', (e) => {
             const rewardButton = e.target.closest('.reward-button');
-            if (rewardButton && !rewardButton.disabled) { showRedeemModal(rewardButton); }
+            if (rewardButton && !rewardButton.disabled) {
+                showRedeemModal(rewardButton);
+            }
         });
-        redeemModalBackBtn.addEventListener('click', closeRedeemModal);
-    });
-  </script>
+
+        dom.redeemModalCloseBtn.addEventListener('click', closeRedeemModal);
+        // Close modal if clicking on the background overlay
+        dom.redeemModal.addEventListener('click', (e) => {
+            if (e.target === dom.redeemModal) closeRedeemModal();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initialize);
+</script>
 </body>
 </html>
