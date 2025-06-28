@@ -75,8 +75,6 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
-        /* --- Login Screen (REMOVED) --- */
-
         /* --- Dashboard Container --- */
         #dashboard {
             display: none; height: 100dvh;
@@ -106,7 +104,7 @@
             box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
         }
 
-        /* --- PART 3: Streak Tracker & Stamping Animation --- */
+        /* --- Streak Tracker & Stamping Animation --- */
         .streak-stamp .stamp-icon-wrapper {
             width: 80px; height: 80px; /* Base size */
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -142,14 +140,8 @@
             animation: fade-in-scale 0.5s ease-out forwards; /* Fade in and scale up */
         }
         @keyframes fade-in-scale {
-            0% {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
@@ -158,10 +150,12 @@
     <div id="splashScreen" class="fullscreen-overlay visible">
         <div class="star-container text-center">
             <svg class="inline-block" fill="#EEF7F6" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.875-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/></svg>
-            <p id="nfcPrompt" class="text-2xl font-semibold mt-8">Tap your Passport on the scanner</p>
+            <!-- UPDATED: Text is shorter and smaller -->
+            <p id="nfcPrompt" class="text-xl font-semibold mt-8">Tap Passport to Scan</p>
             <div id="statusContainer" class="h-10 mt-4"></div>
         </div>
-        <input id="accessCodeInput" type="text" autofocus autocomplete="off" style="opacity: 0; position: absolute; pointer-events: none;">
+        <!-- UPDATED: `inputmode="none"` added to prevent mobile keyboard. `autofocus` removed from HTML. -->
+        <input id="accessCodeInput" type="text" inputmode="none" autocomplete="off" style="opacity: 0; position: absolute; pointer-events: none;">
     </div>
 
     <main id="dashboard" class="flex">
@@ -172,8 +166,7 @@
             </div>
             <div class="dashboard-card flex-grow flex flex-col">
                 <h3 class="font-bold text-xl text-slate-800 text-center mb-4 flex-shrink-0">Event Stamps</h3>
-                <div id="streakTrackerContainer" class="flex-grow flex items-center justify-around">
-                    </div>
+                <div id="streakTrackerContainer" class="flex-grow flex items-center justify-around"></div>
             </div>
         </div>
 
@@ -190,24 +183,9 @@
                     <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full text-white hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Rewards</a>
                 </div>
                 <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
-                    <a href="game1.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="K-Pop Quiz (Easy)">
-                        <div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div>
-                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">K-Pop Quiz</span>
-                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Easy</span>
-                        <span class="card-points block text-xs md:text-sm font-medium text-green-500">+5 Pts</span>
-                    </a>
-                    <a href="game2.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="Guess the Song (Moderate)">
-                        <div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div>
-                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span>
-                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Moderate</span>
-                        <span class="card-points block text-xs md:text-sm font-medium text-green-500">+10 Pts</span>
-                    </a>
-                    <a href="game3.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="True or False (Hard)">
-                        <div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div>
-                        <span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">True or False</span>
-                        <span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Hard</span>
-                        <span class="card-points block text-xs md:text-sm font-medium text-green-500">+20 Pts</span>
-                    </a>
+                    <a href="game1.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="K-Pop Quiz (Easy)"><div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div><span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">K-Pop Quiz</span><span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Easy</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+5 Pts</span></a>
+                    <a href="game2.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Moderate</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+10 Pts</span></a>
+                    <a href="game3.html" class="interactive-card p-2 text-center flex flex-col justify-center" data-label="True or False (Hard)"><div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">True or False</span><span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Hard</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+20 Pts</span></a>
                 </div>
             </div>
         </div>
@@ -236,7 +214,7 @@
     const historyList = document.getElementById('historyList');
     const historyPopup = document.getElementById('historyPopup');
 
-    // --- PART 1: SheetDB Configuration ---
+    // --- App Configuration ---
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; 
     const INACTIVITY_TIMEOUT = 30000;
     const AUTO_REFRESH_INTERVAL = 15000;
@@ -248,6 +226,18 @@
     let currentUserCode = null;
     let isVerifying = false; // Prevents double scans while a request is active
     
+    // --- Focus management for HID reader ---
+    function focusInput() {
+        // This function focuses the hidden input field without triggering the on-screen keyboard
+        // or causing the page to scroll.
+        try {
+            accessCodeInput.focus({ preventScroll: true });
+        } catch(e) {
+            // Fallback for older browsers
+            accessCodeInput.focus();
+        }
+    }
+
     // --- UI Flow & Data Functions ---
     function showSplashScreen() {
       splashScreen.classList.add('visible');
@@ -265,8 +255,8 @@
       autoRefreshInterval = null;
       inactivityTimer = null;
 
-      // Ensure focus for the NFC reader
-      accessCodeInput.focus();
+      // Ensure focus for the NFC reader after the splash screen is visible
+      setTimeout(focusInput, 100);
     }
 
     function resetInactivityTimer() {
@@ -289,7 +279,7 @@
                  clearStatusMessage();
                  accessCodeInput.value = '';
                  isVerifying = false;
-                 accessCodeInput.focus();
+                 focusInput(); // Re-focus for the next scan
             }
         }, 3000);
     }
@@ -375,7 +365,6 @@
         currentUserCode = null;
         sessionStorage.removeItem('currentUserCode');
         clearInterval(autoRefreshInterval);
-        // isVerifying will be set to false in the error message timeout
       }
     }
 
@@ -451,18 +440,28 @@
     document.addEventListener('DOMContentLoaded', () => {
       showSplashScreen();
       
-      // Keep focus on the hidden input for the NFC reader
-      setInterval(() => {
-        if (!currentUserCode) accessCodeInput.focus();
-      }, 500);
-
+      // Keep the app responsive to user activity to reset the inactivity timer
       ['click', 'keypress', 'mousemove', 'touchstart'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       
-      // Listener for NFC input
-      accessCodeInput.addEventListener('input', () => {
-        const code = accessCodeInput.value.trim().toUpperCase();
-        if (code.length >= MIN_UID_LENGTH) {
-            handleLogin(code);
+      // UPDATED: Listener for NFC input (and manual entry with "Enter")
+      // Listens for the "Enter" key to process the input, which is how HID readers often terminate input.
+      accessCodeInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+              event.preventDefault(); // Prevents adding a newline to the input or submitting a form
+              const code = accessCodeInput.value.trim().toUpperCase();
+              
+              if (code && code.length >= MIN_UID_LENGTH) {
+                  handleLogin(code);
+              }
+              // Clear the input after attempting login to be ready for the next scan
+              accessCodeInput.value = ''; 
+          }
+      });
+
+      // Keep focus on the hidden input whenever the splash screen is visible
+      splashScreen.addEventListener('transitionend', () => {
+        if (splashScreen.classList.contains('visible')) {
+            focusInput();
         }
       });
 
