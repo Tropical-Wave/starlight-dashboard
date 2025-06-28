@@ -161,7 +161,7 @@
             <p id="nfcPrompt" class="text-2xl font-semibold mt-8">Tap your Passport on the scanner</p>
             <div id="statusContainer" class="h-10 mt-4"></div>
         </div>
-        <input id="accessCodeInput" type="text" autofocus autocomplete="off" style="opacity: 0; position: absolute; pointer-events: none;">
+        <input id="accessCodeInput" type="text" autofocus autocomplete="off" style="opacity: 0; position: absolute; pointer-events: none;" readonly>
     </div>
 
     <main id="dashboard" class="flex">
@@ -265,8 +265,11 @@
       autoRefreshInterval = null;
       inactivityTimer = null;
 
-      // Ensure focus for the NFC reader
+      // Ensure focus for the NFC reader (but try to prevent keyboard)
       accessCodeInput.focus();
+      if (window.innerWidth < 768) { // Basic check for mobile
+          document.activeElement?.blur(); // Try to blur immediately after focus
+      }
     }
 
     function resetInactivityTimer() {
@@ -290,6 +293,9 @@
                  accessCodeInput.value = '';
                  isVerifying = false;
                  accessCodeInput.focus();
+                 if (window.innerWidth < 768) {
+                     document.activeElement?.blur();
+                 }
             }
         }, 3000);
     }
@@ -314,7 +320,7 @@
 
         if (!Array.isArray(userJson) || userJson.length === 0) throw new Error("Invalid user data received.");
         
-        updateDashboardUI(userJson[0], historyJson);
+        updateDashboardUI(userJson, historyJson);
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
@@ -347,10 +353,10 @@
         const userJson = await userRes.json();
         const historyJson = await historyRes.json();
 
-        if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
+        if (!Array.isArray(userJson) || userJson.length === 0 || !userJson.Name) {
             throw new Error("Passport not recognized.");
         }
-        const userData = userJson[0];
+        const userData = userJson;
         
         currentUserCode = code;
         sessionStorage.setItem('currentUserCode', code);
@@ -381,9 +387,11 @@
 
     // --- UI Rendering Functions ---
     function updateDashboardUI(userData, historyData) {
-      userNameEl.textContent = `${userData.Name || "Guest"}!`;
-      userPointsEl.textContent = parseInt(userData.Points || "0", 10);
-      renderStreakTracker(userData);
+      if (Array.isArray(userData) && userData.length > 0) {
+        userNameEl.textContent = `${userData?.[0]?.Name || "Guest"}!`;
+        userPointsEl.textContent = parseInt(userData?.[0]?.Points || "0", 10);
+        renderStreakTracker(userData?.[0] || {});
+      }
       renderHistoryList(historyData || []);
     }
 
@@ -405,13 +413,13 @@
       let currentAnimationDelay = animationInitialDelay;
 
       steps.forEach((step, index) => {
-        const tier = data[step.key];
-        const isCompleted = tier && tierIcons[tier];
+        const tier = data?.[step.key];
+        const isCompleted = tier && tierIcons?.[tier];
         const stampEl = document.createElement('div');
         stampEl.className = `streak-stamp flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
         stampEl.innerHTML = `
           <div class="stamp-icon-wrapper">
-            ${isCompleted ? tierIcons[tier] : ''}
+            ${isCompleted ? tierIcons?.[tier] : ''}
           </div>
           <div class="event-label">${step.label}</div>
         `;
@@ -440,41 +448,4 @@
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
             row.innerHTML = `
                 <span class="font-semibold text-slate-800 text-left">${item.Transaction || 'Event'}</span>
-                <span class="font-bold text-lg text-right ${points >= 0 ? 'text-green-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
-            `;
-            container.appendChild(row);
-        });
-        historyList.appendChild(container);
-    }
-    
-    // --- Event Listeners Setup ---
-    document.addEventListener('DOMContentLoaded', () => {
-      showSplashScreen();
-      
-      // Keep focus on the hidden input for the NFC reader
-      setInterval(() => {
-        if (!currentUserCode) accessCodeInput.focus();
-      }, 500);
-
-      ['click', 'keypress', 'mousemove', 'touchstart'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
-      
-      // Listener for NFC input
-      accessCodeInput.addEventListener('input', () => {
-        const code = accessCodeInput.value.trim().toUpperCase();
-        if (code.length >= MIN_UID_LENGTH) {
-            handleLogin(code);
-        }
-      });
-
-      document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
-      document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
-      historyPopup.addEventListener('click', (e) => { if(e.target === historyPopup) historyPopup.classList.remove('visible'); });
-      
-      document.getElementById('refreshHistoryBtn').addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (currentUserCode) fetchDashboardData(currentUserCode, true);
-      });
-    });
-  </script>
-</body>
-</html>
+                <span class="font-bold text-lg text-right ${points >= 0 ? 'text-green-600' : 'text-red-500
