@@ -10,7 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="K-Pop Quiz">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎶</text></svg>">
-    <link rel="apple-touch-icon" href="https://placehold.co/192x192/4BA7AD/FFFFFF?text=Q">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png"> <!-- Changed to local path -->
+    <link rel="manifest" href="manifest.json"> <!-- Link to manifest for PWA -->
+    <meta name="mobile-web-app-capable" content="yes"> <!-- For Android PWA -->
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,8 +26,19 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; background-color: #EEF7F6;
             font-family: 'Poppins', sans-serif; color: #334155;
-            /* Ensure landscape view is prioritized on tablets/phones */
-            min-height: 100dvh;
+            font-size: 16px; /* Base font size for responsiveness */
+            box-sizing: border-box; /* Crucial for consistent sizing */
+        }
+        /* Adjust base font size for smaller screens */
+        @media (max-width: 767px) {
+            html, body {
+                font-size: 14px;
+            }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+            html, body {
+                font-size: 15px;
+            }
         }
 
         /* Gradient variables from index.html */
@@ -44,6 +57,8 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             opacity: 0; visibility: hidden; transition: opacity 0.5s ease-out, visibility 0.5s;
             overflow: hidden;
+            box-sizing: border-box; /* Ensure padding is included in width/height */
+            padding: 1rem; /* Default padding for all screens */
         }
         .screen-container.active {
             opacity: 1; visibility: visible;
@@ -52,19 +67,54 @@
         /* Intro Screen */
         #introScreen {
             background-color: #EEF7F6;
-            justify-content: space-around; /* Distribute space for content */
-            padding: 2rem;
+            justify-content: center; /* Center content vertically */
+            padding: 1rem; /* Base padding */
         }
+        /* Landscape specific layout for Intro Screen */
+        @media (orientation: landscape) {
+            #introScreen {
+                flex-direction: row; /* Arrange content side-by-side */
+                justify-content: space-around; /* Distribute space */
+                align-items: center; /* Center items vertically in row */
+                padding: 1.5rem 3rem; /* More horizontal padding in landscape */
+            }
+            #introScreen > div { /* Target the content div inside introScreen */
+                max-width: 48%; /* Limit width of text content to allow side-by-side */
+                text-align: left; /* Align text left when in columns */
+                display: flex; /* Make it a flex container */
+                flex-direction: column; /* Stack its children vertically */
+                justify-content: center; /* Center content vertically */
+            }
+            #introScreen .title,
+            #introScreen .subtitle,
+            #introScreen .label,
+            #introScreen .instructions-list {
+                text-align: left; /* Override previous center alignment */
+                margin-left: 0; /* Remove auto margins if present */
+                margin-right: 0;
+            }
+            #introScreen button {
+                margin-top: 2rem; /* Add some top margin to the button in landscape */
+            }
+        }
+
         #introScreen .title {
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(3rem, 10vw, 4rem); /* Responsive title size */
+            font-size: clamp(2.5rem, 8vw, 4rem); /* Responsive title size */
             line-height: 1;
             color: #2D3748; /* Darker tone for emphasis */
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-align: center; /* Default center for mobile portrait */
+        }
+        @media (max-width: 767px) {
+            #introScreen .title {
+                font-size: clamp(2rem, 7vw, 3.5rem);
+            }
         }
         #introScreen .subtitle {
-            font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive subtitle size */
+            font-size: clamp(1.1rem, 3.5vw, 1.5rem); /* Responsive subtitle size */
             color: #4A5568;
+            text-align: center; /* Default center for mobile portrait */
         }
         #introScreen .label {
             font-weight: 700;
@@ -72,26 +122,58 @@
             padding: 0.25rem 0.75rem;
             border-radius: 9999px; /* Pill shape */
             background-color: #B2F5EA; /* Light background for the label */
-            font-size: clamp(1rem, 3vw, 1.25rem); /* Responsive label size */
+            font-size: clamp(0.9rem, 2.8vw, 1.25rem); /* Responsive label size */
             margin-top: 1rem;
+            align-self: center; /* Center the pill for mobile portrait */
         }
-        #introScreen .instructions-list { /* Changed from .instructions to .instructions-list */
-            max-width: 80%;
-            text-align: left; /* Changed to left align for bullet points */
+        @media (orientation: landscape) {
+            #introScreen .label {
+                align-self: flex-start; /* Align left in landscape */
+            }
+        }
+        #introScreen .instructions-list {
+            max-width: 90%; /* Adjusted for better mobile fit */
+            text-align: left;
             font-size: clamp(0.9rem, 2.8vw, 1.1rem); /* Responsive font size */
             color: #6B7280;
             line-height: 1.6;
             margin-top: 2rem;
-            list-style: disc; /* Use disc for bullet points */
-            padding-left: 20px; /* Indent for bullet points */
+            list-style: disc;
+            padding-left: 20px;
+            box-sizing: border-box;
+            margin-left: auto; /* Center list on mobile */
+            margin-right: auto;
+        }
+        @media (max-width: 767px) {
+            #introScreen .instructions-list {
+                font-size: clamp(0.8rem, 2.5vw, 1rem);
+                margin-top: 1rem;
+            }
         }
         #introScreen button {
             padding: 1.25rem 3rem;
-            font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive button text size */
+            font-size: clamp(1.1rem, 3.8vw, 1.5rem); /* Responsive button text size */
             font-weight: bold;
             border-radius: 0.75rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+            width: 80%; /* Make button fill more width on mobile */
+            max-width: 300px; /* Limit max width */
+            margin-top: 3rem; /* Increased margin for mobile portrait */
+        }
+        @media (orientation: landscape) {
+            #introScreen button {
+                width: auto; /* Auto width in landscape */
+                padding: 1rem 2.5rem; /* Slightly smaller padding */
+                font-size: clamp(1rem, 3.2vw, 1.4rem);
+                margin-top: 1.5rem; /* Reduced margin in landscape */
+            }
+        }
+        @media (max-width: 767px) {
+            #introScreen button {
+                padding: 1rem 2rem;
+                font-size: clamp(1rem, 3.5vw, 1.3rem);
+            }
         }
         #introScreen button:hover {
             transform: translateY(-2px);
@@ -123,6 +205,25 @@
             background-color: rgba(255, 255, 255, 1);
             transform: translateY(-1px);
         }
+        @media (max-width: 767px) {
+            .back-button {
+                top: 0.75rem;
+                left: 0.75rem;
+                padding: 0.6rem;
+            }
+            .back-button svg {
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+        }
+        @media (min-width: 768px) and (orientation: landscape) {
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.6rem;
+            }
+        }
+
 
         /* Game Screen */
         #gameScreen {
@@ -130,6 +231,13 @@
             justify-content: flex-start; /* Align header to top */
             padding-top: 1rem; /* Space for header */
             flex-direction: column; /* Ensure column layout for content below header */
+            gap: 1rem; /* Space between question card and choices section */
+        }
+        @media (orientation: landscape) {
+            #gameScreen {
+                padding-top: 1.5rem;
+                gap: 1.5rem;
+            }
         }
         #gameScreen .header-quiz {
             font-family: 'Oswald', sans-serif;
@@ -138,9 +246,21 @@
             margin-bottom: 1rem;
             width: 100%; /* Ensure it spans width */
             text-align: center;
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+        @media (max-width: 767px) {
+            #gameScreen .header-quiz {
+                font-size: clamp(1.8rem, 6vw, 2.2rem);
+            }
+        }
+        @media (orientation: landscape) {
+            #gameScreen .header-quiz {
+                margin-bottom: 0.5rem; /* Less margin in landscape */
+            }
         }
 
-        /* New Card for Question and Timer */
+
+        /* Question Card and Choices Section - Adjusted for Landscape */
         .question-card {
             background-color: white;
             border-radius: 1.5rem;
@@ -149,10 +269,8 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             width: 90%;
             max-width: 900px;
-            /* Flex properties for vertical space distribution */
             flex-grow: 1; /* Allows it to grow and take space */
             flex-basis: 0; /* Flexible base size */
-            margin-bottom: 1.5rem; /* Space between question card and choices */
             position: relative; /* For absolute positioning of timer */
             display: flex;
             align-items: center;
@@ -161,25 +279,53 @@
             max-height: 45%; /* Fixed to take top half (approx) */
             box-sizing: border-box; /* Include padding/border in height */
         }
+        @media (orientation: landscape) {
+            .question-card {
+                flex-grow: 0.6; /* Give question card slightly more space */
+                max-height: 60vh; /* Allow it to take up more vertical space in landscape */
+                padding: clamp(1.2rem, 3vw, 1.8rem); /* Adjust padding for landscape */
+            }
+        }
+        @media (max-width: 767px) {
+            .question-card {
+                padding: 0.8rem;
+                min-height: 120px;
+                border-radius: 1rem;
+            }
+        }
+
 
         .question-text {
-            font-size: clamp(1.6rem, 5.5vw, 2.2rem); /* Responsive font size */
+            font-size: clamp(1.5rem, 5vw, 2.2rem); /* Responsive font size */
             font-weight: 600;
             color: #334155;
             line-height: 1.4;
-            text-align: center; /* Changed to center align */
+            text-align: center;
             padding-right: 70px; /* Make space for the timer */
             width: 100%; /* Ensure text fills container width */
         }
+        @media (max-width: 767px) {
+            .question-text {
+                font-size: clamp(1.3rem, 4.5vw, 2rem);
+                padding-right: 55px; /* Adjust for smaller timer */
+            }
+        }
+        @media (orientation: landscape) {
+            .question-text {
+                font-size: clamp(1.6rem, 4.5vw, 2.5rem); /* Larger font for landscape */
+                padding-right: 80px; /* More space for timer */
+            }
+        }
+
         .choices-section {
             flex-grow: 1; /* Takes up bottom half */
             display: grid;
             grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
             grid-template-rows: repeat(2, 1fr);
-            gap: 1.5rem; /* Space between buttons */
+            gap: 1.25rem; /* Space between buttons */
             width: 90%;
             max-width: 900px;
-            padding: 1rem;
+            padding: 0.5rem; /* Reduced padding here, as gameScreen has padding */
             opacity: 0; /* Hidden initially */
             visibility: hidden;
             transition: opacity 0.3s ease-in;
@@ -189,6 +335,20 @@
             opacity: 1;
             visibility: visible;
         }
+        @media (max-width: 767px) {
+            .choices-section {
+                gap: 0.75rem;
+                padding: 0.25rem;
+            }
+        }
+        @media (orientation: landscape) {
+            .choices-section {
+                gap: 1.5rem; /* Slightly more space in landscape */
+                padding: 0.5rem 0; /* Adjust vertical padding */
+            }
+        }
+
+
         .choice-button {
             background-color: white;
             border: 2px solid #D1E0DE;
@@ -214,6 +374,20 @@
         .choice-button:disabled {
             cursor: not-allowed;
             opacity: 0.7;
+        }
+        @media (max-width: 767px) {
+            .choice-button {
+                padding: 0.6rem;
+                font-size: clamp(0.9rem, 3vw, 1.2rem);
+                min-height: 60px;
+                border-radius: 0.8rem;
+            }
+        }
+        @media (orientation: landscape) {
+            .choice-button {
+                font-size: clamp(1.1rem, 3vw, 1.5rem);
+                padding: clamp(0.9rem, 2.5vw, 1.3rem);
+            }
         }
 
         /* Answer feedback colors */
@@ -247,7 +421,28 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             overflow: hidden;
             z-index: 5; /* Above buttons */
+            flex-shrink: 0; /* Prevent it from shrinking */
         }
+        @media (max-width: 767px) {
+            .countdown-timer-container {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+                top: 0.75rem;
+                right: 0.75rem;
+                border-width: 3px;
+            }
+        }
+        @media (orientation: landscape) {
+            .countdown-timer-container {
+                top: 0.8rem;
+                right: 0.8rem;
+                width: 65px;
+                height: 65px;
+                font-size: 1.6rem;
+            }
+        }
+
         .countdown-timer-svg {
             position: absolute;
             top: 0;
@@ -278,18 +473,34 @@
             justify-content: center; /* Center content vertically */
             align-items: center; /* Center content horizontally */
         }
+        @media (orientation: landscape) {
+            #resultScreen {
+                padding: 1.5rem; /* Reduced padding for landscape */
+            }
+        }
         #resultScreen .message {
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 3.5rem); /* Responsive message size */
+            font-size: clamp(2.2rem, 7vw, 3.5rem); /* Responsive message size */
             line-height: 1.2;
             color: #2D3748;
             margin-bottom: 1rem;
         }
+        @media (max-width: 767px) {
+            #resultScreen .message {
+                font-size: clamp(2rem, 6.5vw, 3rem);
+            }
+        }
         #resultScreen .subtitle-message {
-            font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive subtitle size */
+            font-size: clamp(1.1rem, 3.5vw, 1.5rem); /* Responsive subtitle size */
             color: #4A5568;
             margin-bottom: 2rem;
         }
+        @media (max-width: 767px) {
+            #resultScreen .subtitle-message {
+                font-size: clamp(1rem, 3vw, 1.3rem);
+            }
+        }
+
         #resultScreen .done-button-container { /* New container for done button */
             margin-top: 2rem; /* Add spacing above the button */
             width: 100%; /* Allow it to take full width for centering */
@@ -299,14 +510,13 @@
         }
         #resultScreen .done-button {
             padding: 1.25rem 3rem;
-            font-size: clamp(1.2rem, 4vw, 1.5rem); /* Responsive button text size */
+            font-size: clamp(1.1rem, 3.8vw, 1.5rem); /* Responsive button text size */
             font-weight: bold;
             border-radius: 0.75rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
             color: white;
             background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
-            /* Removed appearance: none; and border: none; as Tailwind handles this well and often not needed */
         }
         #resultScreen .done-button:hover {
             transform: translateY(-2px);
@@ -318,10 +528,16 @@
             transform: none;
             box-shadow: none;
         }
+        @media (max-width: 767px) {
+            #resultScreen .done-button {
+                padding: 1rem 2.5rem;
+                font-size: clamp(1rem, 3.5vw, 1.3rem);
+            }
+        }
 
         /* Points Earned Text for Result Screen */
         .points-earned-text {
-            font-size: clamp(1.5rem, 5vw, 2rem); /* Responsive font size */
+            font-size: clamp(1.4rem, 4.5vw, 2rem); /* Responsive font size */
             font-weight: bold;
             color: #10B981; /* Green color for earned points */
             margin-top: -1rem; /* Adjust spacing */
@@ -330,12 +546,17 @@
             width: 80%; /* Match max width of other content for consistent alignment */
             max-width: 900px;
         }
+        @media (max-width: 767px) {
+            .points-earned-text {
+                font-size: clamp(1.2rem, 4vw, 1.8rem);
+            }
+        }
 
         /* NEW: Result Screen Footer */
         .result-footer {
             position: absolute;
             bottom: 1rem;
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 2vw, 0.8rem); /* Responsive font size for footer */
             color: #9CA3AF; /* Soft gray color */
             text-align: center;
             width: 100%;
@@ -354,8 +575,8 @@
             display: none !important;
         }
 
-        /* Ensure content is centered for all screens */
-        .flex.flex-col.h-full.w-full {
+        /* Ensure body content is centered for all screens */
+        body {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -364,66 +585,6 @@
             width: 100%;
         }
 
-        /* Landscape specific adjustments */
-        @media (orientation: landscape) {
-            body {
-                flex-direction: row; /* For wider screens */
-            }
-            .screen-container {
-                flex-direction: row; /* For wider screens */
-            }
-            #introScreen {
-                padding: 1rem 4rem; /* More horizontal padding */
-            }
-            #introScreen .instructions-list { /* Apply landscape adjustments */
-                max-width: 60%;
-            }
-            #gameScreen {
-                flex-direction: column; /* Still column for game sections */
-                height: 100%; /* Occupy full height in landscape */
-            }
-            .question-card, .choices-section {
-                width: 80%; /* Wider content area */
-                max-width: 1000px; /* Allow content to span more */
-            }
-             .question-card {
-                flex-grow: 0.5; /* Makes it take roughly the top half */
-                max-height: 50%; /* Explicitly set max height for card */
-            }
-            .choices-section {
-                flex-grow: 0.5; /* Makes it take roughly the bottom half */
-                padding-top: 0; /* No extra padding needed at top of choices section */
-                display: grid; /* Keep grid layout */
-                align-content: center; /* Vertically center grid items */
-            }
-            /* Adjust font sizes more aggressively for smaller landscape screens */
-            @media (max-height: 600px) { /* Example: for typical tablet landscape */
-                .question-text {
-                    font-size: clamp(1.4rem, 4.5vw, 2rem); /* Slightly smaller font */
-                }
-                .choice-button {
-                    font-size: clamp(0.9rem, 3vw, 1.3rem);
-                    padding: clamp(0.6rem, 2.5vw, 1rem);
-                }
-                #resultScreen .message {
-                    font-size: clamp(2rem, 6vw, 3rem);
-                }
-                #resultScreen .subtitle-message {
-                    font-size: clamp(1rem, 3.5vw, 1.3rem);
-                }
-                .points-earned-text {
-                    font-size: clamp(1.3rem, 4.5vw, 1.8rem);
-                }
-            }
-             @media (max-width: 900px) and (orientation: landscape) { /* Smaller landscape tablets */
-                .question-text {
-                    font-size: clamp(1.5rem, 5vw, 2.1rem);
-                }
-                .choice-button {
-                    font-size: clamp(0.9rem, 3.2vw, 1.35rem);
-                }
-            }
-        }
     </style>
 </head>
 <body class="flex flex-col h-full w-full">
@@ -434,7 +595,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
         </a>
-        <div class="flex flex-col items-center justify-center h-full w-full">
+        <div class="flex flex-col items-center justify-center"> <!-- This div will adapt for landscape -->
             <h1 class="title">K-Pop Quiz</h1>
             <p class="subtitle font-semibold text-lg md:text-xl mt-2">(Multiple Choice)</p>
             <span class="label">Easy</span>
