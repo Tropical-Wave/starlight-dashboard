@@ -40,7 +40,7 @@
         /* Fullscreen overlays (popups, login, splash) */
         .fullscreen-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 100; display: none; align-items: center; justify-content: center;
+            z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center;
             opacity: 0; transition: opacity 0.5s ease-out, visibility 0.5s;
             background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
         }
@@ -69,25 +69,13 @@
             0%, 100% { transform: scale(1); opacity: 0.7; }
             50% { transform: scale(1.15); opacity: 1; }
         }
+        
+        #nfcPrompt {
+            color: #FAF3F3;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
 
-        /* --- Login Screen --- */
-        #loginScreen {
-            flex-direction: column; gap: 2rem; background-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(8px);
-        }
-        .login-box {
-            background-color: white; padding: 2.5rem; border-radius: 1.5rem; text-align: center;
-            width: 90%; max-width: 450px; border: 1px solid #D1E0DE;
-            box-shadow: 0 8px 24px 0 rgba(0,0,0, 0.08);
-        }
-        #accessCodeInput {
-            border: 2px solid #D1E0DE; background-color: #F8FAFC; color: #334155;
-            transition: border-color 0.3s ease; text-align: center;
-        }
-        #accessCodeInput:focus {
-            border-color: var(--brand-color); outline: none;
-            box-shadow: 0 0 0 3px rgba(75, 167, 173, 0.2);
-        }
+        /* --- Login Screen (REMOVED) --- */
 
         /* --- Dashboard Container --- */
         #dashboard {
@@ -168,23 +156,12 @@
 <body class="antialiased">
     
     <div id="splashScreen" class="fullscreen-overlay visible">
-        <div class="star-container">
-            <svg fill="#EEF7F6" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.875-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/></svg>
+        <div class="star-container text-center">
+            <svg class="inline-block" fill="#EEF7F6" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.875-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/></svg>
+            <p id="nfcPrompt" class="text-2xl font-semibold mt-8">Tap your Passport on the scanner</p>
+            <div id="statusContainer" class="h-10 mt-4"></div>
         </div>
-    </div>
-
-    <div id="loginScreen" class="fullscreen-overlay">
-        <div class="login-box">
-            <div class="w-20 h-20 mx-auto text-cyan-600"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></div>
-            <h2 class="text-3xl font-bold text-slate-800 mt-4">Event Access</h2>
-            <p class="text-slate-500 mt-1">Enter your code to view your dashboard</p>
-            <div class="mt-8">
-                <input type="text" id="accessCodeInput" autocomplete="off" placeholder="Enter Access Code" class="w-full p-4 rounded-lg font-semibold text-lg tracking-wider">
-                <button id="accessCodeEnterBtn" class="w-full mt-4 p-4 text-white font-bold rounded-lg text-lg transition hover:opacity-90 shadow-lg shadow-cyan-500/10" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Verify Code</button>
-                <p id="loadingIndicator" class="text-cyan-600 mt-4 font-semibold hidden"><span class="inline-block animate-spin h-5 w-5 mr-2 border-2 border-current border-t-transparent rounded-full"></span>Verifying...</p>
-                <p id="accessCodeError" class="text-red-500 mt-4 font-semibold hidden">Invalid Code. Please try again.</p>
-            </div>
-        </div>
+        <input id="accessCodeInput" type="text" autofocus autocomplete="off" style="opacity: 0; position: absolute; pointer-events: none;">
     </div>
 
     <main id="dashboard" class="flex">
@@ -250,12 +227,9 @@
   <script>
     // --- DOM Element Constants ---
     const splashScreen = document.getElementById('splashScreen');
-    const loginScreen = document.getElementById('loginScreen');
     const dashboard = document.getElementById('dashboard');
     const accessCodeInput = document.getElementById('accessCodeInput');
-    const accessCodeEnterBtn = document.getElementById('accessCodeEnterBtn');
-    const accessCodeError = document.getElementById('accessCodeError');
-    const loadingIndicator = document.getElementById('loadingIndicator');
+    const statusContainer = document.getElementById('statusContainer');
     const userNameEl = document.getElementById('userName');
     const userPointsEl = document.getElementById('userPoints');
     const streakTrackerContainer = document.getElementById('streakTrackerContainer');
@@ -263,35 +237,36 @@
     const historyPopup = document.getElementById('historyPopup');
 
     // --- PART 1: SheetDB Configuration ---
-    // IMPORTANT: Replace "YOUR_SHEETDB_API_ID_HERE" with your actual SheetDB API ID.
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; 
     const INACTIVITY_TIMEOUT = 30000;
     const AUTO_REFRESH_INTERVAL = 15000;
+    const MIN_UID_LENGTH = 4; // Min length of NFC UID to trigger verification
 
     // --- App State ---
     let inactivityTimer = null;
     let autoRefreshInterval = null;
     let currentUserCode = null;
+    let isVerifying = false; // Prevents double scans while a request is active
     
     // --- UI Flow & Data Functions ---
     function showSplashScreen() {
       splashScreen.classList.add('visible');
-      loginScreen.classList.remove('visible');
       dashboard.style.display = 'none';
       dashboard.style.opacity = '0';
       
       currentUserCode = null;
       sessionStorage.removeItem('currentUserCode');
       accessCodeInput.value = '';
+      isVerifying = false;
+      clearStatusMessage();
+      
       clearInterval(autoRefreshInterval);
       clearTimeout(inactivityTimer);
       autoRefreshInterval = null;
       inactivityTimer = null;
-    }
 
-    function showLoginScreen() {
-      splashScreen.classList.remove('visible');
-      loginScreen.classList.add('visible');
+      // Ensure focus for the NFC reader
+      accessCodeInput.focus();
     }
 
     function resetInactivityTimer() {
@@ -301,43 +276,48 @@
       }
     }
     
+    // --- Splash Screen Status Messaging ---
+    function showVerifyingMessage() {
+        statusContainer.innerHTML = `<p class="text-white text-lg font-semibold animate-pulse">Verifying Passport...</p>`;
+    }
+
+    function showErrorMessage(message) {
+        statusContainer.innerHTML = `<p class="text-red-300 text-lg font-bold">${message}</p>`;
+        // Clear message after a few seconds and reset state
+        setTimeout(() => {
+            if (!currentUserCode) { // Only clear if we haven't successfully logged in
+                 clearStatusMessage();
+                 accessCodeInput.value = '';
+                 isVerifying = false;
+                 accessCodeInput.focus();
+            }
+        }, 3000);
+    }
+
+    function clearStatusMessage() {
+        statusContainer.innerHTML = '';
+    }
+
     async function fetchDashboardData(code, isManualRefresh = false) {
       if (isManualRefresh) {
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
       try {
-        // Fetch Name, Points, and Event attendance from the 'Users' sheet
-        // Removed the 'fields' parameter and the cache-busting 't' parameter from the URL.
-        // SheetDB's search endpoint returns the full row, from which we can extract the necessary fields.
         const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users`;
-        
-        // Fetch Transaction history from the 'History' sheet, sorted by Timestamp
-        // Removed the 'fields' parameter and the cache-busting 't' parameter from the URL.
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&sort_by=Timestamp&sort_order=desc`;
-        
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
-        if (!userRes.ok) {
-            const errorText = await userRes.text();
-            throw new Error(`User data refresh failed: ${userRes.status} ${userRes.statusText}. Details: ${errorText}`);
-        }
-        if (!historyRes.ok) {
-            const errorText = await historyRes.text();
-            throw new Error(`History data refresh failed: ${historyRes.status} ${historyRes.statusText}. Details: ${errorText}`);
-        }
-
+        if (!userRes.ok || !historyRes.ok) throw new Error(`Data refresh failed.`);
+        
         const userJson = await userRes.json();
         const historyJson = await historyRes.json();
 
-        if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
-            throw new Error("Invalid user data received from API during refresh. No user found or data format incorrect.");
-        }
+        if (!Array.isArray(userJson) || userJson.length === 0) throw new Error("Invalid user data received.");
         
         updateDashboardUI(userJson[0], historyJson);
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        // Only logout on auto-refresh failure if not a manual refresh
         if (!isManualRefresh) showSplashScreen(); 
       } finally {
         if (isManualRefresh) {
@@ -346,50 +326,36 @@
       }
     }
 
-    async function handleLogin() {
-      const code = accessCodeInput.value.trim().toUpperCase(); // Often codes are not case-sensitive
-      if (!code) {
-        accessCodeError.textContent = "Please enter a code.";
-        accessCodeError.classList.remove('hidden');
-        return;
-      }
+    async function handleLogin(code) {
+      if (isVerifying) return; // Exit if a verification is already in progress
+      isVerifying = true;
 
-      loadingIndicator.classList.remove('hidden');
-      accessCodeError.classList.add('hidden');
-      accessCodeEnterBtn.disabled = true;
+      showVerifyingMessage();
 
       try {
-        // Fetch Name, Points, and Event attendance from the 'Users' sheet
-        // Removed the 'fields' parameter and the cache-busting 't' parameter from the URL.
         const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users`;
-        
-        // Fetch Transaction history from the 'History' sheet, sorted by Timestamp
-        // Removed the 'fields' parameter and the cache-busting 't' parameter from the URL.
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&sort_by=Timestamp&sort_order=desc`;
         
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
-        if (!userRes.ok) {
-            const errorText = await userRes.text();
-            throw new Error(`User data fetch failed: ${userRes.status} ${userRes.statusText}. Details: ${errorText}`);
+        if (!userRes.ok) { // Check user response first
+             if (userRes.status === 404) throw new Error("Passport not recognized.");
+             throw new Error(`User data fetch failed: ${userRes.status}`);
         }
-        if (!historyRes.ok) {
-            const errorText = await historyRes.text();
-            throw new Error(`History data fetch failed: ${historyRes.status} ${historyRes.statusText}. Details: ${errorText}`);
-        }
+        if (!historyRes.ok) throw new Error(`History data fetch failed: ${historyRes.status}`);
         
         const userJson = await userRes.json();
         const historyJson = await historyRes.json();
 
         if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
-            throw new Error("Invalid access code or user data format. No user found or data format incorrect.");
+            throw new Error("Passport not recognized.");
         }
         const userData = userJson[0];
         
         currentUserCode = code;
         sessionStorage.setItem('currentUserCode', code);
 
-        loginScreen.classList.remove('visible');
+        splashScreen.classList.remove('visible');
         dashboard.style.display = 'flex';
         setTimeout(() => {
             dashboard.style.opacity = 1;
@@ -405,27 +371,17 @@
 
       } catch (error) {
         console.error("Login failed:", error);
-        // Provide a more user-friendly error message if it's a 404 from SheetDB specifically
-        if (error.message.includes("404") && (error.message.includes("Undefined column: fields") || error.message.includes("Undefined column: t"))) {
-            accessCodeError.textContent = "Configuration error: The SheetDB API might be set up incorrectly (sheet name, column name, or API ID).";
-        } else if (error.message.includes("Invalid access code") || error.message.includes("No user found")) {
-            accessCodeError.textContent = "Invalid Access Code. Please try again.";
-        } else {
-            accessCodeError.textContent = "Login failed. Please check the code or try again later.";
-        }
-        accessCodeError.classList.remove('hidden');
+        showErrorMessage(error.message || "Verification failed. Try again.");
         currentUserCode = null;
         sessionStorage.removeItem('currentUserCode');
         clearInterval(autoRefreshInterval);
-      } finally {
-        loadingIndicator.classList.add('hidden');
-        accessCodeEnterBtn.disabled = false;
+        // isVerifying will be set to false in the error message timeout
       }
     }
 
     // --- UI Rendering Functions ---
     function updateDashboardUI(userData, historyData) {
-      userNameEl.textContent = `${userData.Name || "Guest"}!`; // Added exclamation mark
+      userNameEl.textContent = `${userData.Name || "Guest"}!`;
       userPointsEl.textContent = parseInt(userData.Points || "0", 10);
       renderStreakTracker(userData);
       renderHistoryList(historyData || []);
@@ -433,7 +389,6 @@
 
     function renderStreakTracker(data) {
       streakTrackerContainer.innerHTML = '';
-
       const steps = [
         { key: 'Event1', label: 'Onboarding' },
         { key: 'Event2', label: 'Take Off' },
@@ -445,17 +400,13 @@
         'Tier3': `<svg class="w-10 h-10 md:w-12 md:h-12 stamp-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>`
       };
       
-      // Initial delay before the first stamp animation
       let animationInitialDelay = 500; 
-      // Delay between sequential stamp animations
       let animationStaggerDelay = 700; 
-
       let currentAnimationDelay = animationInitialDelay;
 
       steps.forEach((step, index) => {
         const tier = data[step.key];
         const isCompleted = tier && tierIcons[tier];
-
         const stampEl = document.createElement('div');
         stampEl.className = `streak-stamp flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
         stampEl.innerHTML = `
@@ -470,7 +421,7 @@
             setTimeout(() => {
                 stampEl.classList.add('is-stamping');
             }, currentAnimationDelay);
-            currentAnimationDelay += animationStaggerDelay; // Increment delay for the next stamp
+            currentAnimationDelay += animationStaggerDelay;
         }
       });
     }
@@ -480,17 +431,13 @@
             historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history recorded.</p>';
             return;
         }
-        
         historyList.innerHTML = ''; 
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
-
-        // Data is now pre-sorted by the API, so no need to sort here.
         historyData.forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
-            // Changed text-cyan-600 to text-green-600 for positive points
             row.innerHTML = `
                 <span class="font-semibold text-slate-800 text-left">${item.Transaction || 'Event'}</span>
                 <span class="font-bold text-lg text-right ${points >= 0 ? 'text-green-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
@@ -503,13 +450,21 @@
     // --- Event Listeners Setup ---
     document.addEventListener('DOMContentLoaded', () => {
       showSplashScreen();
-      setTimeout(showLoginScreen, 2500);
+      
+      // Keep focus on the hidden input for the NFC reader
+      setInterval(() => {
+        if (!currentUserCode) accessCodeInput.focus();
+      }, 500);
 
       ['click', 'keypress', 'mousemove', 'touchstart'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
-      splashScreen.addEventListener('click', showLoginScreen);
       
-      accessCodeEnterBtn.addEventListener('click', handleLogin);
-      accessCodeInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleLogin());
+      // Listener for NFC input
+      accessCodeInput.addEventListener('input', () => {
+        const code = accessCodeInput.value.trim().toUpperCase();
+        if (code.length >= MIN_UID_LENGTH) {
+            handleLogin(code);
+        }
+      });
 
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
