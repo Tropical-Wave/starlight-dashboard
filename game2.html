@@ -679,7 +679,7 @@
         autostart: false,
     }).toDestination();
 
-    // Removed: backgroundMusicPlayer
+    // Removed: backgroundMusicPlayer as it's not needed for this game
     // const backgroundMusicPlayer = new Tone.Player({
     //     url: 'music-for-game-fun-kid-game-163649.mp3', // Local file path
     //     loop: true, // Loop the background music
@@ -830,16 +830,15 @@
         resetGame(); // Reset game state for a fresh start
         showScreen(gameScreen);
         
-        // Removed: Start background music
-        // if (audioLoaded) {
-        //     try {
-        //         await Tone.start(); // Ensure audio context is started
-        //         backgroundMusicPlayer.start();
-        //     } catch (e) {
-        //         console.error("Failed to start Tone.js audio context or background music:", e);
-        //         // Continue game without music
-        //     }
-        // }
+        if (audioLoaded) {
+            try {
+                await Tone.start(); // Ensure audio context is started
+                // Removed backgroundMusicPlayer.start() as it's not needed for this game.
+            } catch (e) {
+                console.error("Failed to start Tone.js audio context:", e);
+                // Continue game without music
+            }
+        }
 
         loadQuestion();
         // Prevent refresh or back during game
@@ -855,7 +854,6 @@
             const confirmExit = window.confirm("Exiting the quiz will reset your progress. Are you sure?");
             if (confirmExit) {
                 // Removed: backgroundMusicPlayer.stop()
-                // if(backgroundMusicPlayer.state === 'started') backgroundMusicPlayer.stop(); // Stop music on exit
                 if(songSnippetPlayer.state === 'started') songSnippetPlayer.stop(); // Stop song snippet on exit
                 window.removeEventListener('popstate', handlePopState);
                 window.location.href = 'home.html'; // Redirect to home.html
@@ -884,7 +882,7 @@
     /**
      * Loads and displays the current question.
      */
-    function loadQuestion() {
+    async function loadQuestion() { // Made async to await songSnippetPlayer.load()
         if (currentQuestionIndex >= shuffledSongs.length) { // Changed from shuffledQuestions
             endQuiz();
             return;
@@ -910,12 +908,22 @@
             songSnippetPlayer.stop();
         }
 
-        // Load and start the new song snippet
         if (audioLoaded) {
-            songSnippetPlayer.url = `audio/${songData.audio}`; // Ensure correct path for audio files
-            songSnippetPlayer.start();
+            try {
+                // Load the new song snippet and wait for it to be ready
+                await songSnippetPlayer.load(`audio/${songData.audio}`); // Await the loading of the audio buffer
+                songSnippetPlayer.start();
+            } catch (e) {
+                console.error("Error loading or playing song snippet:", e);
+                // Handle error gracefully, e.g., skip to next question or show error
+                handleAnswer(null, false); // Treat as wrong answer and move on
+                return; // Prevent further execution of this function for this round
+            }
         } else {
-            console.warn("Audio not loaded, cannot play song snippet.");
+            console.warn("Audio context not ready, cannot play song snippet.");
+            // If audio context is not ready, we can't play. Treat as wrong answer.
+            handleAnswer(null, false);
+            return;
         }
 
         // Schedule showing choices and starting countdown after AUDIO_ONLY_DURATION
@@ -1070,8 +1078,7 @@
      */
     function endQuiz() {
         gameActive = false;
-        // Removed: backgroundMusicPlayer.stop()
-        // if(backgroundMusicPlayer.state === 'started') backgroundMusicPlayer.stop(); // Stop music when quiz ends
+        // Removed: backgroundMusicPlayer.stop() as it's not needed for this game
         if(songSnippetPlayer.state === 'started') songSnippetPlayer.stop(); // Stop song snippet when quiz ends
         if(audioLoaded) gameDoneSoundPlayer.start(); // Play game done sound
         window.removeEventListener('popstate', handlePopState); // Remove popstate listener
