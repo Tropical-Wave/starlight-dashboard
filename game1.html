@@ -708,7 +708,7 @@
     const buzzerSound = new Tone.NoiseSynth().toDestination();
     buzzerSound.envelope.attack = 0.005;
     buzzerSound.envelope.decay = 0.2;
-    buzzerBuzzerSound.envelope.sustain = 0;
+    buzzerSound.envelope.sustain = 0; // Fixed typo here
     buzzerSound.envelope.release = 0.3;
 
 
@@ -822,14 +822,13 @@
         resetGame(); // Reset game state for a fresh start
         showScreen(gameScreen);
         
-        // Start background music only if audio loaded and context started successfully
+        // Ensure audio context is started on user gesture
         if (audioLoaded) {
             try {
-                await Tone.start(); // Ensure audio context is started
+                await Tone.start(); // This will resume the AudioContext
                 backgroundMusicPlayer.start();
             } catch (e) {
                 console.error("Failed to start Tone.js audio context or background music:", e);
-                // Continue game without music
             }
         }
 

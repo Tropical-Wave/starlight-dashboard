@@ -340,7 +340,7 @@
             width: 80%;
             max-width: 600px;
             height: 80px; /* Fixed height for the wave */
-            background-color: #B2F5EA; /* Light background for the wave */
+            /* Removed background-color: #B2F5EA; to make it transparent */
             border-radius: 0.5rem;
             margin: 2rem 0; /* Space above and below */
             display: flex;
@@ -348,7 +348,7 @@
             justify-content: center;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            /* Removed box-shadow: 0 4px 12px rgba(0,0,0,0.05); to remove background-like shadow */
         }
         .sound-wave-bar {
             width: 8px; /* Width of each bar */
@@ -709,7 +709,7 @@
 <script>
     // --- Constants and DOM Elements ---
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; // Replace with your SheetDB API ID
-    const GAME_POINTS = 5; // Points awarded for winning the game
+    const GAME_POINTS = 15; // Points awarded for winning the game - CHANGED FROM 5 TO 15
     const QUIZ_QUESTION_COUNT = 10; // Number of questions in the quiz (changed from 5)
     const TOTAL_ROUND_DURATION = 15000; // 15 seconds total per round (changed from 7000 ms)
     const CHOICES_DISPLAY_DURATION = 5000; // Choices appear for the last 5 seconds (unchanged)
@@ -942,7 +942,7 @@
         // Removed: adjustPromptFontSize(); as it's no longer needed
 
         choicesSection.classList.remove('visible'); // Hide choices
-        countdownTimerContainer.classList.add('hidden'); // Hide timer
+        countdownTimerContainer.classList.remove('hidden'); // Show timer from the start of the round
         soundWavePlaceholder.classList.remove('hidden'); // Show sound wave animation
         resetChoiceButtons(); // Reset buttons to clear previous states
 
@@ -950,6 +950,13 @@
         clearTimeout(roundTimer);
         clearTimeout(choicesTimer);
         clearInterval(countdownTimer);
+
+        // Reset countdown display to full duration (e.g., 5 seconds) before it starts counting down
+        countdownText.textContent = CHOICES_DISPLAY_DURATION / 1000;
+        const radius = 15.9155;
+        const circumference = 2 * Math.PI * radius;
+        countdownCircleProgress.style.transition = `none`; // Remove transition for instant reset
+        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`; // Set to full circle
 
         // Stop previous song snippet if playing
         if (songSnippetPlayer.state === 'started') {
@@ -1007,7 +1014,8 @@
             button.onclick = () => handleAnswer(choiceText, choiceText === shuffledSongs[currentQuestionIndex].correctAnswer); // Changed from shuffledQuestions
             button.disabled = false; // Enable buttons when visible
         });
-        countdownTimerContainer.classList.remove('hidden'); // Show timer
+        // The timer is already visible, no need to show it again here.
+        // countdownTimerContainer.classList.remove('hidden'); // Show timer
     }
 
     /**
@@ -1019,8 +1027,10 @@
         const radius = 15.9155; // From SVG path
         const circumference = 2 * Math.PI * radius;
 
+        // Apply transition here, right before the countdown starts
         countdownCircleProgress.style.transition = `stroke-dasharray ${durationInSeconds}s linear`;
-        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`; // Start filled (100% of circumference)
+        // Set the initial progress for the countdown (full circle at the start of countdown)
+        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`;
 
         countdownText.textContent = timeRemaining; // Display initial time
 
@@ -1071,15 +1081,17 @@
         // Show correct answer and wrong answers
         choiceButtons.forEach(button => {
             // Re-parse the text content for comparison
-            const buttonText = button.textContent.replace(/\s+/g, ' ').trim(); // Normalize whitespace
-            const originalCorrectAnswer = songData.correctAnswer.replace(/\s+/g, ' ').trim(); // Normalize whitespace
+            // Note: button.textContent will now contain both song title and artist name
+            // We need to compare against the full 'correctAnswer' from songData
+            const buttonFullText = button.querySelector('.song-title').textContent + ' - ' + button.querySelector('.artist-name').textContent;
+            const originalCorrectAnswer = songData.correctAnswer;
 
-            if (buttonText.includes(originalCorrectAnswer.split(' - ')[0]) && buttonText.includes(originalCorrectAnswer.split(' - ')[1])) { // Check by song title and artist
+            if (buttonFullText.trim() === originalCorrectAnswer.trim()) {
                 button.classList.add('correct');
-                if (selectedAnswer && selectedAnswer.replace(/\s+/g, ' ').trim() === originalCorrectAnswer) {
+                if (selectedAnswer && selectedAnswer.trim() === originalCorrectAnswer.trim()) {
                     correctlyAnswered = true;
                 }
-            } else if (selectedAnswer && buttonText.includes(selectedAnswer.split(' - ')[0]) && buttonText.includes(selectedAnswer.split(' - ')[1])) {
+            } else if (selectedAnswer && buttonFullText.trim() === selectedAnswer.trim()) {
                 button.classList.add('wrong');
             }
             button.disabled = true; // Disable all buttons after an answer is chosen or time runs out
