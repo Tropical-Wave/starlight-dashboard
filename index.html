@@ -50,14 +50,15 @@
             --brand-color: #4BA7AD;
         }
         
-        /* Fullscreen overlay for splash screen */
+        /* Fullscreen overlay for splash screen and general popups */
         .fullscreen-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.5s ease-out, visibility 0.5s;
+            z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.5s ease-out, visibility 0.5s;
             background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
         }
-        .fullscreen-overlay.visible { display: flex; opacity: 1; visibility: visible; }
+        .fullscreen-overlay.visible { opacity: 1; visibility: visible; }
+        .fullscreen-overlay.hidden { display: none; } /* Added for explicit hiding */
         
         /* --- Splash Screen --- */
         #splashScreen {
@@ -88,6 +89,122 @@
                 margin-top: 1.5rem;
             }
         }
+
+        /* --- Test Login Popup --- */
+        #testLoginPopup {
+            z-index: 210; /* Higher than splash screen */
+            background-color: rgba(0, 0, 0, 0.6); /* Darker overlay for popup */
+        }
+
+        .popup-card {
+            background-color: white; border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex;
+            flex-direction: column; width: 90%; max-width: 400px; max-height: 90vh;
+            transform: scale(0.95); opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        /* Make popup visible when its parent overlay is visible */
+        .fullscreen-overlay.visible .popup-card { transform: scale(1); opacity: 1; }
+
+        .popup-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            font-weight: 600;
+            font-size: 1.25rem;
+            text-align: center;
+            color: #334155;
+            position: relative;
+        }
+
+        .popup-close-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94A3B8;
+            transition: color 0.2s;
+        }
+        .popup-close-btn:hover {
+            color: #334155;
+        }
+
+        .popup-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .popup-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #CBD5E1;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .popup-input:focus {
+            border-color: var(--brand-color);
+            box-shadow: 0 0 0 3px rgba(75, 167, 173, 0.2);
+        }
+
+        .popup-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, opacity 0.2s;
+        }
+        .popup-button.primary {
+            background-color: var(--brand-color);
+            color: white;
+            box-shadow: 0 4px 8px rgba(75, 167, 173, 0.2);
+        }
+        .popup-button.primary:hover {
+            opacity: 0.9;
+        }
+        .popup-button.secondary {
+            background-color: #E2E8F0;
+            color: #475569;
+        }
+        .popup-button.secondary:hover {
+            background-color: #CBD5E1;
+        }
+
+        /* Test Login Button at bottom of splash screen */
+        #showTestLoginBtn {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.75rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            z-index: 201; /* Above splash screen */
+        }
+        #showTestLoginBtn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%) translateY(-2px);
+        }
+        @media (max-width: 767px) {
+            #showTestLoginBtn {
+                bottom: 1rem;
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+            }
+        }
+
     </style>
 </head>
 <body class="antialiased">
@@ -99,6 +216,25 @@
             <div id="statusContainer" class="h-10 mt-4"></div>
         </div>
         <input id="accessCodeInput" type="text" inputmode="none" autocomplete="off" style="opacity: 0; position: absolute; pointer-events: none;">
+
+        <!-- Test Login Button -->
+        <button id="showTestLoginBtn">Test Log-In</button>
+    </div>
+
+    <!-- Test Login Popup (hidden by default) -->
+    <div id="testLoginPopup" class="fullscreen-overlay hidden">
+        <div class="popup-card">
+            <div class="popup-header">
+                Manual Access Code Entry
+                <button id="closeTestLoginPopupBtn" class="popup-close-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                </button>
+            </div>
+            <div class="popup-content">
+                <input type="text" id="manualAccessCodeInput" class="popup-input" placeholder="Enter Access Code" />
+                <button id="manualLoginBtn" class="popup-button primary">Log-In</button>
+            </div>
+        </div>
     </div>
     
   <script>
@@ -106,6 +242,14 @@
     const splashScreen = document.getElementById('splashScreen');
     const accessCodeInput = document.getElementById('accessCodeInput');
     const statusContainer = document.getElementById('statusContainer');
+
+    // Test Login Elements
+    const showTestLoginBtn = document.getElementById('showTestLoginBtn');
+    const testLoginPopup = document.getElementById('testLoginPopup');
+    const closeTestLoginPopupBtn = document.getElementById('closeTestLoginPopupBtn');
+    const manualAccessCodeInput = document.getElementById('manualAccessCodeInput');
+    const manualLoginBtn = document.getElementById('manualLoginBtn');
+
 
     // --- App Configuration ---
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; 
@@ -129,6 +273,7 @@
     // --- UI Flow & Data Functions ---
     function showSplashScreen() {
       splashScreen.classList.add('visible');
+      splashScreen.classList.remove('hidden'); // Ensure it's not display: none
       accessCodeInput.value = '';
       isVerifying = false;
       clearStatusMessage();
@@ -148,8 +293,14 @@
         setTimeout(() => {
             clearStatusMessage();
             accessCodeInput.value = '';
+            manualAccessCodeInput.value = ''; // Clear manual input too
             isVerifying = false;
-            focusInput(); // Re-focus for the next scan
+            // Re-focus based on which input is active (NFC or manual)
+            if (testLoginPopup.classList.contains('visible')) {
+                manualAccessCodeInput.focus();
+            } else {
+                focusInput(); // Re-focus for the next scan
+            }
         }, 3000);
     }
 
@@ -214,7 +365,7 @@
 
       // Keep focus on the hidden input whenever the splash screen is visible
       splashScreen.addEventListener('transitionend', () => {
-        if (splashScreen.classList.contains('visible')) {
+        if (splashScreen.classList.contains('visible') && !testLoginPopup.classList.contains('visible')) {
             focusInput();
         }
       });
@@ -231,6 +382,48 @@
                   });
           });
       }
+
+      // --- Test Login Feature ---
+      showTestLoginBtn.addEventListener('click', () => {
+          testLoginPopup.classList.add('visible');
+          testLoginPopup.classList.remove('hidden');
+          // Hide the main splash screen content temporarily
+          splashScreen.classList.add('hidden');
+          manualAccessCodeInput.value = ''; // Clear input field
+          setTimeout(() => manualAccessCodeInput.focus(), 100); // Focus after transition
+      });
+
+      closeTestLoginPopupBtn.addEventListener('click', () => {
+          testLoginPopup.classList.remove('visible');
+          testLoginPopup.classList.add('hidden');
+          // Show main splash screen content again
+          splashScreen.classList.remove('hidden');
+          showSplashScreen(); // Reset splash screen state and focus NFC input
+      });
+
+      manualLoginBtn.addEventListener('click', () => {
+          const code = manualAccessCodeInput.value.trim().toUpperCase();
+          if (code && code.length >= MIN_UID_LENGTH) {
+              handleLogin(code);
+          } else {
+              showErrorMessage("Please enter a valid access code.");
+          }
+      });
+
+      // Allow pressing Enter in the manual input field
+      manualAccessCodeInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+              event.preventDefault();
+              manualLoginBtn.click(); // Trigger the login button click
+          }
+      });
+
+      // Close popup if clicking outside the card
+      testLoginPopup.addEventListener('click', (e) => {
+          if (e.target === testLoginPopup) {
+              closeTestLoginPopupBtn.click();
+          }
+      });
     });
   </script>
 </body>
