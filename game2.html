@@ -231,7 +231,7 @@
             justify-content: flex-start; /* Align header to top */
             padding-top: 1rem; /* Space for header */
             flex-direction: column; /* Ensure column layout for content below header */
-            gap: 1rem; /* Space between question card and choices section */
+            gap: 1rem; /* Space between sections */
         }
         @media (orientation: landscape) {
             #gameScreen {
@@ -240,20 +240,19 @@
             }
         }
 
-        /* NEW: Header and Timer Container */
-        .game-header-container {
+        /* NEW: Top Game Section for Header and Timer */
+        .top-game-section {
             display: flex;
             align-items: center; /* Vertically align header and timer */
-            justify-content: center; /* Center content horizontally */
+            justify-content: space-between; /* Push header left, timer right */
             width: 90%;
             max-width: 900px;
-            margin-bottom: 1rem; /* Space below header section */
-            gap: 1rem; /* Space between header text and timer */
+            margin-bottom: 1rem; /* Space below this section */
         }
         @media (max-width: 767px) {
-            .game-header-container {
+            .top-game-section {
                 flex-direction: column; /* Stack header and timer on small screens */
-                gap: 0.5rem;
+                gap: 0.5rem; /* Add gap when stacked */
                 margin-bottom: 0.5rem;
             }
         }
@@ -263,24 +262,27 @@
             font-size: clamp(2.5rem, 8vw, 4rem); /* Enlarged header size */
             line-height: 1; /* Tighter line height */
             color: #2D3748;
-            text-align: center;
-            flex-shrink: 0; /* Prevent header from shrinking */
+            text-align: center; /* Default center, but will be left-aligned by flex */
+            flex-grow: 1; /* Allow header to take available space */
+            flex-shrink: 1;
         }
         @media (max-width: 767px) {
             #gameScreen .header-quiz {
                 font-size: clamp(2.2rem, 7vw, 3.5rem);
+                text-align: center; /* Re-center when stacked */
             }
         }
         @media (orientation: landscape) {
             #gameScreen .header-quiz {
-                font-size: clamp(3rem, 7vw, 4.5rem); /* Even larger in landscape */
+                font-size: clamp(3rem, 7vw, 4.5rem);
+                text-align: left; /* Align left in landscape when side-by-side */
             }
         }
 
 
         /* Countdown Timer - Integrated with Header */
         .countdown-timer-container {
-            position: relative; /* Changed from absolute to relative */
+            position: relative;
             width: clamp(60px, 12vw, 90px); /* Responsive size */
             height: clamp(60px, 12vw, 90px); /* Responsive size */
             display: flex;
@@ -294,9 +296,11 @@
             border: 4px solid #D1E0DE;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             overflow: hidden;
-            z-index: 5; /* Above buttons */
+            z-index: 5;
             flex-shrink: 0; /* Prevent it from shrinking */
-            /* Removed top/right positioning as it's now part of flex layout */
+            /* Ensure it has a fixed width/height so its space is always reserved */
+            min-width: clamp(60px, 12vw, 90px); /* Use min-width to reserve space */
+            min-height: clamp(60px, 12vw, 90px); /* Use min-height to reserve space */
         }
         @media (max-width: 767px) {
             .countdown-timer-container {
@@ -335,12 +339,11 @@
             transition: stroke-dasharray linear; /* Smooth transition for countdown */
         }
 
-        /* NEW: Sound Wave Animation Placeholder */
+        /* Sound Wave Animation Placeholder */
         .sound-wave-placeholder {
             width: 80%;
             max-width: 600px;
             height: 80px; /* Fixed height for the wave */
-            /* Removed background-color: #B2F5EA; to make it transparent */
             border-radius: 0.5rem;
             margin: 2rem 0; /* Space above and below */
             display: flex;
@@ -348,7 +351,6 @@
             justify-content: center;
             overflow: hidden;
             position: relative;
-            /* Removed box-shadow: 0 4px 12px rgba(0,0,0,0.05); to remove background-like shadow */
         }
         .sound-wave-bar {
             width: 8px; /* Width of each bar */
@@ -647,11 +649,11 @@
     </div>
 
     <div id="gameScreen" class="screen-container hidden">
-        <!-- NEW: Header and Timer Container -->
-        <div class="game-header-container">
+        <!-- NEW: Top Game Section for Header and Timer -->
+        <div class="top-game-section">
             <h2 id="gameTitleHeader" class="header-quiz">Guess the Song</h2>
             <div id="countdownTimerContainer" class="countdown-timer-container hidden">
-                <span id="countdownText">10</span> <!-- Changed initial display to 10 -->
+                <span id="countdownText">10</span>
                 <svg class="countdown-timer-svg" viewBox="0 0 36 36">
                     <path class="countdown-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                     <path id="countdownCircleProgress" class="countdown-circle-progress" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -659,7 +661,7 @@
             </div>
         </div>
 
-        <!-- NEW: Sound Wave Animation Placeholder -->
+        <!-- Sound Wave Animation Placeholder -->
         <div id="soundWavePlaceholder" class="sound-wave-placeholder">
             <!-- Bars for the sound wave animation -->
             <div class="sound-wave-bar"></div>
@@ -706,9 +708,9 @@
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; // Replace with your SheetDB API ID
     const GAME_POINTS = 15; // Points awarded for winning the game
     const QUIZ_QUESTION_COUNT = 10; // Number of questions in the quiz
-    const SONG_PLAYBACK_DURATION = 10000; // Song plays for 10 seconds (10000 ms) - CHANGED
-    const CHOICES_APPEAR_DELAY = 5000; // Choices appear after 5 seconds of song playback - CHANGED
-    const CHOICES_DISPLAY_DURATION = 10000; // Choices last for 10 seconds - CHANGED
+    const SONG_PLAYBACK_DURATION = 10000; // Song plays for 10 seconds (10000 ms)
+    const CHOICES_APPEAR_DELAY = 5000; // Choices appear after 5 seconds of song playback
+    const CHOICES_DISPLAY_DURATION = 10000; // Choices last for 10 seconds
     const TOTAL_ROUND_DURATION = CHOICES_APPEAR_DELAY + CHOICES_DISPLAY_DURATION; // Total round duration is 5s (audio only) + 10s (choices) = 15s
 
     const introScreen = document.getElementById('introScreen');
@@ -879,7 +881,7 @@
         const songData = shuffledSongs[currentQuestionIndex];
 
         choicesSection.classList.remove('visible'); // Hide choices
-        countdownTimerContainer.classList.remove('hidden'); // Show timer from the start of the round
+        countdownTimerContainer.classList.add('hidden'); // Hide timer at the start of the round
         soundWavePlaceholder.classList.remove('hidden'); // Show sound wave animation
         resetChoiceButtons(); // Reset buttons to clear previous states and colors
 
@@ -918,6 +920,7 @@
         // Schedule showing choices and starting countdown AFTER CHOICES_APPEAR_DELAY
         choicesTimer = setTimeout(() => {
             displayChoices(songData.choices);
+            countdownTimerContainer.classList.remove('hidden'); // Show timer when choices appear
             startCountdownTimer(CHOICES_DISPLAY_DURATION / 1000); // Pass duration in seconds (10 seconds)
             soundWavePlaceholder.classList.add('hidden'); // Hide sound wave when choices appear
         }, CHOICES_APPEAR_DELAY); // Choices appear after 5 seconds
@@ -955,10 +958,10 @@
 
         countdownText.textContent = timeRemaining;
 
-        countdownInterval = setInterval(() => { // Use countdownInterval
+        countdownInterval = setInterval(() => {
             timeRemaining--;
             if (timeRemaining < 0) {
-                clearInterval(countdownInterval); // Clear countdownInterval
+                clearInterval(countdownInterval);
                 return;
             }
             countdownText.textContent = timeRemaining;
@@ -979,7 +982,7 @@
 
         clearTimeout(roundTimer);
         clearTimeout(choicesTimer);
-        clearInterval(countdownInterval); // Clear countdownInterval
+        clearInterval(countdownInterval);
         countdownTimerContainer.classList.add('hidden');
         soundWavePlaceholder.classList.add('hidden');
 
@@ -1041,7 +1044,7 @@
     function resetChoiceButtons() {
         choiceButtons.forEach(button => {
             button.innerHTML = '';
-            button.classList.remove('correct', 'wrong'); // Remove color feedback
+            button.classList.remove('correct', 'wrong'); // This removes the green/red feedback
             button.disabled = true;
         });
     }
