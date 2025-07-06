@@ -1,202 +1,102 @@
 [
   {
     "audio": "song1.mp3",
-    "correctAnswer": "Gnarly - KATSEYE",
+    "correctAnswer": "Dumdi Dumdi - (G)I-DLE",
     "choices": [
-      "Gnarly - KATSEYE",
-      "In My Bag - KATSEYE",
-      "Touch - KATSEYE",
-      "Hollywood - KATSEYE"
+      "Dumdi Dumdi - (G)I-DLE",
+      "Hola Hola - KARD",
+      "Flip That - LOONA",
+      "Fever - GFRIEND"
     ]
   },
   {
     "audio": "song2.mp3",
-    "correctAnswer": "IDOL - BTS",
+    "correctAnswer": "Hola Hola - KARD",
     "choices": [
-      "IDOL - BTS",
-      "DNA - BTS",
-      "Fake Love - BTS",
-      "Boy With Luv - BTS"
+      "Hola Hola - KARD",
+      "Dumdi Dumdi - (G)I-DLE",
+      "Latata - (G)I-DLE",
+      "Rumor - Produce 48"
     ]
   },
   {
     "audio": "song3.mp3",
-    "correctAnswer": "How You Like That - BLACKPINK",
+    "correctAnswer": "Latata - (G)I-DLE",
     "choices": [
-      "How You Like That - BLACKPINK",
-      "DDU-DU DDU-DU - BLACKPINK",
-      "Kill This Love - BLACKPINK",
-      "Lovesick Girls - BLACKPINK"
+      "Latata - (G)I-DLE",
+      "Tiki-Taka - Weki Meki",
+      "1&Only - X:IN",
+      "Why Don't You Know - Chungha"
     ]
   },
   {
     "audio": "song4.mp3",
-    "correctAnswer": "Red Flavor - Red Velvet",
+    "correctAnswer": "Rumor - Produce 48",
     "choices": [
-      "Red Flavor - Red Velvet",
-      "Bad Boy - Red Velvet",
-      "Psycho - Red Velvet",
-      "Peek-A-Boo - Red Velvet"
+      "Rumor - Produce 48",
+      "Really Really - WINNER",
+      "Hola Hola - KARD",
+      "Fever - GFRIEND"
     ]
   },
   {
     "audio": "song5.mp3",
-    "correctAnswer": "DALLA DALLA - ITZY",
+    "correctAnswer": "Tiki-Taka - Weki Meki",
     "choices": [
-      "DALLA DALLA - ITZY",
-      "WANNABE - ITZY",
-      "LOCO - ITZY",
-      "ICY - ITZY"
+      "Tiki-Taka - Weki Meki",
+      "Latata - (G)I-DLE",
+      "Dumdi Dumdi - (G)I-DLE",
+      "Flip That - LOONA"
     ]
   },
   {
     "audio": "song6.mp3",
-    "correctAnswer": "I AM THE BEST - 2NE1",
+    "correctAnswer": "Flip That - LOONA",
     "choices": [
-      "I AM THE BEST - 2NE1",
-      "Fire - 2NE1",
-      "Come Back Home - 2NE1",
-      "Gotta Be You - 2NE1"
+      "Flip That - LOONA",
+      "1&Only - X:IN",
+      "Tiki-Taka - Weki Meki",
+      "Rumor - Produce 48"
     ]
   },
   {
     "audio": "song7.mp3",
-    "correctAnswer": "I Got A Boy - SNSD",
+    "correctAnswer": "1&Only - XLov",
     "choices": [
-      "I Got A Boy - SNSD",
-      "Gee - SNSD",
-      "Lion Heart - SNSD",
-      "The Boys - SNSD"
+      "1&Only - XLov",
+      "Fever - GFRIEND",
+      "Why Don't You Know - Chungha",
+      "Latata - (G)I-DLE"
     ]
   },
   {
     "audio": "song8.mp3",
-    "correctAnswer": "ANTIFRAGILE - LE SSERAFIM",
+    "correctAnswer": "Fever - GFRIEND",
     "choices": [
-      "ANTIFRAGILE - LE SSERAFIM",
-      "FEARLESS - LE SSERAFIM",
-      "UNFORGIVEN - LE SSERAFIM",
-      "Easy - LE SSERAFIM"
+      "Fever - GFRIEND",
+      "Really Really - WINNER",
+      "Dumdi Dumdi - (G)I-DLE",
+      "Hola Hola - KARD"
     ]
   },
   {
     "audio": "song9.mp3",
-    "correctAnswer": "Drama - aespa",
+    "correctAnswer": "Really Really - WINNER",
     "choices": [
-      "Drama - aespa",
-      "Next Level - aespa",
-      "Savage - aespa",
-      "Spicy - aespa"
+      "Really Really - WINNER",
+      "Why Don't You Know - Chungha",
+      "Rumor - Produce 48",
+      "Flip That - LOONA"
     ]
   },
   {
     "audio": "song10.mp3",
-    "correctAnswer": "Cheer Up - TWICE",
+    "correctAnswer": "Why Don't You Know - Chungha",
     "choices": [
-      "Cheer Up - TWICE",
-      "TT - TWICE",
-      "Fancy - TWICE",
-      "What is Love? - TWICE"
-    ]
-  },
-  {
-    "audio": "song11.mp3",
-    "correctAnswer": "Hot Issue - 4MINUTE",
-    "choices": [
-      "Hot Issue - 4MINUTE",
-      "Crazy - 4MINUTE",
-      "Volume Up - 4MINUTE",
-      "Hate - 4MINUTE"
-    ]
-  },
-  {
-    "audio": "song12.mp3",
-    "correctAnswer": "BANG BANG BANG - Big Bang",
-    "choices": [
-      "BANG BANG BANG - Big Bang",
-      "Fantastic Baby - Big Bang",
-      "Haru Haru - Big Bang",
-      "Loser - Big Bang"
-    ]
-  },
-  {
-    "audio": "song13.mp3",
-    "correctAnswer": "Love Scenario - iKON",
-    "choices": [
-      "Love Scenario - iKON",
-      "Rhythm Ta - iKON",
-      "Killing Me - iKON",
-      "Dive - iKON"
-    ]
-  },
-  {
-    "audio": "song14.mp3",
-    "correctAnswer": "Call Me Baby - EXO",
-    "choices": [
-      "Call Me Baby - EXO",
-      "Growl - EXO",
-      "Ko Ko Bop - EXO",
-      "Monster - EXO"
-    ]
-  },
-  {
-    "audio": "song15.mp3",
-    "correctAnswer": "Crown - TXT",
-    "choices": [
-      "Crown - TXT",
-      "Run Away - TXT",
-      "Can't You See Me? - TXT",
-      "Blue Hour - TXT"
-    ]
-  },
-  {
-    "audio": "song16.mp3",
-    "correctAnswer": "Lucifer - SHINee",
-    "choices": [
-      "Lucifer - SHINee",
-      "Ring Ding Dong - SHINee",
-      "Sherlock (Clue + Note) - SHINee",
-      "View - SHINee"
-    ]
-  },
-  {
-    "audio": "song17.mp3",
-    "correctAnswer": "Sorry, Sorry - Super Junior",
-    "choices": [
-      "Sorry, Sorry - Super Junior",
-      "Bonamana - Super Junior",
-      "Mr. Simple - Super Junior",
-      "Mamacita - Super Junior"
-    ]
-  },
-  {
-    "audio": "song18.mp3",
-    "correctAnswer": "Make A Wish - NCT U",
-    "choices": [
-      "Make A Wish - NCT U",
-      "Boss - NCT U",
-      "The 7th Sense - NCT U",
-      "Baby Don't Stop - NCT U"
-    ]
-  },
-  {
-    "audio": "song19.mp3",
-    "correctAnswer": "Wave - ATEEZ",
-    "choices": [
-      "Wave - ATEEZ",
-      "Pirate King - ATEEZ",
-      "Answer - ATEEZ",
-      "HALA HALA - ATEEZ"
-    ]
-  },
-  {
-    "audio": "song20.mp3",
-    "correctAnswer": "HOT - SEVENTEEN",
-    "choices": [
-      "HOT - SEVENTEEN",
-      "Left & Right - SEVENTEEN",
-      "Don't Wanna Cry - SEVENTEEN",
-      "Super - SEVENTEEN"
+      "Why Don't You Know - Chungha",
+      "1&Only - X:IN",
+      "Fever - GFRIEND",
+      "Really Really - WINNER"
     ]
   }
 ]

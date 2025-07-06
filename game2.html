@@ -637,8 +637,8 @@
             <p class="subtitle font-semibold text-lg md:text-xl mt-2">(Audio Quiz)</p>
             <span class="label">Moderate</span>
             <ul class="instructions-list mt-8 px-4">
-                <li>Each round plays a 15-second audio snippet of a K-Pop song.</li>
-                <li>For the first 10 seconds, you'll hear the song, then choices appear for the last 5 seconds.</li>
+                <li>Each round plays a 10-second audio snippet of a K-Pop song.</li>
+                <li>Choices will appear 5 seconds into the audio and last for 10 seconds.</li>
                 <li>Answer 10 questions.</li>
                 <li>Be quick to answer! Get all 10 correct to win!</li>
             </ul>
@@ -651,7 +651,7 @@
         <div class="game-header-container">
             <h2 id="gameTitleHeader" class="header-quiz">Guess the Song</h2>
             <div id="countdownTimerContainer" class="countdown-timer-container hidden">
-                <span id="countdownText">5</span>
+                <span id="countdownText">10</span> <!-- Changed initial display to 10 -->
                 <svg class="countdown-timer-svg" viewBox="0 0 36 36">
                     <path class="countdown-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                     <path id="countdownCircleProgress" class="countdown-circle-progress" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -679,11 +679,6 @@
             <div class="sound-wave-bar"></div>
         </div>
 
-        <!-- Removed: question-card with "What song is this?" text -->
-        <!-- <div class="question-card">
-            <p id="questionText" class="question-text">What song is this?</p>
-        </div> -->
-
         <div id="choicesSection" class="choices-section">
             <button class="choice-button" data-choice-index="0"></button>
             <button class="choice-button" data-choice-index="1"></button>
@@ -709,18 +704,17 @@
 <script>
     // --- Constants and DOM Elements ---
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; // Replace with your SheetDB API ID
-    const GAME_POINTS = 15; // Points awarded for winning the game - CHANGED FROM 5 TO 15
-    const QUIZ_QUESTION_COUNT = 10; // Number of questions in the quiz (changed from 5)
-    const TOTAL_ROUND_DURATION = 15000; // 15 seconds total per round (changed from 7000 ms)
-    const CHOICES_DISPLAY_DURATION = 5000; // Choices appear for the last 5 seconds (unchanged)
-    const AUDIO_ONLY_DURATION = TOTAL_ROUND_DURATION - CHOICES_DISPLAY_DURATION; // 10000ms (new constant)
+    const GAME_POINTS = 15; // Points awarded for winning the game
+    const QUIZ_QUESTION_COUNT = 10; // Number of questions in the quiz
+    const SONG_PLAYBACK_DURATION = 10000; // Song plays for 10 seconds (10000 ms) - CHANGED
+    const CHOICES_APPEAR_DELAY = 5000; // Choices appear after 5 seconds of song playback - CHANGED
+    const CHOICES_DISPLAY_DURATION = 10000; // Choices last for 10 seconds - CHANGED
+    const TOTAL_ROUND_DURATION = CHOICES_APPEAR_DELAY + CHOICES_DISPLAY_DURATION; // Total round duration is 5s (audio only) + 10s (choices) = 15s
 
     const introScreen = document.getElementById('introScreen');
     const gameScreen = document.getElementById('gameScreen');
     const resultScreen = document.getElementById('resultScreen');
     const startButton = document.getElementById('startButton');
-    // Removed: questionText as it's no longer used for dynamic text
-    // const questionText = document.getElementById('questionText');
     const choicesSection = document.getElementById('choicesSection');
     const choiceButtons = document.querySelectorAll('.choice-button');
     const countdownTimerContainer = document.getElementById('countdownTimerContainer');
@@ -728,56 +722,37 @@
     const countdownCircleProgress = document.getElementById('countdownCircleProgress');
     const resultMessage = document.getElementById('resultMessage');
     const resultSubtitle = document.getElementById('resultSubtitle');
-    const pointsEarnedText = document.getElementById('pointsEarnedText'); // New element
+    const pointsEarnedText = document.getElementById('pointsEarnedText');
     const doneButton = document.getElementById('doneButton');
-    const soundWavePlaceholder = document.getElementById('soundWavePlaceholder'); // New: Sound wave placeholder element
+    const soundWavePlaceholder = document.getElementById('soundWavePlaceholder');
 
     // --- Sound Effects (using Tone.js) ---
-    // Tone.Player for local sound files - These will be loaded before starting the game
     const correctSoundPlayer = new Tone.Player({
-        url: 'correct.wav', // Local file path
+        url: 'correct.wav',
         autostart: false,
     }).toDestination();
 
     const wrongSoundPlayer = new Tone.Player({
-        url: 'wrong.wav', // Local file path
+        url: 'wrong.wav',
         autostart: false,
     }).toDestination();
-
-    // Removed: backgroundMusicPlayer as it's not needed for this game
-    // const backgroundMusicPlayer = new Tone.Player({
-    //     url: 'music-for-game-fun-kid-game-163649.mp3', // Local file path
-    //     loop: true, // Loop the background music
-    //     autostart: false // Start manually when quiz begins
-    // }).toDestination();
 
     const gameDoneSoundPlayer = new Tone.Player({
-        url: 'done.wav', // Local file path
+        url: 'done.wav',
         autostart: false,
     }).toDestination();
 
-    // NEW: Tone.Player for song snippets
     const songSnippetPlayer = new Tone.Player({
         autostart: false,
     }).toDestination();
 
-
-    // Tone.Synth for timer tick - Adjusted for softer/cuter sound
     const timerTickSound = new Tone.MembraneSynth({
-        pitchDecay: 0.05, // Slight pitch decay for a softer "boop"
+        pitchDecay: 0.05,
         octaves: 0.5,
-        oscillator: {
-            type: 'sine' // Softer waveform
-        },
-        envelope: {
-            attack: 0.002, // Very quick attack
-            decay: 0.2, // Slightly longer decay for softness
-            sustain: 0.0,
-            release: 0.05 // Quick release
-        }
+        oscillator: { type: 'sine' },
+        envelope: { attack: 0.002, decay: 0.2, sustain: 0.0, release: 0.05 }
     }).toDestination();
     
-    // Tone.NoiseSynth for buzzer (for wrong/timeout)
     const buzzerSound = new Tone.NoiseSynth().toDestination();
     buzzerSound.envelope.attack = 0.005;
     buzzerSound.envelope.decay = 0.2;
@@ -786,23 +761,17 @@
 
 
     // --- Game State Variables ---
-    let allSongs = []; // Changed from allQuestions
-    let shuffledSongs = []; // Changed from shuffledQuestions
+    let allSongs = [];
+    let shuffledSongs = [];
     let currentQuestionIndex = 0;
     let score = 0;
-    let roundTimer = null; // Timer for the total round duration
-    let choicesTimer = null; // Timer for when choices appear
-    let countdownTimer = null; // Interval for the 5-second choices countdown
-    let gameActive = false; // Flag to track if a game is in progress
-    let audioLoaded = false; // Flag to track if audio assets are loaded
+    let roundTimer = null;
+    let choicesTimer = null;
+    let countdownInterval = null; // Renamed from countdownTimer to avoid confusion with DOM element
+    let gameActive = false;
+    let audioLoaded = false;
 
     // --- Utility Functions ---
-
-    /**
-     * Shuffles an array in place using the Fisher-Yates (Knuth) algorithm.
-     * @param {Array} array - The array to shuffle.
-     * @returns {Array} The shuffled array.
-     */
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -812,19 +781,13 @@
     }
 
     // --- Game Flow Functions ---
-
-    /**
-     * Initializes the game by loading songs and setting up the initial state.
-     * Also loads audio assets.
-     */
     async function initializeGame() {
         startButton.textContent = "Loading Quiz...";
         startButton.disabled = true;
 
         try {
-            const [songsResponse] = await Promise.all([ // Changed from questionsResponse
-                fetch('songs.json'), // Changed to songs.json
-                // Ensure all Tone.Players are loaded
+            const [songsResponse] = await Promise.all([
+                fetch('songs.json'),
                 new Promise(resolve => {
                     Tone.loaded().then(() => {
                         audioLoaded = true;
@@ -833,45 +796,34 @@
                     }).catch(e => {
                         audioLoaded = false;
                         console.error("Error loading audio assets:", e);
-                        // Still resolve to allow the game to start without sound
                         resolve(); 
                     });
                 })
             ]);
             
-            if (!songsResponse.ok) { // Changed from questionsResponse
-                throw new Error(`HTTP error! status: ${songsResponse.status} - Could not find songs.json`); // Changed file name
+            if (!songsResponse.ok) {
+                throw new Error(`HTTP error! status: ${songsResponse.status} - Could not find songs.json`);
             }
-            allSongs = await songsResponse.json(); // Changed to allSongs
+            allSongs = await songsResponse.json();
             resetGame();
             startButton.textContent = "Start Quiz";
-            startButton.disabled = false; // Enable start button once everything is loaded
-            console.log("Quiz songs and assets ready."); // Changed message
+            startButton.disabled = false;
+            console.log("Quiz songs and assets ready.");
 
         } catch (error) {
             console.error('Failed to initialize game:', error);
             startButton.textContent = "Quiz Not Ready";
-            // Optionally, show a more prominent error message to the user
             alert('Failed to load quiz resources. Please check your files and internet connection.');
-            // Redirect or keep on error screen
-            window.location.href = 'home.html'; // Redirect to home.html if game fails to load
+            window.location.href = 'home.html';
         }
     }
 
-    /**
-     * Resets game state variables and shuffles songs.
-     */
     function resetGame() {
         score = 0;
         currentQuestionIndex = 0;
-        // Shuffle all songs initially and then slice for quiz_question_count
-        shuffledSongs = shuffleArray([...allSongs]).slice(0, QUIZ_QUESTION_COUNT); // Changed to shuffledSongs
+        shuffledSongs = shuffleArray([...allSongs]).slice(0, QUIZ_QUESTION_COUNT);
     }
 
-    /**
-     * Shows a specific screen and hides others.
-     * @param {HTMLElement} screenToShow - The DOM element of the screen to activate.
-     */
     function showScreen(screenToShow) {
         introScreen.classList.remove('active');
         gameScreen.classList.remove('active');
@@ -887,71 +839,56 @@
         }, 10);
     }
 
-    /**
-     * Starts the quiz game.
-     */
     async function startQuiz() {
         gameActive = true;
-        resetGame(); // Reset game state for a fresh start
+        resetGame();
         showScreen(gameScreen);
         
         if (audioLoaded) {
             try {
-                await Tone.start(); // Ensure audio context is started
-                // Removed backgroundMusicPlayer.start() as it's not needed for this game.
+                await Tone.start();
             } catch (e) {
                 console.error("Failed to start Tone.js audio context:", e);
-                // Continue game without music
             }
         }
 
         loadQuestion();
-        // Prevent refresh or back during game
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', handlePopState);
     }
 
-    /**
-     * Handles the popstate event to prevent going back during the quiz.
-     */
     function handlePopState() {
         if (gameActive) {
             const confirmExit = window.confirm("Exiting the quiz will reset your progress. Are you sure?");
             if (confirmExit) {
-                // Removed: backgroundMusicPlayer.stop()
-                if(songSnippetPlayer.state === 'started') songSnippetPlayer.stop(); // Stop song snippet on exit
+                if(songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
                 window.removeEventListener('popstate', handlePopState);
-                window.location.href = 'home.html'; // Redirect to home.html
+                window.location.href = 'home.html';
             } else {
-                history.pushState(null, null, location.href); // Stay on current page
+                history.pushState(null, null, location.href);
             }
         }
     }
-
-    /**
-     * Loads and displays the current question.
-     */
-    async function loadQuestion() { // Made async to await songSnippetPlayer.load()
-        if (currentQuestionIndex >= shuffledSongs.length) { // Changed from shuffledQuestions
+    
+    async function loadQuestion() {
+        if (currentQuestionIndex >= shuffledSongs.length) {
             endQuiz();
             return;
         }
 
-        const songData = shuffledSongs[currentQuestionIndex]; // Changed from questionData
-        // Removed: questionText.textContent = "What song is this?"; as it's now a static header
-        // Removed: adjustPromptFontSize(); as it's no longer needed
+        const songData = shuffledSongs[currentQuestionIndex];
 
         choicesSection.classList.remove('visible'); // Hide choices
         countdownTimerContainer.classList.remove('hidden'); // Show timer from the start of the round
         soundWavePlaceholder.classList.remove('hidden'); // Show sound wave animation
-        resetChoiceButtons(); // Reset buttons to clear previous states
+        resetChoiceButtons(); // Reset buttons to clear previous states and colors
 
         // Clear any existing timers
         clearTimeout(roundTimer);
         clearTimeout(choicesTimer);
-        clearInterval(countdownTimer);
+        clearInterval(countdownInterval); // Use countdownInterval
 
-        // Reset countdown display to full duration (e.g., 5 seconds) before it starts counting down
+        // Reset countdown display to full duration (e.g., 10 seconds) before it starts counting down
         countdownText.textContent = CHOICES_DISPLAY_DURATION / 1000;
         const radius = 15.9155;
         const circumference = 2 * Math.PI * radius;
@@ -965,124 +902,95 @@
 
         if (audioLoaded) {
             try {
-                // Load the new song snippet and wait for it to be ready
-                await songSnippetPlayer.load(`audio/${songData.audio}`); // Await the loading of the audio buffer
-                songSnippetPlayer.start();
+                await songSnippetPlayer.load(`audio/${songData.audio}`);
+                songSnippetPlayer.start(0, 0, SONG_PLAYBACK_DURATION / 1000); // Play for SONG_PLAYBACK_DURATION
             } catch (e) {
                 console.error("Error loading or playing song snippet:", e);
-                // Handle error gracefully, e.g., skip to next question or show error
-                handleAnswer(null, false); // Treat as wrong answer and move on
-                return; // Prevent further execution of this function for this round
+                handleAnswer(null, false);
+                return;
             }
         } else {
             console.warn("Audio context not ready, cannot play song snippet.");
-            // If audio context is not ready, we can't play. Treat as wrong answer.
             handleAnswer(null, false);
             return;
         }
 
-        // Schedule showing choices and starting countdown after AUDIO_ONLY_DURATION
+        // Schedule showing choices and starting countdown AFTER CHOICES_APPEAR_DELAY
         choicesTimer = setTimeout(() => {
             displayChoices(songData.choices);
-            startCountdownTimer(CHOICES_DISPLAY_DURATION / 1000); // Pass duration in seconds
+            startCountdownTimer(CHOICES_DISPLAY_DURATION / 1000); // Pass duration in seconds (10 seconds)
             soundWavePlaceholder.classList.add('hidden'); // Hide sound wave when choices appear
-        }, AUDIO_ONLY_DURATION); // Choices appear after 10 seconds
+        }, CHOICES_APPEAR_DELAY); // Choices appear after 5 seconds
 
-        // Set a timer for the entire round (15 seconds). If it expires, handle as wrong answer.
+        // Set a timer for the entire round. If it expires, handle as wrong answer.
         roundTimer = setTimeout(() => {
             handleAnswer(null, false); // Time ran out
-        }, TOTAL_ROUND_DURATION);
+        }, TOTAL_ROUND_DURATION); // Total round duration is 15 seconds
     }
 
-    /**
-     * Displays the answer choices.
-     * @param {string[]} choices - An array of answer choices.
-     */
     function displayChoices(choices) {
         choicesSection.classList.add('visible');
-        const shuffledCurrentChoices = shuffleArray([...choices]); // Shuffle choices for this question
+        const shuffledCurrentChoices = shuffleArray([...choices]);
 
         choiceButtons.forEach((button, index) => {
             const choiceText = shuffledCurrentChoices[index];
             const parts = choiceText.split(' - ');
             const songTitle = parts[0];
-            const artistName = parts.length > 1 ? parts.slice(1).join(' - ') : ''; // Handles cases with no artist or multiple dashes
+            const artistName = parts.length > 1 ? parts.slice(1).join(' - ') : '';
 
-            button.innerHTML = `<span class="song-title">${songTitle}</span><span class="artist-name">${artistName}</span>`; // Formatted HTML
+            button.innerHTML = `<span class="song-title">${songTitle}</span><span class="artist-name">${artistName}</span>`;
             
-            // The original index in songData.choices is used to check correctness, not the shuffled index
-            button.onclick = () => handleAnswer(choiceText, choiceText === shuffledSongs[currentQuestionIndex].correctAnswer); // Changed from shuffledQuestions
-            button.disabled = false; // Enable buttons when visible
+            button.onclick = () => handleAnswer(choiceText, choiceText === shuffledSongs[currentQuestionIndex].correctAnswer);
+            button.disabled = false;
         });
-        // The timer is already visible, no need to show it again here.
-        // countdownTimerContainer.classList.remove('hidden'); // Show timer
     }
 
-    /**
-     * Starts the circular countdown timer.
-     * @param {number} durationInSeconds - The duration of the countdown in seconds.
-     */
     function startCountdownTimer(durationInSeconds) {
         let timeRemaining = durationInSeconds;
-        const radius = 15.9155; // From SVG path
+        const radius = 15.9155;
         const circumference = 2 * Math.PI * radius;
 
-        // Apply transition here, right before the countdown starts
         countdownCircleProgress.style.transition = `stroke-dasharray ${durationInSeconds}s linear`;
-        // Set the initial progress for the countdown (full circle at the start of countdown)
         countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`;
 
-        countdownText.textContent = timeRemaining; // Display initial time
+        countdownText.textContent = timeRemaining;
 
-        countdownTimer = setInterval(() => {
+        countdownInterval = setInterval(() => { // Use countdownInterval
             timeRemaining--;
             if (timeRemaining < 0) {
-                clearInterval(countdownTimer);
-                // handleAnswer(null, false) is called by roundTimer if time runs out
+                clearInterval(countdownInterval); // Clear countdownInterval
                 return;
             }
             countdownText.textContent = timeRemaining;
 
-            // Play tick sound for last few seconds
-            if (timeRemaining <= 3 && timeRemaining >= 0 && audioLoaded) { // Only play if audio loaded
-                timerTickSound.triggerAttackRelease('G4', '16n'); // Play a specific note for the tick
+            if (timeRemaining <= 3 && timeRemaining >= 0 && audioLoaded) {
+                timerTickSound.triggerAttackRelease('G4', '16n');
             }
             
             const progress = (timeRemaining / durationInSeconds) * circumference;
             countdownCircleProgress.style.strokeDasharray = `${progress}, ${circumference}`;
 
-        }, 1000); // Update every second
+        }, 1000);
     }
 
-
-    /**
-     * Handles the player's answer or time running out.
-     * @param {string|null} selectedAnswer - The text of the selected answer, or null if time ran out.
-     * @param {boolean} isCorrect - True if the selected answer is correct, false otherwise.
-     */
     function handleAnswer(selectedAnswer, isCorrect) {
-        // Prevent multiple calls if already handled
         if (!gameActive) return; 
-        gameActive = false; // Temporarily deactivate game to prevent further clicks/timeouts
+        gameActive = false;
 
         clearTimeout(roundTimer);
-        clearTimeout(choicesTimer); // Clear choices display timer too
-        clearInterval(countdownTimer);
-        countdownTimerContainer.classList.add('hidden'); // Hide timer immediately
-        soundWavePlaceholder.classList.add('hidden'); // Ensure sound wave is hidden after answer
+        clearTimeout(choicesTimer);
+        clearInterval(countdownInterval); // Clear countdownInterval
+        countdownTimerContainer.classList.add('hidden');
+        soundWavePlaceholder.classList.add('hidden');
 
-        if (songSnippetPlayer.state === 'started') { // Stop song snippet immediately
+        if (songSnippetPlayer.state === 'started') {
             songSnippetPlayer.stop();
         }
 
-        const songData = shuffledSongs[currentQuestionIndex]; // Changed from questionData
+        const songData = shuffledSongs[currentQuestionIndex];
         let correctlyAnswered = false;
 
-        // Show correct answer and wrong answers
         choiceButtons.forEach(button => {
-            // Re-parse the text content for comparison
-            // Note: button.textContent will now contain both song title and artist name
-            // We need to compare against the full 'correctAnswer' from songData
             const buttonFullText = button.querySelector('.song-title').textContent + ' - ' + button.querySelector('.artist-name').textContent;
             const originalCorrectAnswer = songData.correctAnswer;
 
@@ -1094,7 +1002,7 @@
             } else if (selectedAnswer && buttonFullText.trim() === selectedAnswer.trim()) {
                 button.classList.add('wrong');
             }
-            button.disabled = true; // Disable all buttons after an answer is chosen or time runs out
+            button.disabled = true;
         });
 
         if (correctlyAnswered) {
@@ -1110,7 +1018,7 @@
             if(audioLoaded) {
                 try {
                     wrongSoundPlayer.start();
-                    buzzerSound.triggerAttackRelease('8n', 'C2'); // Play buzzer for wrong answer/timeout
+                    buzzerSound.triggerAttackRelease('8n', 'C2');
                 } catch (e) {
                     console.error("Error playing wrong/buzzer sound:", e);
                 }
@@ -1119,85 +1027,68 @@
 
         setTimeout(() => {
             currentQuestionIndex++;
-            gameActive = true; // Re-activate game for next question
-            loadQuestion(); // Load the next question
-        }, 1500); // Short delay before next question
+            gameActive = true;
+            loadQuestion();
+        }, 1500);
     }
 
-    /**
-     * Disables all choice buttons.
-     */
     function disableChoiceButtons() {
         choiceButtons.forEach(button => {
             button.disabled = true;
         });
     }
 
-    /**
-     * Resets the visual state of choice buttons.
-     */
     function resetChoiceButtons() {
         choiceButtons.forEach(button => {
-            button.innerHTML = ''; // Clear HTML content
+            button.innerHTML = '';
             button.classList.remove('correct', 'wrong'); // Remove color feedback
-            button.disabled = true; // Disable until choices are displayed again
+            button.disabled = true;
         });
     }
 
-    /**
-     * Ends the quiz and displays the result screen.
-     * User stays on this screen until they press the "Done" button.
-     */
     function endQuiz() {
         gameActive = false;
-        // Removed: backgroundMusicPlayer.stop() as it's not needed for this game
-        if(songSnippetPlayer.state === 'started') songSnippetPlayer.stop(); // Stop song snippet when quiz ends
-        if(audioLoaded) gameDoneSoundPlayer.start(); // Play game done sound
-        window.removeEventListener('popstate', handlePopState); // Remove popstate listener
+        if(songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
+        if(audioLoaded) gameDoneSoundPlayer.start();
+        window.removeEventListener('popstate', handlePopState);
 
         showScreen(resultScreen);
-        doneButton.disabled = false; // Enable done button when on result screen
+        doneButton.disabled = false;
 
         if (score === QUIZ_QUESTION_COUNT) {
             resultMessage.textContent = "Congratulations you won!";
-            resultSubtitle.textContent = `You got all ${QUIZ_QUESTION_COUNT} questions right!`; // Added subtitle
-            pointsEarnedText.textContent = `You earned ${GAME_POINTS} points!`; // Set points text
-            pointsEarnedText.classList.remove('hidden'); // Show points text
-            sendPointsToSheetDB(); // Attempt to send points if won
+            resultSubtitle.textContent = `You got all ${QUIZ_QUESTION_COUNT} questions right!`;
+            pointsEarnedText.textContent = `You earned ${GAME_POINTS} points!`;
+            pointsEarnedText.classList.remove('hidden');
+            sendPointsToSheetDB();
         } else {
             resultMessage.textContent = "Game Over!";
             resultSubtitle.textContent = `You answered ${score} out of ${QUIZ_QUESTION_COUNT} correctly. Keep practicing!`;
-            pointsEarnedText.classList.add('hidden'); // Hide points text if lost
+            pointsEarnedText.classList.add('hidden');
         }
     }
 
-    /**
-     * Sends game data to SheetDB. Only called if the user wins.
-     */
     async function sendPointsToSheetDB() {
         const currentUserCode = sessionStorage.getItem('currentUserCode');
         if (!currentUserCode) {
             console.error("No current user code found in session storage. Cannot send points.");
-            // Update the result screen to show a subtle error message instead of popup
             resultSubtitle.textContent += "\n(Error: Could not save points - no user code)";
             return;
         }
 
         const payload = {
-            sheet: "History", // Explicitly target the 'History' sheet
+            sheet: "History",
             data: [{
                 "Access Code": currentUserCode,
                 "Timestamp": new Date().toISOString(),
-                "Code": "Game2" // Changed to Game2
+                "Code": "Game2"
             }]
         };
 
         try {
             const response = await fetch(`https://sheetdb.io/api/v1/${SHEETDB_API_ID}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
@@ -1223,21 +1114,20 @@
 
     // --- Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
-        initializeGame(); // Load songs and audio assets on page load
+        initializeGame();
 
         startButton.addEventListener('click', startQuiz);
 
         doneButton.addEventListener('click', () => {
-            doneButton.disabled = true; // Disable button to prevent multiple clicks
-            window.location.href = 'home.html'; // Redirect to home.html
+            doneButton.disabled = true;
+            window.location.href = 'home.html';
         });
     });
 
-    // Handle browser back button during active game
     window.addEventListener('beforeunload', (event) => {
         if (gameActive) {
             event.preventDefault();
-            event.returnValue = ''; // Standard for browser to show its default message
+            event.returnValue = '';
         }
     });
 
