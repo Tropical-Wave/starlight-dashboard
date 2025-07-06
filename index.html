@@ -216,7 +216,6 @@
     const statusContainer = document.getElementById('statusContainer');
 
     // Test Login Elements
-    // Removed showTestLoginBtn
     const testLoginPopup = document.getElementById('testLoginPopup');
     const closeTestLoginPopupBtn = document.getElementById('closeTestLoginPopupBtn');
     const manualAccessCodeInput = document.getElementById('manualAccessCodeInput');
@@ -355,10 +354,10 @@
           });
       }
 
-      // --- Keyboard Shortcut for Manual Login (Command + Shift + M for macOS) ---
+      // --- Keyboard Shortcut for Manual Login (Command + Control + M for macOS) ---
       document.addEventListener('keydown', (event) => {
-          // Check for Command (MetaKey), Shift, and 'M' key
-          if (event.metaKey && event.shiftKey && event.key === 'M') {
+          // Check for Command (MetaKey), Control (CtrlKey), and 'M' key
+          if (event.metaKey && event.ctrlKey && event.key === 'm') { // Use 'm' for case-insensitivity
               event.preventDefault(); // Prevent default browser behavior for the shortcut
               testLoginPopup.classList.add('visible');
               testLoginPopup.classList.remove('hidden');
