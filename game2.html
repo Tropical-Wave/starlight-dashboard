@@ -228,9 +228,9 @@
         /* Game Screen */
         #gameScreen {
             background-color: #EEF7F6;
-            justify-content: flex-start; /* Align header to top */
-            padding-top: 1rem; /* Space for header */
-            flex-direction: column; /* Ensure column layout for content below header */
+            justify-content: flex-start; /* Align content to top */
+            padding-top: 1rem; /* Space from top */
+            flex-direction: column; /* Ensure column layout */
             gap: 1rem; /* Space between sections */
         }
         @media (orientation: landscape) {
@@ -244,52 +244,56 @@
         .top-game-section {
             display: flex;
             align-items: center; /* Vertically align header and timer */
-            justify-content: space-between; /* Push header left, timer right */
+            justify-content: center; /* Center the combined content */
             width: 90%;
             max-width: 900px;
             margin-bottom: 1rem; /* Space below this section */
+            position: relative; /* For absolute positioning of timer within this container */
+            padding-right: clamp(60px, 12vw, 90px); /* Reserve space for timer on the right */
         }
         @media (max-width: 767px) {
             .top-game-section {
                 flex-direction: column; /* Stack header and timer on small screens */
                 gap: 0.5rem; /* Add gap when stacked */
                 margin-bottom: 0.5rem;
+                padding-right: 0; /* Remove padding-right when stacked */
             }
         }
 
         #gameScreen .header-quiz {
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4rem); /* Enlarged header size */
-            line-height: 1; /* Tighter line height */
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            line-height: 1;
             color: #2D3748;
-            text-align: center; /* Default center, but will be left-aligned by flex */
+            text-align: center; /* Keep header text centered */
             flex-grow: 1; /* Allow header to take available space */
             flex-shrink: 1;
         }
         @media (max-width: 767px) {
             #gameScreen .header-quiz {
                 font-size: clamp(2.2rem, 7vw, 3.5rem);
-                text-align: center; /* Re-center when stacked */
             }
         }
         @media (orientation: landscape) {
             #gameScreen .header-quiz {
                 font-size: clamp(3rem, 7vw, 4.5rem);
-                text-align: left; /* Align left in landscape when side-by-side */
             }
         }
 
 
-        /* Countdown Timer - Integrated with Header */
+        /* Countdown Timer - Fixed position relative to .top-game-section */
         .countdown-timer-container {
-            position: relative;
+            position: absolute; /* Position absolutely within .top-game-section */
+            right: 0; /* Align to the right edge of .top-game-section */
+            top: 50%; /* Center vertically */
+            transform: translateY(-50%); /* Adjust for vertical centering */
             width: clamp(60px, 12vw, 90px); /* Responsive size */
             height: clamp(60px, 12vw, 90px); /* Responsive size */
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: clamp(1.5rem, 4vw, 2.5rem); /* Responsive font size */
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
             color: #334155;
             background-color: rgba(255,255,255,0.8);
             border-radius: 50%;
@@ -297,13 +301,15 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             overflow: hidden;
             z-index: 5;
-            flex-shrink: 0; /* Prevent it from shrinking */
-            /* Ensure it has a fixed width/height so its space is always reserved */
-            min-width: clamp(60px, 12vw, 90px); /* Use min-width to reserve space */
-            min-height: clamp(60px, 12vw, 90px); /* Use min-height to reserve space */
+            flex-shrink: 0;
+            /* No min-width/height needed here as its position is absolute */
         }
         @media (max-width: 767px) {
             .countdown-timer-container {
+                position: relative; /* Back to relative for stacking on small screens */
+                top: auto;
+                right: auto;
+                transform: none;
                 width: clamp(50px, 10vw, 70px);
                 height: clamp(50px, 10vw, 70px);
                 font-size: clamp(1.2rem, 3.5vw, 2rem);
