@@ -176,34 +176,7 @@
             background-color: #CBD5E1;
         }
 
-        /* Test Login Button at bottom of splash screen */
-        #showTestLoginBtn {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0.75rem 1.5rem;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 0.75rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
-            z-index: 201; /* Above splash screen */
-        }
-        #showTestLoginBtn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-            transform: translateX(-50%) translateY(-2px);
-        }
-        @media (max-width: 767px) {
-            #showTestLoginBtn {
-                bottom: 1rem;
-                padding: 0.6rem 1.2rem;
-                font-size: 0.8rem;
-            }
-        }
+        /* Removed #showTestLoginBtn styling as it will be removed */
 
     </style>
 </head>
@@ -217,8 +190,7 @@
         </div>
         <input id="accessCodeInput" type="text" inputmode="none" autocomplete="off" style="opacity: 0; position: absolute; pointer-events: none;">
 
-        <!-- Test Login Button -->
-        <button id="showTestLoginBtn">Test Log-In</button>
+        <!-- Removed Test Login Button -->
     </div>
 
     <!-- Test Login Popup (hidden by default) -->
@@ -244,7 +216,7 @@
     const statusContainer = document.getElementById('statusContainer');
 
     // Test Login Elements
-    const showTestLoginBtn = document.getElementById('showTestLoginBtn');
+    // Removed showTestLoginBtn
     const testLoginPopup = document.getElementById('testLoginPopup');
     const closeTestLoginPopupBtn = document.getElementById('closeTestLoginPopupBtn');
     const manualAccessCodeInput = document.getElementById('manualAccessCodeInput');
@@ -383,14 +355,18 @@
           });
       }
 
-      // --- Test Login Feature ---
-      showTestLoginBtn.addEventListener('click', () => {
-          testLoginPopup.classList.add('visible');
-          testLoginPopup.classList.remove('hidden');
-          // Hide the main splash screen content temporarily
-          splashScreen.classList.add('hidden');
-          manualAccessCodeInput.value = ''; // Clear input field
-          setTimeout(() => manualAccessCodeInput.focus(), 100); // Focus after transition
+      // --- Keyboard Shortcut for Manual Login (Command + Shift + M for macOS) ---
+      document.addEventListener('keydown', (event) => {
+          // Check for Command (MetaKey), Shift, and 'M' key
+          if (event.metaKey && event.shiftKey && event.key === 'M') {
+              event.preventDefault(); // Prevent default browser behavior for the shortcut
+              testLoginPopup.classList.add('visible');
+              testLoginPopup.classList.remove('hidden');
+              // Hide the main splash screen content temporarily
+              splashScreen.classList.add('hidden');
+              manualAccessCodeInput.value = ''; // Clear input field
+              setTimeout(() => manualAccessCodeInput.focus(), 100); // Focus after transition
+          }
       });
 
       closeTestLoginPopupBtn.addEventListener('click', () => {
