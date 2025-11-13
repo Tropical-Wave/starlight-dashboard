@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Starlight Dashboard</title>
 
-    <!-- Meta tags for PWA -->
     <meta name="theme-color" content="#F5F7F6"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,7 +16,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font is unified to "Inter" for design consistency -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -309,12 +307,17 @@
             #grid-user-info {
                 grid-column: 1 / 2;
                 grid-row: 1 / 2;
+                display: flex; /* Make this a flex column */
+                flex-direction: column;
+                gap: var(--base-gap);
             }
             
             /* Top-Middle: Game */
             #grid-game {
                 grid-column: 2 / 3;
                 grid-row: 1 / 2;
+                display: flex; /* Make this a flex column */
+                flex-direction: column;
             }
             
             /* Right (Full Height): History */
@@ -381,7 +384,6 @@
 </head>
 <body class="antialiased">
     
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110]">
         <div class="text-center">
             <svg class="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="color: var(--primary-accent);"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -389,12 +391,9 @@
         </div>
     </div>
 
-    <!-- Main Dashboard -->
     <main id="dashboard" class="flex">
         
-        <!-- Row 1: Title & Logout Button -->
         <div class="flex-shrink-0 flex justify-between items-center pb-4">
-             <!-- MODIFIED: Header color changed to brand blue -->
              <header class="font-bold text-4xl md:text-5xl" style="color: var(--primary-accent);">Starlight Dashboard</header>
              <button id="logoutButton" class="p-2 rounded-full hover:bg-slate-200 transition-colors" title="Logout">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color: var(--text-body);">
@@ -403,33 +402,24 @@
              </button>
         </div>
         
-        <!-- Row 2: Main 3x2 Grid -->
         <div class="main-grid">
             
-            <!-- Cell: Top-Left (User Info) -->
             <div id="grid-user-info" class="flex flex-col gap-6">
-                <!-- NEW: Pass Card -->
                 <div id="userPassCard" class="dashboard-card flex-grow-0 text-center tier-pending">
-                    <!-- Pass/Tier data -->
                     <p id="userTier" class="text-2xl font-bold">Loading Pass...</p>
                 </div>
 
-                <!-- NEW: Welcome Card -->
                 <div class="dashboard-card flex-grow-0 text-center">
-                    <!-- Welcome message -->
                     <p id="userName" class="text-xl md:text-2xl">Welcome, <span class="font-semibold" style="color: var(--text-title);">...</span></p>
                 </div>
             </div>
 
-            <!-- Cell: Top-Middle (Game) -->
             <div id="grid-game" class="dashboard-card flex flex-col game-card">
-                <!-- MODIFIED: Title and Rules -->
                 <h3 class="font-bold text-xl text-center mb-4 flex-shrink-0" style="color: var(--text-title);">Want to play a game?</h3>
                 <div class="text-sm space-y-3 px-2 flex-shrink-0 text-center">
                     <p>🎵 Guess the song from the instrumental!</p>
                     <p>🏆 Earn points for every correct answer.</p>
                 </div>
-                <!-- MODIFIED: Button is larger and centered in flex-grow parent -->
                 <div class="flex-grow flex items-center justify-center pt-6">
                     <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)">
                         <div class="card-icon">
@@ -444,9 +434,7 @@
                 </div>
             </div>
 
-            <!-- Cell: Right (Full Height) (Points & History) -->
             <div id="grid-history" class="dashboard-card flex flex-col overflow-hidden history-card">
-                <!-- Top Section: Points -->
                 <div class="flex-shrink-0">
                     <div class="flex justify-between items-center" style="border-color: var(--card-border);">
                         <div class="flex items-center gap-2 md:gap-3">
@@ -455,22 +443,17 @@
                         </div>
                     </div>
                 </div>
-                <!-- History Section Title -->
                 <div class="flex-shrink-0 flex justify-between items-center mt-6 pt-4 border-t" style="border-color: var(--card-border);">
                      <h3 class="text-lg font-bold" style="color: var(--text-title);">Points History</h3>
                      <button id="refreshHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg class="h-6 w-6" style="color: var(--text-body);" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
                 </div>
-                <!-- Scrollable List -->
                 <div id="historyList" class="flex-grow overflow-y-auto pt-2">
-                    <!-- History items will be injected here by JS -->
-                </div>
+                    </div>
             </div>
 
-            <!-- Cell: Bottom Left/Middle (Span) (Rewards) -->
             <div id="grid-rewards" class="dashboard-card flex flex-col overflow-hidden rewards-card">
                 <h3 class="text-lg font-bold flex-shrink-0" style="color: var(--text-title);">Redeem Rewards</h3>
                 <main id="rewardsGrid" class="flex-grow overflow-y-auto pt-4 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    <!-- Reward buttons will be dynamically checked by JS -->
                     <button class="reward-button" data-cost="5" data-label="Candy" data-reward-code="Reward1">
                         <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=混" alt="Candy Icon" class="bg-red-100">
                         <p class="label">Candy</p>
@@ -499,29 +482,23 @@
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
                         <div class="disabled-overlay">Not enough<br>points</div>
                     </button>
-                     <!-- Add more buttons here if needed -->
-                </main>
+                     </main>
             </div>
 
         </div>
     </main>
     
-    <!-- MODALS (Merged) -->
-    
-    <!-- General Info Modal (for errors, logout) -->
     <div id="infoModal" class="fullscreen-overlay">
         <div class="popup-card p-6 gap-4 text-center">
             <h3 id="infoModalTitle" class="text-2xl font-bold" style="color: var(--text-title);"></h3>
             <p id="infoModalMessage" class="text-slate-500 break-words"></p>
             <div class="flex items-center justify-center gap-4 mt-4 w-full">
-                <!-- NEW: Cancel button for confirmation dialogs -->
                 <button id="infoModalCancelBtn" class="modal-button primary !bg-slate-200 !text-slate-700" style="display: none;">Cancel</button>
                 <button id="infoModalCloseBtn" class="modal-button primary w-full">OK</button>
             </div>
         </div>
     </div>
 
-    <!-- Redeem Confirmation Modal (from rewards.html) -->
     <div id="redeemModal" class="fullscreen-overlay">
         <div class="popup-card p-6 gap-4 text-center">
             <button id="redeemModalCloseBtn" class="absolute top-3 right-3 p-1 rounded-full hover:bg-slate-100" style="color: var(--text-body);">
@@ -544,7 +521,7 @@
 
     // --- App Configuration ---
     // GET requests (fetch data) MUST use Google Apps Script
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: Replace this
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwb2YDEuFLayiuqShjTN9IkhDOWUInGrJCZWuW4_RQ_lky0lo6Xf_Z7E7SUm0e60oBA/exec"; // IMPORTANT: Replace this
     
     // POST requests (submit data) MUST use SheetDB
     const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID
@@ -867,7 +844,7 @@
         } finally {
             // Re-sync with server after a delay, regardless of outcome
             setTimeout(() => {
-                state.isRedeemimg = false; // Typo corrected: isRedeeming
+                state.isRedeeming = false; // <-- Fixed typo here
                 dom.redeemModalConfirmBtn.disabled = false;
                 dom.redeemModalConfirmBtn.textContent = 'Redeem Now';
                 fetchHomePageData(state.currentUserCode, true); // Re-fetch ALL data
@@ -953,3 +930,197 @@
   </script>
 </body>
 </html>
+```eof
+```javascript:Google Apps Script Code (v3):google_apps_script_update.txt
+// --- Google Apps Script (Code.gs) ---
+
+// --- CONFIGURATION ---
+// Set your sheet names here.
+const USER_SHEET_NAME = "Users";
+const HISTORY_SHEET_NAME = "History";
+const INVENTORY_SHEET_NAME = "Inventory";
+
+// --- MAIN FUNCTION (Handles all GET requests) ---
+function doGet(e) {
+  let action = e.parameter.action;
+  let code = e.parameter.code;
+
+  try {
+    // This switch statement protects your logic.
+    switch (action) {
+      case 'getUser': // NEW: Handles the login request from index.html
+        return getUserLoginData(code);
+        
+      case 'getHomePageData': // Handles the dashboard request from home.html
+        return getHomePageData(code);
+      
+      // Kept for legacy support
+      case 'getDashboardData':
+      case 'getRewardsData':
+        return getHomePageData(code);
+        
+      default:
+        return createJsonResponse({ status: 'error', message: 'Invalid action' });
+    }
+  } catch (error) {
+    return createJsonResponse({ status: 'error', message: `Server error: ${error.message}` });
+  }
+}
+
+// --- HELPER: Create JSON Response ---
+function createJsonResponse(data) {
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// --- NEW LOGIN FUNCTION ---
+/**
+ * Handles the login request from index.html.
+ * Only fetches user data to verify existence.
+ */
+function getUserLoginData(code) {
+  if (!code) {
+    return createJsonResponse({ status: 'error', message: 'Access code is required' });
+  }
+
+  const userData = getUserData_(code); // Reuse the existing helper
+
+  if (!userData) {
+    return createJsonResponse({ status: 'error', message: 'Passport not recognized.' });
+  }
+
+  // User found, send back success and user object
+  return createJsonResponse({
+    status: 'success',
+    user: userData
+  });
+}
+
+
+// --- DASHBOARD DATA FUNCTION ---
+/**
+ * Fetches all data for the home page (User, History, Inventory)
+ * based on the provided access code.
+ */
+function getHomePageData(code) {
+  if (!code) {
+    return createJsonResponse({ status: 'error', message: 'Access code is required' });
+  }
+
+  // Use parallel execution to fetch data faster
+  let [userData, historyData, inventoryData] = [
+    getUserData_(code),   // Fetches from "Users" sheet
+    getHistoryData_(code), // Fetches from "History" sheet
+    getInventoryData_()    // Fetches from "Inventory" sheet
+  ];
+
+  // Check if the user is valid
+  if (!userData) {
+    return createJsonResponse({ status: 'error', message: 'Invalid access code' });
+  }
+
+  // All data fetched successfully
+  return createJsonResponse({
+    status: 'success',
+    user: userData,
+    history: historyData,
+    inventory: inventoryData
+  });
+}
+
+// --- DATA-FEETCHING HELPER (User) ---
+// This helper is now used by BOTH login and dashboard functions
+function getUserData_(code) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(USER_SHEET_NAME);
+    if (!sheet) return null; // Sheet not found
+
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const codeCol = headers.indexOf('Access Code');
+    
+    // Find the user row
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][codeCol] == code) {
+        // Build the user object
+        let user = {};
+        headers.forEach((header, index) => {
+          user[header] = data[i][index];
+        });
+        return user; // User found
+      }
+    }
+    return null; // User not found
+  } catch (e) {
+    Logger.log(`Error in getUserData_: ${e}`);
+    return null;
+  }
+}
+
+// --- DATA-FETCHING HELPER (History) ---
+function getHistoryData_(code) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(HISTORY_SHEET_NAME);
+    if (!sheet) return []; // Sheet not found
+
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const codeCol = headers.indexOf('Access Code');
+    
+    let history = [];
+    
+    // Iterate in reverse to get the latest transactions first
+    for (let i = data.length - 1; i > 0; i--) {
+      if (data[i][codeCol] == code) {
+        let transaction = {};
+        headers.forEach((header, index) => {
+          // Format timestamp
+          if (header === "Timestamp" && data[i][index] instanceof Date) {
+            transaction[header] = data[i][index].toISOString();
+          } else {
+            transaction[header] = data[i][index];
+          }
+        });
+        history.push(transaction);
+      }
+    }
+    return history; // Return list of transactions
+  } catch (e) {
+    Logger.log(`Error in getHistoryData_: ${e}`);
+    return [];
+  }
+}
+
+// --- DATA-FETCHING HELPER (Inventory) ---
+function getInventoryData_() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(INVENTORY_SHEET_NAME);
+    if (!sheet) return []; // Sheet not found
+
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    
+    let inventory = [];
+    
+    // Start from row 1 (skip headers)
+    for (let i = 1; i < data.length; i++) {
+      // Stop if the row is empty (e.g., no Prize)
+      if (!data[i][0]) break; 
+      
+      let item = {};
+      headers.forEach((header, index) => {
+        item[header] = data[i][index];
+      });
+      inventory.push(item);
+    }
+    return inventory; // Return list of all items
+  } catch (e) {
+    Logger.log(`Error in getInventoryData_: ${e}`);
+    return [];
+  }
+}
+// --- END OF SCRIPT ---
