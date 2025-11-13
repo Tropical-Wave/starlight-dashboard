@@ -19,19 +19,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- NEW: Color Palette & Font from index.html --- */
+        /* --- Color Palette & Font --- */
         :root {
             /* Core Palette */
             --background: #F5F7F6;
             --card-bg: #F3F8F4;
             --card-border: #E1E5E3;
-            --primary-accent: #89B3D9; /* <-- ADDED from target design */
+            --primary-accent: #89B3D9;
             --cta-accent: #F4D35E;
             --text-title: #2D3748;
             --text-body: #5F7D97;
             --text-on-cta: #1C2B26;
 
-            /* Stepper/Tier Colors */
+            /* Tier Colors */
             --tier1-green-bg: #E6F3E9;
             --tier1-green-border: #C8E2D0;
             --tier1-green-icon: #2A745C;
@@ -44,7 +44,7 @@
             --tier3-yellow-border: #FFE8AC;
             --tier3-yellow-icon: #B58700;
             
-            /* Sizing variables for responsiveness */
+            /* Sizing variables */
             --base-font-size: 16px;
             --base-padding: 1.5rem;
             --base-gap: 1.5rem;
@@ -91,8 +91,8 @@
             opacity: 0; transition: opacity 0.5s ease-in;
             flex-direction: column;
             box-sizing: border-box;
-            max-width: 2000px; /* NEW: Max width for large screens */
-            margin: 0 auto; /* NEW: Center the container */
+            max-width: 2000px; 
+            margin: 0 auto; 
         }
         
         .dashboard-card {
@@ -102,6 +102,8 @@
             padding: var(--base-padding);
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             box-sizing: border-box;
+            /* NEW: Add transition for dynamic color changes */
+            transition: background-color 0.5s ease, border-color 0.5s ease;
         }
 
         .interactive-card {
@@ -113,7 +115,6 @@
             justify-content: center; align-items: center;
             text-decoration: none;
             padding: 0.5rem;
-            /* NEW: Set a min-width for the button so it looks good */
             min-width: 120px;
         }
         .interactive-card:hover {
@@ -121,69 +122,6 @@
             border-color: var(--primary-accent);
             box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
         }
-
-        /* --- Stepper UI --- */
-        .stepper-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-grow: 1;
-        }
-        .stepper {
-            --circle-size: 80px;
-            --track-h: 8px;
-            display: grid;
-            grid-template-columns: var(--circle-size) 1fr var(--circle-size) 1fr var(--circle-size);
-            grid-template-rows: auto 16px auto;
-            grid-template-areas:
-                "c1 conn1 c2 conn2 c3"
-                ".  .     .  .     . "
-                "l1 .     l2 .     l3";
-            align-items: center;
-            width: 100%;
-            max-width: 700px;
-            margin: 0 auto;
-            position: relative;
-        }
-        .circle {
-            width: var(--circle-size); height: var(--circle-size);
-            border-radius: 9999px; border: 6px solid #e5e7eb;
-            background: #fff; display: grid; place-items: center;
-            box-shadow: 0 6px 16px rgba(0,0,0,.05);
-            transition: border-color 0.3s, background-color 0.3s;
-        }
-        .icon { width: 50%; height: 50%; stroke: #9ca3af; fill: none; stroke-width: 2; transition: stroke 0.3s; }
-        .label { font-weight: 600; color: var(--text-body); text-align: center; transition: color 0.3s; }
-        
-        #c1 { grid-area: c1; } #c2 { grid-area: c2; } #c3 { grid-area: c3; }
-        #l1 { grid-area: l1; } #l2 { grid-area: l2; } #l3 { grid-area: l3; }
-        .connector { height: var(--track-h); background: #e5e7eb; border-radius: 9999px; position: relative; overflow: hidden; }
-        #conn1 { grid-area: conn1; } #conn2 { grid-area: conn2; }
-        .fill { position: absolute; inset: 0; width: 0; background: var(--conn, #e5e7eb); border-radius: inherit; }
-        
-        .connector.pulsing::after {
-            content: ""; position: absolute; inset: 0;
-            background: linear-gradient(90deg, transparent 0%, var(--wave, rgba(59,130,246,.9)) 50%, transparent 100%);
-            background-size: 200% 100%; animation: wave 2s linear infinite;
-            filter: blur(2px); opacity: .8;
-        }
-        @keyframes wave { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes growLine { from { width: 0; } to { width: 100%; } }
-        
-        /* Stepper Color Application */
-        .done.green { border-color: var(--tier1-green-border); background: var(--tier1-green-bg); }
-        .done.green .icon { stroke: var(--tier1-green-icon); }
-        .tint-green { color: var(--tier1-green-icon); font-weight: 700; }
-
-        .done.blue { border-color: var(--tier2-blue-border); background: var(--tier2-blue-bg); }
-        .done.blue .icon { stroke: var(--tier2-blue-icon); }
-        .tint-blue { color: var(--tier2-blue-icon); font-weight: 700; }
-
-        .done.yellow { border-color: var(--tier3-yellow-border); background: var(--tier3-yellow-bg); }
-        .done.yellow .icon { stroke: var(--tier3-yellow-icon); }
-        .tint-yellow { color: var(--tier3-yellow-icon); font-weight: 700; }
 
         /* --- Responsive Design --- */
         /* Mobile */
@@ -193,30 +131,39 @@
                 --base-padding: 1rem;
                 --base-gap: 1rem;
             }
-            .stepper { --circle-size: 60px; --track-h: 6px; }
-            .label { font-size: 0.8rem; }
         }
 
         /* Tablet & Landscape Mobile */
         @media (min-width: 768px) {
-            #dashboard { flex-direction: row; }
-            .left-panel { flex: 1 1 55%; display: flex; flex-direction: column; gap: var(--base-gap); }
-            .right-panel { flex: 1 1 45%; display: flex; flex-direction: column; }
+            #dashboard { 
+                flex-direction: row; 
+            }
+            /* NEW: Balanced 50/50 layout */
+            .left-panel { 
+                flex: 1 1 50%; 
+                display: flex; 
+                flex-direction: column; 
+                gap: var(--base-gap); 
+            }
+            .right-panel { 
+                flex: 1 1 50%; 
+                display: flex; 
+                flex-direction: column; 
+                gap: var(--base-gap); 
+            }
         }
 
-        /* NEW: Large Desktop Optimization (e.g., 2560x1600) */
+        /* NEW: Large Desktop Optimization */
         @media (min-width: 1920px) {
             :root {
                 --base-font-size: 18px;
                 --base-padding: 2.5rem;
                 --base-gap: 2.5rem;
             }
-            .stepper { --circle-size: 100px; max-width: 900px; }
-            .label { font-size: 1.1rem; }
             .dashboard-card header { font-size: 3.5rem; }
         }
 
-        /* --- Modal Buttons (from rewards.html) --- */
+        /* --- Modal Buttons --- */
         .modal-button { 
             flex-grow: 1; 
             text-align: center; 
@@ -246,31 +193,32 @@
 <body class="antialiased">
     
     <main id="dashboard" class="flex">
+        <!-- 
+          NEW LAYOUT: 
+          Left panel for Info (Welcome, Tier)
+          Right panel for Actions (Points, Game)
+        -->
         <div class="left-panel">
-            <div class="dashboard-card flex-shrink-0">
+            <!-- Welcome Card -->
+            <!-- MODIFIED: Added flex-grow to fill the vertical space -->
+            <div class="dashboard-card flex-shrink-0 flex-grow">
                  <header class="font-bold text-4xl md:text-5xl" style="color: var(--text-title);">Starlight Dashboard</header>
                  <p class="text-xl md:text-2xl mt-1">Welcome, <span id="userName" class="font-semibold" style="color: var(--text-title);">...</span></p>
             </div>
-            <div class="dashboard-card flex-grow flex flex-col">
-                <div class="stepper-container">
-                    <h3 class="font-bold text-xl text-center mb-6 flex-shrink-0" style="color: var(--text-title);">Event Progress</h3>
-                    <div class="stepper">
-                        <div class="circle" id="c1" aria-label="Onboarding"><svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg></div>
-                        <div class="circle" id="c2" aria-label="Take Off"><svg class="icon" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg></div>
-                        <div class="circle" id="c3" aria-label="Touchdown"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v8"></path><path d="m19 12-7 7-7-7"></path></svg></div>
-                        <div class="connector" id="conn1"><span class="fill"></span></div>
-                        <div class="connector" id="conn2"><span class="fill"></span></div>
-                        <div class="label" id="l1">Onboarding</div>
-                        <div class="label" id="l2">Take Off</div>
-                        <div class="label" id="l3">Touchdown</div>
-                    </div>
-                </div>
+            
+            <!-- NEW: Ticket Tier Card (Replaces Stepper) -->
+            <!-- MODIFIED: Removed flex-grow, flex-col, items-center, justify-center, p-8. Made simpler. -->
+            <div id="tierCard" class="dashboard-card flex-shrink-0 p-6">
+                <!-- REMOVED: tierIcon div has been removed -->
+                <h3 class="text-lg font-semibold mb-1 text-center" style="color: var(--text-body);">Your Pass</h3> <!-- MODIFIED: Centered text -->
+                <p id="userTier" class="text-4xl font-bold text-center" style="color: var(--text-title);">Loading...</p> <!-- MODIFIED: Centered text -->
             </div>
         </div>
 
         <div class="right-panel">
-            <div class="dashboard-card h-full flex flex-col">
-                <div class="flex justify-between items-center border-b pb-4 flex-shrink-0" style="border-color: var(--card-border);">
+            <!-- Points & Rewards Card -->
+            <div class="dashboard-card flex-shrink-0">
+                <div class="flex justify-between items-center" style="border-color: var(--card-border);">
                     <div class="flex items-center gap-2 md:gap-3">
                         <span class="font-semibold text-base md:text-lg">Points:</span>
                         <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
@@ -280,13 +228,11 @@
                     </div>
                     <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full hover:opacity-90 transition-opacity shadow-lg" style="background-color: var(--cta-accent); color: var(--text-on-cta); box-shadow: 0 8px 15px -5px rgba(244, 211, 94, 0.4);">Rewards</a>
                 </div>
-                <!-- 
-                  MODIFICATION: 
-                  - Removed grid layout ("grid grid-cols-3 gap-2 md:gap-4")
-                  - Added flex layout ("flex items-center justify-center") to center the remaining button
-                  - Removed "K-Pop Quiz" and "True or False" buttons
-                  - Removed "+15 Pts" span from "Guess the Song"
-                -->
+            </div>
+
+            <!-- Game Card -->
+            <div class="dashboard-card h-full flex flex-col">
+                <h3 class="font-bold text-xl text-center mb-6 flex-shrink-0" style="color: var(--text-title);">Ready to Play?</h3>
                 <div class="flex-grow flex items-center justify-center pt-4">
                     <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium">Moderate</span></a>
                 </div>
@@ -294,6 +240,7 @@
         </div>
     </main>
     
+    <!-- History Popup -->
     <div id="historyPopup" class="fullscreen-overlay">
         <div class="popup-card">
             <div class="p-4 border-b flex items-center justify-between flex-shrink-0" style="border-color: var(--card-border);">
@@ -325,10 +272,7 @@
     const historyPopup = document.getElementById('historyPopup');
 
     // --- App Configuration ---
-    // *** NEW: Google Apps Script URL ***
-    // *** UPDATED: Set this to your new URL to match the other files ***
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: Replace this
-    // *** REMOVED: SHEETDB_API_ID ***
     const INACTIVITY_TIMEOUT = 30000;
     const AUTO_REFRESH_INTERVAL = 15000;
 
@@ -336,6 +280,16 @@
     let inactivityTimer = null;
     let autoRefreshInterval = null;
     let currentUserCode = null;
+
+    // --- REMOVED: Tier Icons constant is no longer needed ---
+    /*
+    const TIER_ICONS = {
+        economy: '...',
+        business: '...',
+        first: '...',
+        default: '...'
+    };
+    */
 
     // --- UI Flow & Data Functions ---
     function showDashboard() {
@@ -367,7 +321,6 @@
 
         if (!infoModal || !infoModalTitle || !infoModalMessage || !infoModalCloseBtn) {
             console.error("Info modal elements not found!");
-            // Fallback if modal is broken, to prevent loop
             if(onOk) onOk(); 
             return;
         }
@@ -385,16 +338,13 @@
         infoModalCloseBtn.onclick = close;
     }
 
-    // *** MODIFIED: This function now uses Google Apps Script for GET ***
+    // --- Data Fetching ---
     async function fetchDashboardData(code, isManualRefresh = false) {
       if (isManualRefresh) {
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
-
     
-
       try {
-        // Single fetch call to Google Apps Script
         const url = `${GAS_WEB_APP_URL}?action=getDashboardData&code=${encodeURIComponent(code)}`;
         const res = await fetch(url);
 
@@ -406,16 +356,13 @@
             throw new Error(result.message || "Invalid user data.");
         }
         
-        // Pass the user and history data from the result
         updateDashboardUI(result.user, result.history || []);
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        // MODIFICATION: Show error in a modal instead of immediate redirect
         showInfoModal("Data Error", `Failed to load dashboard data: ${error.message}. Returning to login.`, () => {
             redirectToLogin();
         });
-        // OLD: redirectToLogin(); 
       } finally {
         if (isManualRefresh) {
             document.getElementById('refreshHistoryBtn')?.classList.remove('animate-spin');
@@ -424,87 +371,59 @@
     }
 
     // --- UI Rendering Functions ---
-    // (This function is compatible with the new data structure)
     function updateDashboardUI(userData, historyData) {
       userNameEl.textContent = `${userData.Name || "Guest"}!`;
       userPointsEl.textContent = parseInt(userData.Points || "0", 10);
-      renderStepper(userData);
+      renderTierCard(userData); // <-- MODIFIED
       renderHistoryList(historyData || []);
     }
 
-    // (This function is compatible with the new data structure)
-    function renderStepper(userData) {
-        const elements = {
-            c1: document.getElementById('c1'), c2: document.getElementById('c2'), c3: document.getElementById('c3'),
-            l1: document.getElementById('l1'), l2: document.getElementById('l2'), l3: document.getElementById('l3'),
-            conn1: document.getElementById('conn1'), conn2: document.getElementById('conn2'),
-            fill1: document.getElementById('conn1').querySelector('.fill'),
-            fill2: document.getElementById('conn2').querySelector('.fill')
-        };
+    // NEW: Function to render the Ticket Tier card
+    function renderTierCard(userData) {
+        // We now read from Event1 (Column E) as requested
+        const tier = userData.Event1 ? String(userData.Event1).toLowerCase() : 'unknown';
+        const tierCard = document.getElementById('tierCard');
+        const userTierEl = document.getElementById('userTier');
+        // REMOVED: tierIconEl constant
         
-        const steps = [
-            { key: 'Event1', circle: elements.c1, label: elements.l1, color: 'green', connector: elements.conn1, fill: elements.fill1 },
-            { key: 'Event2', circle: elements.c2, label: elements.l2, color: 'blue',  connector: elements.conn2, fill: elements.fill2 },
-            { key: 'Event3', circle: elements.c3, label: elements.l3, color: 'yellow', connector: null, fill: null }
-        ];
+        if (!tierCard || !userTierEl) return; // MODIFIED: Removed tierIconEl from check
 
-        // Reset styles
-        steps.forEach(step => {
-            step.circle.classList.remove('done', 'green', 'blue', 'yellow');
-            step.circle.style.animation = 'none';
-            step.label.classList.remove('tint-green', 'tint-blue', 'tint-yellow');
-            if (step.connector) step.connector.classList.remove('pulsing');
-            if (step.fill) {
-                step.fill.style.animation = 'none';
-                step.fill.style.width = '0';
-            }
-        });
-        
-        let delay = 300;
-        const popInDuration = 500;
-        const growLineDuration = 600;
-        let lastCompletedIndex = -1;
+        let tierName, bgColor, borderColor, iconColor; // REMOVED: iconSvg
 
-        steps.forEach((step, index) => {
-            // Check if Event key exists and has a value
-            const isCompleted = userData[step.key] && userData[step.key] !== ""; 
-            
-            if (isCompleted) {
-                lastCompletedIndex = index;
-                setTimeout(() => {
-                    step.circle.style.animation = `popIn ${popInDuration}ms ease-out forwards`;
-                    step.circle.classList.add('done', step.color);
-                    step.label.classList.add(`tint-${step.color}`);
-                }, delay);
-
-                if (index > 0) {
-                    const prevStep = steps[index - 1];
-                    setTimeout(() => {
-                        // Use the color of the *previous* step for the connector fill
-                        const connectorColor = getComputedStyle(document.documentElement).getPropertyValue(`--tier${index}-green-border`);
-                        prevStep.fill.style.backgroundColor = connectorColor;
-                        prevStep.fill.style.animation = `growLine ${growLineDuration}ms ease-out forwards`;
-                    }, delay - growLineDuration / 2);
-                }
-                delay += popInDuration + growLineDuration - 200;
-            }
-        });
-
-        // Activate pulsing connector for the next step
-        if (lastCompletedIndex > -1 && lastCompletedIndex < steps.length - 1) {
-            const nextStep = steps[lastCompletedIndex + 1];
-            const pulsingConnector = steps[lastCompletedIndex].connector;
-            if (pulsingConnector) {
-                setTimeout(() => {
-                    const waveColor = getComputedStyle(document.documentElement).getPropertyValue(`--tier${lastCompletedIndex + 2}-blue-icon`);
-                    pulsingConnector.style.setProperty('--wave', waveColor);
-                    pulsingConnector.classList.add('pulsing');
-                }, delay);
-            }
+        if (tier.includes('economy')) {
+            tierName = 'Economy';
+            bgColor = 'var(--tier1-green-bg)';
+            borderColor = 'var(--tier1-green-border)';
+            iconColor = 'var(--tier1-green-icon)';
+            // REMOVED: iconSvg assignment
+        } else if (tier.includes('business')) {
+            tierName = 'Business Class';
+            bgColor = 'var(--tier2-blue-bg)';
+            borderColor = 'var(--tier2-blue-border)';
+            iconColor = 'var(--tier2-blue-icon)';
+            // REMOVED: iconSvg assignment
+        } else if (tier.includes('first')) {
+            tierName = 'First Class';
+            bgColor = 'var(--tier3-yellow-bg)';
+            borderColor = 'var(--tier3-yellow-border)';
+            iconColor = 'var(--tier3-yellow-icon)';
+            // REMOVED: iconSvg assignment
+        } else {
+            tierName = 'Ticket Pending';
+            bgColor = 'var(--card-bg)';
+            borderColor = 'var(--card-border)';
+            iconColor = 'var(--text-body)';
+            // REMOVED: iconSvg assignment
         }
+
+        userTierEl.textContent = tierName;
+        userTierEl.style.color = iconColor; // Match text color to icon
+        tierCard.style.backgroundColor = bgColor;
+        tierCard.style.borderColor = borderColor;
+        // REMOVED: All logic related to setting tierIconEl.innerHTML and style
     }
 
-    // (This function is compatible with the new data structure)
+    // History List Rendering
     function renderHistoryList(historyData) {
         if (!historyData || historyData.length === 0) {
             historyList.innerHTML = `<p class="text-center py-8">No points history recorded.</p>`;
