@@ -214,6 +214,31 @@
             .dashboard-card header { font-size: 3.5rem; }
         }
 
+        /* --- Modal Buttons (from rewards.html) --- */
+        .modal-button { 
+            flex-grow: 1; 
+            text-align: center; 
+            padding: 1rem; 
+            font-weight: 600; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .modal-button.primary { 
+            background-color: var(--cta-accent); 
+            color: var(--text-on-cta); 
+            box-shadow: 0 4px 8px rgba(244, 211, 94, 0.3);
+        }
+        .modal-button.primary:hover:not(:disabled) { 
+            opacity: 0.9; 
+        }
+        .modal-button.primary:disabled { 
+            background: #94A3B8; 
+            opacity: 0.7; 
+            cursor: wait; 
+        }
+
     </style>
 </head>
 <body class="antialiased">
@@ -274,6 +299,17 @@
         </div>
     </div>
     
+    <!-- General Info Modal (for errors) -->
+    <div id="infoModal" class="fullscreen-overlay">
+        <div class="popup-card p-6 gap-4 text-center">
+            <h3 id="infoModalTitle" class="text-2xl font-bold" style="color: var(--text-title);"></h3>
+            <p id="infoModalMessage" class="text-slate-500 break-words"></p>
+            <div class="flex items-center justify-center gap-4 mt-4 w-full">
+                <button id="infoModalCloseBtn" class="modal-button primary w-full">OK</button>
+            </div>
+        </div>
+    </div>
+    
   <script>
     // --- DOM Element Constants ---
     const dashboard = document.getElementById('dashboard');
@@ -316,6 +352,33 @@
         window.location.href = 'index.html';
     }
 
+    // --- Info Modal Function ---
+    function showInfoModal(title, message, onOk) {
+        const infoModal = document.getElementById('infoModal');
+        const infoModalTitle = document.getElementById('infoModalTitle');
+        const infoModalMessage = document.getElementById('infoModalMessage');
+        const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
+
+        if (!infoModal || !infoModalTitle || !infoModalMessage || !infoModalCloseBtn) {
+            console.error("Info modal elements not found!");
+            // Fallback if modal is broken, to prevent loop
+            if(onOk) onOk(); 
+            return;
+        }
+        
+        infoModalTitle.textContent = title;
+        infoModalMessage.textContent = message;
+        infoModal.classList.add('visible');
+
+        const close = () => { 
+            infoModal.classList.remove('visible'); 
+            infoModalCloseBtn.onclick = null;
+            if (onOk) onOk();
+        };
+        
+        infoModalCloseBtn.onclick = close;
+    }
+
     // *** MODIFIED: This function now uses Google Apps Script for GET ***
     async function fetchDashboardData(code, isManualRefresh = false) {
       if (isManualRefresh) {
@@ -323,11 +386,15 @@
       }
 
       // This check is valid because the placeholder is different from your real URL
-      if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec") {
+      // --- FIX: Removing the unnecessary check ---
+      /*
+      if (GAS_WEB_APP_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
         console.error("GAS_WEB_APP_URL is not set.");
         redirectToLogin(); // Can't fetch data, so log out
         return;
       }
+      */
+      // --- End of FIX ---
 
       try {
         // Single fetch call to Google Apps Script
@@ -347,7 +414,11 @@
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        redirectToLogin(); 
+        // MODIFICATION: Show error in a modal instead of immediate redirect
+        showInfoModal("Data Error", `Failed to load dashboard data: ${error.message}. Returning to login.`, () => {
+            redirectToLogin();
+        });
+        // OLD: redirectToLogin(); 
       } finally {
         if (isManualRefresh) {
             document.getElementById('refreshHistoryBtn')?.classList.remove('animate-spin');
