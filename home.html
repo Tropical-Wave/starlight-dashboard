@@ -24,9 +24,8 @@
         /* --- UNIFIED Color Palette & Font --- */
         :root {
             /* Core Palette */
-            /* NEW: Background is now brand blue */
             --background: #89B3D9; 
-            --card-bg: #FFFFFF; /* NEW: Set to white per request */
+            --card-bg: #FFFFFF; /* "white" */
             --card-border: #E1E5E3;
             --primary-accent: #89B3D9; /* Brand Blue */
             --cta-accent: #F4D35E;
@@ -49,15 +48,14 @@
             
             /* Sizing variables */
             --base-font-size: 16px;
-            --base-padding: 1.5rem; /* RESTORED */
-            --base-gap: 1.5rem; /* RESTORED */
+            --base-padding: 1.5rem;
+            --base-gap: 1.5rem;
         }
 
         /* --- Base Styles --- */
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; /* Prevent body scroll */
-            /* NEW: Changed to gradient blue background */
             background-color: var(--primary-accent);
             background: linear-gradient(135deg, var(--primary-accent) 0%, #7aa8cc 100%);
             font-family: 'Inter', sans-serif; 
@@ -97,7 +95,7 @@
         #dashboard {
             display: none; /* Hidden by default */
             height: 100dvh;
-            padding: var(--base-padding); /* RESTORED */
+            padding: var(--base-padding);
             opacity: 0; transition: opacity 0.5s ease-in;
             flex-direction: column; /* Main layout is vertical */
             box-sizing: border-box;
@@ -105,47 +103,61 @@
             margin: 0 auto; 
         }
         
-        /* --- NEW: Card Style --- */
+        /* --- Card Style --- */
         .dashboard-card {
-            background-color: var(--card-bg); /* NEW: "white" */
+            background-color: var(--card-bg); /* "white" */
             border-radius: 1.5rem;
             border: 1px solid var(--card-border); 
-            padding: var(--base-padding); /* RESTORED */
-            /* NEW: Enhanced shadow for depth */
             box-shadow: 0 8px 16px rgba(45, 55, 72, 0.1), 0 4px 6px rgba(45, 55, 72, 0.05);
             box-sizing: border-box;
             transition: all 0.5s ease;
             overflow: hidden; /* Prevent content spill */
+            /* All cards get padding by default */
+            padding: var(--base-padding);
         }
 
-        /* --- NEW: Inner Pass Card Styles --- */
+        /* --- NEW: Boarding Pass / Ticket Styles --- */
+        .ticket-label {
+            font-size: 0.75rem; /* 12px */
+            font-weight: 600;
+            color: var(--text-body);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .ticket-data {
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 0.75rem; /* 12px */
+        }
+        .ticket-stub {
+            /* Mobile-first: top border */
+            border-top: 2px dashed var(--card-border);
+            padding-top: var(--base-padding);
+        }
+
+        /* --- Inner Pass Card Styles --- */
         #userPassCard {
             padding: 1rem 1.5rem;
-            border-radius: 1rem; /* Slightly smaller radius */
+            border-radius: 1rem;
             text-align: center;
             transition: all 0.5s ease;
-            /* NEW: Add a subtle shadow to lift it from its parent */
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
-        /* Default/Pending Tier */
+        /* Tier Colors */
         .tier-pending {
-            background-color: #f0f0f0; /* Neutral gray */
-            border: 1px solid #ddd;
+            background-color: #f0f0f0; border: 1px solid #ddd;
         }
         .tier-pending #userTier { color: #555; }
-        /* Tier 1: Economy */
         .tier-economy {
             background-color: var(--tier1-green-bg);
             border: 1px solid var(--tier1-green-border);
         }
         .tier-economy #userTier { color: var(--tier1-green-text); }
-        /* Tier 2: Business */
         .tier-business {
             background-color: var(--tier2-blue-bg);
             border: 1px solid var(--tier2-blue-border);
         }
         .tier-business #userTier { color: var(--tier2-blue-text); }
-        /* Tier 3: First */
         .tier-first {
             background-color: var(--tier3-yellow-bg);
             border: 1px solid var(--tier3-yellow-border);
@@ -155,7 +167,7 @@
 
         /* --- Interactive Card (Game Button) --- */
         .interactive-card {
-            background-color: var(--card-bg); /* NEW: "white" */
+            background-color: var(--card-bg);
             border: 1px solid var(--card-border); 
             border-radius: 1.5rem; 
             transition: all 0.2s ease-out; position: relative; overflow: hidden;
@@ -165,13 +177,11 @@
             padding: 1.5rem; 
             width: 100%;
             max-width: 350px; 
-            /* NEW: Use the standard enhanced shadow */
             box-shadow: 0 8px 16px rgba(45, 55, 72, 0.1), 0 4px 6px rgba(45, 55, 72, 0.05);
         }
         .interactive-card:hover {
             transform: translateY(-4px) scale(1.02); 
             border-color: var(--primary-accent);
-            /* NEW: Brighter shadow on hover */
             box-shadow: 0 10px 25px -5px rgba(137, 179, 217, 0.3), 0 8px 10px -6px rgba(137, 179, 217, 0.2);
         }
         .interactive-card .card-icon svg {
@@ -211,7 +221,6 @@
         }
         .reward-button:disabled { 
             cursor: not-allowed; 
-            /* NEW: Make disabled slightly transparent white */
             background-color: rgba(255,255,255,0.7); 
         }
         .reward-button img {
@@ -244,7 +253,7 @@
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: rgba(255, 255, 255, 0.7); /* NEW: White overlay */
+            background-color: rgba(255, 255, 255, 0.7); /* White overlay */
             backdrop-filter: grayscale(80%) blur(1px);
             display: flex;
             align-items: center;
@@ -303,7 +312,7 @@
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 grid-template-rows: auto 1fr; 
-                gap: var(--base-gap); /* RESTORED */
+                gap: var(--base-gap);
                 overflow: hidden; 
             }
             
@@ -314,9 +323,28 @@
                 grid-column: 1 / 2;
                 grid-row: 1 / 2;
                 display: flex; 
-                flex-direction: column;
-                gap: var(--base-gap); /* RESTORED */
+                flex-direction: row; /* NEW: Horizontal layout */
+                padding: 0; /* NEW: Remove padding for edge-to-edge content */
             }
+            
+            /* NEW: Ticket main/stub classes for desktop */
+            .ticket-main {
+                flex-grow: 1;
+                padding: var(--base-padding);
+            }
+            .ticket-stub {
+                flex-shrink: 0;
+                width: 180px; /* Fixed width for stub */
+                border-left: 2px dashed var(--card-border);
+                border-top: none; /* Remove mobile border */
+                padding: var(--base-padding);
+                padding-top: var(--base-padding); /* Reset mobile padding */
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
             
             /* Top-Middle: Game */
             #grid-game {
@@ -393,7 +421,8 @@
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110]">
         <div class="text-center">
-            <svg class="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="color: var(--primary-accent);"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <svg class="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="color: var(--primary-accent);"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8
+ 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
             <p id="loadingText" class="mt-4 font-semibold" style="color: var(--text-body);">Loading Data...</p>
         </div>
     </div>
@@ -401,70 +430,89 @@
     <!-- Main Dashboard -->
     <main id="dashboard" class="flex">
         
-        <!-- Row 1: Title & Logout Button -->
-        <!-- NEW: HEADER REMOVED -->
+        <!-- Row 1: HEADER REMOVED -->
         
         <!-- Row 2: Main 3x2 Grid -->
         <div class="main-grid">
             
             <!-- Cell: Top-Left (User Info) -->
-            <!-- NEW: This is now a single parent card with padding -->
-            <div id="grid-user-info" class="dashboard-card flex flex-col gap-4" style="padding: var(--base-padding);">
+            <!-- NEW: Redesigned as Boarding Pass. p-0 to remove padding -->
+            <div id="grid-user-info" class="dashboard-card flex flex-col p-0">
                 
-                <!-- NEW: SVG logo moved inside, centered, and colored -->
-                <div class="flex justify-center">
-                    <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-10 w-auto"> <!-- NEW: Sized -->
-                        <defs>
-                            <style>
-                                /* NEW: Set fill to brand blue and removed invalid &nbsp; */
-                                .cls-1 {
-                                    fill: var(--primary-accent);
-                                }
-                            </style>
-                        </defs>
-                        <g id="Layer_1-2" data-name="Layer 1">
-                            <path class="cls-1" d="M9.75,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62s.2-.58.2-.93-.07-.67-.2-.93c-.13-.27-.32-.47-.57-.62Z"/>
-                            <path class="cls-1" d="M33.04,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62.13-.27.2-.58.2-.93s-.07-.67-.2-.93-.32-.47-.57-.62Z"/>
-                            <polygon class="cls-1" points="39.28 33.01 40.67 33.01 39.99 31.14 39.28 33.01"/>
-                            <path class="cls-1" d="M24.81,32.87h-1.2v1.45h1.2c.19,0,.35-.06.46-.19.12-.13.17-.3.17-.51,0-.23-.06-.41-.17-.55-.12-.14-.27-.21-.46-.21Z"/>
-                            <path class="cls-1" d="M48.54,31.68c0-.19-.03-.35-.1-.48s-.16-.23-.29-.3c-.13-.07-.28-.1-.45-.1h-1.02v1.76h1.02c.17,0,.32-.03.45-.1s.22-.17.29-.3c.07-.13.1-.29.1-.48Z"/>
-                            <path class="cls-1" d="M24.88,31.94c.1-.12.15-.27.15-.45,0-.21-.06-.38-.17-.5-.11-.12-.26-.18-.46-.18h-.8v1.32h.85c.18,0,.32-.06.42-.18Z"/>
-                            <path class="cls-1" d="M55.59,31.03c-.25-.15-.54-.22-.86-.22h-.66v3.5h.66c.33,0,.62-.07.86-.21s.44-.35.58-.62.21-.57.21-.93-.07-.65-.21-.91-.33-.47-.58-.62Z"/>
-                            <path class="cls-1" d="M76.87,27.72H7.29c-2.65,0-4.8,2.15-4.8,4.8v.09c0,2.65,2.15,4.8,4.8,4.8h69.58c2.65,0,4.8-2.15,4.8-4.8v-.09c0-2.65-2.15-4.8-4.8-4.8ZM11.07,33.87c-.21.38-.5.68-.88.89-.38.21-.8.32-1.28.32s-.91-.11-1.28-.32c-.38-.21-.67-.51-.88-.9-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.68.88-.89.38-.21.8-.32,1.28-.32s.9.11,1.28.32c.38.21.67.51.88.9.21.38.32.82.32,1.3s-.11.92-.32,1.3ZM19,35.08h-.97l-2.31-3.56v3.56h-.87v-5.03h.98l2.3,3.56v-3.56h.87v5.03ZM26.14,34.38c-.12.22-.28.39-.49.52-.21.12-.45.18-.72.18h-2.21v-5.03h1.78c.26,0,.5.06.71.17.21.11.37.28.49.48.12.21.17.44.17.71,0,.18-.05.36-.14.55-.07.14-.15.26-.25.36.06.03.11.06.17.1l.02.02c.18.13.34.3.45.52.12.22.18.44.18.65,0,.28-.06.53-.18.76ZM34.36,33.87c-.21.38-.5.68-.88.89-.38.21-.8.32-1.28.32s-.91-.11-1.28-.32c-.38-.21-.67-.51-.88-.9-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.68.88-.89.38-.21.8-.32,1.28-.32s.9.11,1.28.32c.38.21.67.51.88.9.21.38.32.82.32,1.3s-.11.92-.32,1.3ZM41.43,35.08l-.48-1.31h-1.94l-.5,1.31h-.93l1.88-5.03h1.06l1.84,5.03h-.93ZM48.6,35.08l-1.17-1.76h-.76v1.76h-.87v-5.03h2.06c.3,0,.57.07.81.2.24.13.42.32.55.56.13.24.2.53.2.84,0,.22-.03.42-.1.61-.06.18-.17.35-.33.5-.15.15-.36.29-.61.41l1.27,1.9h-1.05ZM56.92,33.87c-.22.38-.51.68-.89.89-.38.21-.81.32-1.3.32h-1.54v-5.03h1.54c.49,0,.92.11,1.3.32.38.21.68.51.89.89.22.38.32.81.32,1.3s-.11.93-.32,1.31ZM61.62,35.08h-.87v-5.03h.87v5.03ZM69.46,35.08h-.97l-2.31-3.56v3.56h-.87v-5.03h.98l2.3,3.56v-3.56h.87v5.03ZM77.73,32.88c0,.45-.09.84-.28,1.17-.19.33-.46.59-.8.76-.35.18-.75.27-1.22.27s-.9-.11-1.27-.32-.67-.51-.88-.89c-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.67.88-.89.37-.21.8-.32,1.27-.32.51,0,.94.11,1.3.34.36.23.63.51.8.84l-.72.39c-.12-.24-.3-.43-.54-.6-.24-.16-.52-.24-.84-.24s-.6.07-.85.22c-.25.14-.43.35-.57.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.57.62.25.14.53.22.85.22.27,0,.51-.05.73-.14.22-.09.39-.22.53-.4.13-.18.2-.41.2-.68h-1.39v-.69h2.24v.46Z"/>
-                            <rect class="cls-1" y="24.92" width="84.16" height=".71"/>
-                            <path class="cls-1" d="M6.24,8.21c.33.22.66.33,1,.33.57,0,.99-.11,1.26-.34.27-.22.4-.53.4-.92,0-.23-.08-.42-.23-.58-.15-.16-.35-.29-.58-.4-.23-.11-.56-.23-.97-.37-.63-.23-1.15-.45-1.55-.65-.4-.21-.75-.51-1.04-.91-.29-.4-.44-.92-.44-1.55,0-.57.14-1.07.42-1.49.28-.42.68-.75,1.18-.98C6.21.11,6.79,0,7.45,0,7.85,0,8.26.09,8.69.26c.43.17.82.44,1.19.81.37.37.65.83.87,1.38l-1.61.59c-.32-.49-.6-.83-.87-1.03-.27-.2-.54-.3-.81-.3-.29,0-.54.05-.75.15-.21.1-.36.23-.46.4-.15.25-.19.55-.11.9.18.29.44.51.8.68.24.11.58.26,1.01.42.63.25,1.14.48,1.53.69.39.21.73.51,1.01.89.28.38.42.87.42,1.45s-.15,1.1-.44,1.54c-.3.45-.72.79-1.27,1.04-.55.25-1.2.38-1.95.38s-1.4-.2-2.02-.61c-.61-.41-1.14-.98-1.58-1.71l1.54-.88c.42.56.73.95,1.06,1.17Z"/>
-                            <path class="cls-1" d="M19.52,1.76h-2.68v8.49h-2.06V1.76h-2.73c0-.97.79-1.76,1.76-1.76h3.95c.97,0,1.76.79,1.76,1.76h0Z"/>
-                            <path class="cls-1" d="M29.5,10.25h-2.19l-.92-2.57h-3.72l-.95,2.57h-2.19l3.4-9.19C23.16.42,23.77,0,24.45,0h1.36s3.69,10.25,3.69,10.25ZM25.75,5.92l-1.19-3.37-1.24,3.37h2.43Z"/>
-                            <path class="cls-1" d="M36.53,10.25l-2.2-3.35h-1.39v3.35h-2.06V1.62C30.88.73,31.6,0,32.5,0h2.83C35.95,0,36.5.14,36.98.41c.48.28.85.67,1.12,1.18.27.51.41,1.1.41,1.78,0,.44-.05.84-.16,1.2-.1.36-.3.7-.59,1.03-.29.33-.69.64-1.22.94l2.45,3.72h-2.46ZM35.72,4.95c.23-.13.41-.32.54-.57.13-.25.19-.56.19-.93s-.06-.68-.19-.93c-.13-.25-.31-.44-.54-.57-.23-.13-.51-.19-.84-.19h-1.54c-.22,0-.41.18-.41.41v2.98h1.95c.32,0,.6-.06.84-.19Z"/>
-                            <path class="cls-1" d="M42.51,8.49h4.34v1.76h-6.4V2.06C40.45.92,41.37,0,42.51,0h0v8.49Z"/>
-                            <path class="cls-1" d="M50.51,0v10.25h-2.06V2.06C48.46.92,49.38,0,50.51,0h0Z"/>
-                            <path class="cls-1" d="M71.68,10.25h-2.06v-4.38h-4.14v4.38h-2.06V2.06C63.43.92,64.35,0,65.48,0h0v4.11h4.14V0h0c1.14,0,2.06.92,2.06,2.06v8.19Z"/>
-                            <path class="cls-1" d="M80.48,1.76h-2.68v8.49h-2.06V1.76h-2.73C73.02.79,73.8,0,74.77,0h3.95c.97,0,1.76.79,1.76,1.76h0Z"/>
-                            <path class="cls-1" d="M13.61,22.71h-2.19l-.92-2.57h-3.72l-.95,2.57h-2.19l3.4-9.19c.24-.64.84-1.06,1.52-1.06h1.36l3.69,10.25ZM9.86,18.38l-1.19-3.37-1.24,3.37h2.43Z"/>
-                            <path class="cls-1" d="M17.18,12.46v10.25h-2.06v-8.19c0-1.14.92-2.06,2.06-2.06h0Z"/>
-                            <path class="cls-1" d="M24.72,22.71l-2.2-3.35h-1.39v3.35h-2.06v-8.63c0-.9.73-1.62,1.62-1.62h2.83c.62,0,1.17.14,1.65.41.48.28.85.67,1.12,1.18.27.51.41,1.1.41,1.78,0,.44-.05.84-.16,1.2-.1.36-.3.7-.59,1.03-.29.33-.69.64-1.22.94l2.45,3.72h-2.46ZM23.91,17.41c.23-.13.41-.32.54-.57.13-.25.19-.56.19-.93s-.06-.68-.19-.93c-.13-.25-.31-.44-.54-.57-.23-.13-.51-.19-.84-.19h-1.54c-.22,0-.41.18-.41.41v2.98h1.95c.32,0,.6-.06.84-.19Z"/>
-                            <path class="cls-1" d="M30.7,20.95h4.34v1.76h-6.4v-8.19c0-1.14.92-2.06,2.06-2.06h0v8.49Z"/>
-                            <path class="cls-1" d="M38.71,12.46v10.25h-2.06v-8.19c0-1.14.92-2.06,2.06-2.06h0Z"/>
-                            <path class="cls-1" d="M49.28,22.71h-2.33l-4.34-6.83v6.83h-2.06v-8.26c0-1.1.89-1.99,1.99-1.99h.33l4.34,6.84v-6.84h0c1.14,0,2.06.92,2.06,2.06v8.19Z"/>
-                            <path class="cls-1" d="M58.1,14.22h-4.53c-.22,0-.41.18-.41.41v1.93h4.22v1.76h-4.22v2.64h4.94v1.76h-6.99v-8.63c0-.9.73-1.62,1.62-1.62h5.37v1.76Z"/>
-                            <path class="cls-1" d="M62.09,20.67c.33.22.66.33,1,.33.57,0,.99-.11,1.26-.34.27-.22.4-.53.4-.92,0-.23-.08-.42-.23-.58-.15-.16-.35-.29-.58-.4-.23-.11-.56-.23-.97-.37-.63-.23-1.15-.45-1.55-.65-.4-.21-.75-.51-1.04-.91-.29-.4-.44-.92-.44-1.55,0-.57.14-1.07.42-1.49.28-.42.68-.75,1.18-.98.51-.23,1.09-.34,1.75-.34.4,0,.81.09,1.24.26.43.17.82.44,1.19.81.37.37.65.83.87,1.38l-1.61.59c-.32-.49-.6-.83-.87-1.03-.27-.2-.54-.3-.81-.3-.29,0-.54.05-.75.15-.21.1-.36.23-.46.4-.15.25-.19.55-.11.9.18.29.44.51.8.68.24.11.58.26,1.01.42.63.25,1.14.48,1.53.69.39.21.73.51,1.01.89.28.38.42.87.42,1.45s-.15,1.1-.44,1.54c-.3.45-.72.79-1.27,1.04-.55.25-1.2.38-1.95.38s-1.4-.2-2.02-.61c-.61-.41-1.14-.98-1.58-1.71l1.54-.88c.42.56.73.95,1.06,1.17Z"/>
-                            <path class="cls-1" d="M76.85,17.46l-3.13-2.97c-.08-.08-.2-.11-.31-.09l-.93.16c-.12.02-.19.16-.12.27l1.79,3.09s0,.1-.05.11l-2.75.49c-.05,0-.1,0-.14-.04l-1.7-1.39c-.08-.07-.19-.09-.29-.07l-.5.09c-.12.02-.19.16-.12.27l1.34,2.31c.3.52.9.8,1.49.69l8.35-1.47c.5-.09.84-.57.75-1.07h0c-.09-.5-.57-.84-1.07-.75l-2.43.43c-.06,0-.11,0-.15-.05Z"/>
-                            <path class="cls-1" d="M61.98,1.94l-1.25-.57s-.04-.03-.05-.05l-.57-1.25c-.04-.08-.15-.08-.18,0l-.57,1.25s-.03.04-.05.05l-1.25.57c-.08.04-.08.15,0,.18l1.25.57s.04.03.05.05l.57,1.25c.04.08.15.08.18,0l.57-1.25s.03-.04.05-.05l1.25-.57c.08-.04.08-.15,0-.18Z"/>
-                            <path class="cls-1" d="M56.26.39c.08-.04.04-.16-.04-.14-2.36.4-4.15,2.49-4.09,4.99,0,.37.06.72.15,1.07.33-.76.82-1.54,1.47-2.28.08-1.63,1.09-3.01,2.52-3.63Z"/>
-                            <path class="cls-1" d="M61.77,5.9c-.6,1.38-1.93,2.38-3.5,2.51.15-.13.3-.27.45-.42,1.7-1.7,2.54-3.75,2.2-5.07.15,1.13-.83,3.03-2.53,4.73-.27.27-.54.52-.82.75-1.42-.12-2.64-.96-3.3-2.14-.36.5-.64.99-.84,1.46-.07.17-.13.34-.18.49.58.71,1.36,1.26,2.24,1.56-.7.33-1.34.48-1.83.41.63.16,1.43.06,2.27-.29.32.08.66.12,1,.13,2.49.06,4.58-1.73,4.99-4.09.01-.09-.11-.12-.14-.04Z"/>
-                            <path class="cls-1" d="M55.18,4.45c.85-.85,1.75-1.52,2.58-1.96-.15-.11-.24-.28-.24-.47,0-.07.01-.13.03-.19-.98.36-2.04,1.04-2.99,1.99-2.1,2.1-2.89,4.73-1.76,5.86.03.03.06.05.08.08-.76-.92.24-3.27,2.29-5.32Z"/>
-                        </g>
-                    </svg>
+                <!-- NEW: Main ticket area -->
+                <div class="ticket-main p-6">
+                    <!-- SVG logo -->
+                    <div class="h-8 mb-4"> <!-- Sized logo -->
+                        <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-full w-auto">
+                            <defs>
+                                <style>
+                                    .cls-1 { fill: var(--primary-accent); }
+                                </style>
+                            </defs>
+                            <g id="Layer_1-2" data-name="Layer 1">
+                                <path class="cls-1" d="M9.75,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62s.2-.58.2-.93-.07-.67-.2-.93c-.13-.27-.32-.47-.57-.62Z"/>
+                                <path class="cls-1" d="M33.04,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62.13-.27.2-.58.2-.93s-.07-.67-.2-.93-.32-.47-.57-.62Z"/>
+                                <polygon class="cls-1" points="39.28 33.01 40.67 33.01 39.99 31.14 39.28 33.01"/>
+                                <path class="cls-1" d="M24.81,32.87h-1.2v1.45h1.2c.19,0,.35-.06.46-.19.12-.13.17-.3.17-.51,0-.23-.06-.41-.17-.55-.12-.14-.27-.21-.46-.21Z"/>
+                                <path class="cls-1" d="M48.54,31.68c0-.19-.03-.35-.1-.48s-.16-.23-.29-.3c-.13-.07-.28-.1-.45-.1h-1.02v1.76h1.02c.17,0,.32-.03.45-.1s.22-.17.29-.3c.07-.13.1-.29.1-.48Z"/>
+                                <path class="cls-1" d="M24.88,31.94c.1-.12.15-.27.15-.45,0-.21-.06-.38-.17-.5-.11-.12-.26-.18-.46-.18h-.8v1.32h.85c.18,0,.32-.06.42-.18Z"/>
+                                <path class="cls-1" d="M55.59,31.03c-.25-.15-.54-.22-.86-.22h-.66v3.5h.66c.33,0,.62-.07.86-.21s.44-.35.58-.62.21-.57.21-.93-.07-.65-.21-.91-.33-.47-.58-.62Z"/>
+                                <path class="cls-1" d="M76.87,27.72H7.29c-2.65,0-4.8,2.15-4.8,4.8v.09c0,2.65,2.15,4.8,4.8,4.8h69.58c2.65,0,4.8-2.15,4.8-4.8v-.09c0-2.65-2.15-4.8-4.8-4.8ZM11.07,33.87c-.21.38-.5.68-.88.89-.38.21-.8.32-1.28.32s-.91-.11-1.28-.32c-.38-.21-.67-.51-.88-.9-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.68.88-.89.38-.21.8-.32,1.28-.32s.9.11,1.28.32c.38.21.67.51.88.9.21.38.32.82.32,1.3s-.11.92-.32,1.3ZM19,35.08h-.97l-2.31-3.56v3.56h-.87v-5.03h.98l2.3,3.56v-3.56h.87v5.03ZM26.14,34.38c-.12.22-.28.39-.49.52-.21.12-.45.18-.72.18h-2.21v-5.03h1.78c.26,0,.5.06.71.17.21.11.37.28.49.48.12.21.17.44.17.71,0,.18-.05.36-.14.55-.07.14-.15.26-.25.36.06.03.11.06.17.1l.02.02c.18.13.34.3.45.52.12.22.18.44.18.65,0,.28-.06.53-.18.76ZM34.36,33.87c-.21.38-.5.68-.88.89-.38.21-.8.32-1.28.32s-.91-.11-1.28-.32c-.38-.21-.67-.51-.88-.9-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.68.88-.89.38-.21.8-.32,1.28-.32s.9.11,1.28.32c.38.21.67.51.88.9.21.38.32.82.32,1.3s-.11.92-.32,1.3ZM41.43,35.08l-.48-1.31h-1.94l-.5,1.31h-.93l1.88-5.03h1.06l1.84,5.03h-.93ZM48.6,35.08l-1.17-1.76h-.76v1.76h-.87v-5.03h2.06c.3,0,.57.07.81.2.24.13.42.32.55.56.13.24.2.53.2.84,0,.22-.03.42-.1.61-.06.18-.17.35-.33.5-.15.15-.36.29-.61.41l1.27,1.9h-1.05ZM56.92,33.87c-.22.38-.51.68-.89.89-.38.21-.81.32-1.3.32h-1.54v-5.03h1.54c.49,0,.92.11,1.3.32.38.21.68.51.89.89.22.38.32.81.32,1.3s-.11.93-.32,1.31ZM61.62,35.08h-.87v-5.03h.87v5.03ZM69.46,35.08h-.97l-2.31-3.56v3.56h-.87v-5.03h.98l2.3,3.56v-3.56h.87v5.03ZM77.73,32.88c0,.45-.09.84-.28,1.17-.19.33-.46.59-.8.76-.35.18-.75.27-1.22.27s-.9-.11-1.27-.32-.67-.51-.88-.89c-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.67.88-.89.37-.21.8-.32,1.27.32.51,0,.94.11,1.3.34.36.23.63.51.8.84l-.72.39c-.12-.24-.3-.43-.54-.6-.24-.16-.52-.24-.84-.24s-.6.07-.85.22c-.25.14-.43.35-.57.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.57.62.25.14.53.22.85.22.27,0,.51-.05.73-.14.22-.09.39-.22.53-.4.13-.18.2-.41.2-.68h-1.39v-.69h2.24v.46Z"/>
+                                <rect class="cls-1" y="24.92" width="84.16" height=".71"/>
+                                <path class="cls-1" d="M6.24,8.21c.33.22.66.33,1,.33.57,0,.99-.11,1.26-.34.27-.22.4-.53.4-.92,0-.23-.08-.42-.23-.58-.15-.16-.35-.29-.58-.4-.23-.11-.56-.23-.97-.37-.63-.23-1.15-.45-1.55-.65-.4-.21-.75-.51-1.04-.91-.29-.4-.44-.92-.44-1.55,0-.57.14-1.07.42-1.49.28-.42.68-.75,1.18-.98C6.21.11,6.79,0,7.45,0,7.85,0,8.26.09,8.69.26c.43.17.82.44,1.19.81.37.37.65.83.87,1.38l-1.61.59c-.32-.49-.6-.83-.87-1.03-.27-.2-.54-.3-.81-.3-.29,0-.54.05-.75.15-.21.1-.36.23-.46.4-.15.25-.19.55-.11.9.18.29.44.51.8.68.24.11.58.26,1.01.42.63.25,1.14.48,1.53.69.39.21.73.51,1.01.89.28.38.42.87.42,1.45s-.15,1.1-.44,1.54c-.3.45-.72.79-1.27,1.04-.55.25-1.2.38-1.95.38s-1.4-.2-2.02-.61c-.61-.41-1.14-.98-1.58-1.71l1.54-.88c.42.56.73.95,1.06,1.17Z"/>
+                                <path class="cls-1" d="M19.52,1.76h-2.68v8.49h-2.06V1.76h-2.73c0-.97.79-1.76,1.76-1.76h3.95c.97,0,1.76.79,1.76,1.76h0Z"/>
+                                <path class="cls-1" d="M29.5,10.25h-2.19l-.92-2.57h-3.72l-.95,2.57h-2.19l3.4-9.19C23.16.42,23.77,0,24.45,0h1.36s3.69,10.25,3.69,10.25ZM25.75,5.92l-1.19-3.37-1.24,3.37h2.43Z"/>
+                                <path class="cls-1" d="M36.53,10.25l-2.2-3.35h-1.39v3.35h-2.06V1.62C30.88.73,31.6,0,32.5,0h2.83C35.95,0,36.5.14,36.98.41c.48.28.85.67,1.12,1.18.27.51.41,1.1.41,1.78,0,.44-.05.84-.16,1.2-.1.36-.3.7-.59,1.03-.29.33-.69.64-1.22.94l2.45,3.72h-2.46ZM35.72,4.95c.23-.13.41-.32.54-.57.13-.25.19-.56.19-.93s-.06-.68-.19-.93c-.13-.25-.31-.44-.54-.57-.23-.13-.51-.19-.84-.19h-1.54c-.22,0-.41.18-.41.41v2.98h1.95c.32,0,.6-.06.84-.19Z"/>
+                                <path class="cls-1" d="M42.51,8.49h4.34v1.76h-6.4V2.06C40.45.92,41.37,0,42.51,0h0v8.49Z"/>
+                                <path class="cls-1" d="M50.51,0v10.25h-2.06V2.06C48.46.92,49.38,0,50.51,0h0Z"/>
+                                <path class="cls-1" d="M71.68,10.25h-2.06v-4.38h-4.14v4.38h-2.06V2.06C63.43.92,64.35,0,65.48,0h0v4.11h4.14V0h0c1.14,0,2.06.92,2.06,2.06v8.19Z"/>
+                                <path class="cls-1" d="M80.48,1.76h-2.68v8.49h-2.06V1.76h-2.73C73.02.79,73.8,0,74.77,0h3.95c.97,0,1.76.79,1.76,1.76h0Z"/>
+                                <path class="cls-1" d="M13.61,22.71h-2.19l-.92-2.57h-3.72l-.95,2.57h-2.19l3.4-9.19c.24-.64.84-1.06,1.52-1.06h1.36l3.69,10.25ZM9.86,18.38l-1.19-3.37-1.24,3.37h2.43Z"/>
+                                <path class="cls-1" d="M17.18,12.46v10.25h-2.06v-8.19c0-1.14.92-2.06,2.06-2.06h0Z"/>
+                                <path class="cls-1" d="M24.72,22.71l-2.2-3.35h-1.39v3.35h-2.06v-8.63c0-.9.73-1.62,1.62-1.62h2.83c.62,0,1.17.14,1.65.41.48.28.85.67,1.12,1.18.27.51.41,1.1.41,1.78,0,.44-.05.84-.16,1.2-.1.36-.3.7-.59,1.03-.29.33-.69.64-1.22.94l2.45,3.72h-2.46ZM23.91,17.41c.23-.13.41-.32.54-.57.13-.25.19-.56.19-.93s-.06-.68-.19-.93c-.13-.25-.31-.44-.54-.57-.23-.13-.51-.19-.84-.19h-1.54c-.22,0-.41.18-.41.41v2.98h1.95c.32,0,.6-.06.84-.19Z"/>
+                                <path class="cls-1" d="M30.7,20.95h4.34v1.76h-6.4v-8.19c0-1.14.92-2.06,2.06-2.06h0v8.49Z"/>
+                                <path class="cls-1" d="M38.71,12.46v10.25h-2.06v-8.19c0-1.14.92-2.06,2.06-2.06h0Z"/>
+                                <path class="cls-1" d="M49.28,22.71h-2.33l-4.34-6.83v6.83h-2.06v-8.26c0-1.1.89-1.99,1.99-1.99h.33l4.34,6.84v-6.84h0c1.14,0,2.06.92,2.06,2.06v8.19Z"/>
+                                <path class="cls-1" d="M58.1,14.22h-4.53c-.22,0-.41.18-.41.41v1.93h4.22v1.76h-4.22v2.64h4.94v1.76h-6.99v-8.63c0-.9.73-1.62,1.62-1.62h5.37v1.76Z"/>
+                                <path class="cls-1" d="M62.09,20.67c.33.22.66.33,1,.33.57,0,.99-.11,1.26-.34.27-.22.4-.53.4-.92,0-.23-.08-.42-.23-.58-.15-.16-.35-.29-.58-.4-.23-.11-.56-.23-.97-.37-.63-.23-1.15-.45-1.55-.65-.4-.21-.75-.51-1.04-.91-.29-.4-.44-.92-.44-1.55,0-.57.14-1.07.42-1.49.28-.42.68-.75,1.18-.98.51-.23,1.09-.34,1.75-.34.4,0,.81.09,1.24.26.43.17.82.44,1.19.81.37.37.65.83.87,1.38l-1.61.59c-.32-.49-.6-.83-.87-1.03-.27-.2-.54-.3-.81-.3-.29,0-.54.05-.75.15-.21.1-.36.23-.46.4-.15.25-.19.55-.11.9.18.29.44.51.8.68.24.11.58.26,1.01.42.63.25,1.14.48,1.53.69.39.21.73.51,1.01.89.28.38.42.87.42,1.45s-.15,1.1-.44,1.54c-.3.45-.72.79-1.27,1.04-.55.25-1.2.38-1.95.38s-1.4-.2-2.02-.61c-.61-.41-1.14-.98-1.58-1.71l1.54-.88c.42.56.73.95,1.06,1.17Z"/>
+                                <path class="cls-1" d="M76.85,17.46l-3.13-2.97c-.08-.08-.2-.11-.31-.09l-.93.16c-.12.02-.19.16-.12.27l1.79,3.09s0,.1-.05.11l-2.75.49c-.05,0-.1,0-.14-.04l-1.7-1.39c-.08-.07-.19-.09-.29-.07l-.5.09c-.12.02-.19.16-.12.27l1.34,2.31c.3.52.9.8,1.49.69l8.35-1.47c.5-.09.84-.57.75-1.07h0c-.09-.5-.57-.84-1.07-.75l-2.43.43c-.06,0-.11,0-.15-.05Z"/>
+                                <path class="cls-1" d="M61.98,1.94l-1.25-.57s-.04-.03-.05-.05l-.57-1.25c-.04-.08-.15-.08-.18,0l-.57,1.25s-.03.04-.05.05l-1.25.57c-.08.04-.08.15,0,.18l1.25.57s.04.03.05.05l.57,1.25c.04.08.15.08.18,0l.57-1.25s.03-.04.05-.05l1.25-.57c.08-.04.08-.15,0-.18Z"/>
+                                <path class="cls-1" d="M56.26.39c.08-.04.04-.16-.04-.14-2.36.4-4.15,2.49-4.09,4.99,0,.37.06.72.15,1.07.33-.76.82-1.54,1.47-2.28.08-1.63,1.09-3.01,2.52-3.63Z"/>
+                                <path class="cls-1" d="M61.77,5.9c-.6,1.38-1.93,2.38-3.5,2.51.15-.13.3-.27.45-.42,1.7-1.7,2.54-3.75,2.2-5.07.15,1.13-.83,3.03-2.53,4.73-.27.27-.54.52-.82.75-1.42-.12-2.64-.96-3.3-2.14-.36.5-.64.99-.84,1.46-.07.17-.13.34-.18.49.58.71,1.36,1.26,2.24,1.56-.7.33-1.34.48-1.83.41.63.16,1.43.06,2.27-.29.32.08.66.12,1,.13,2.49.06,4.58-1.73,4.99-4.09.01-.09-.11-.12-.14-.04Z"/>
+                                <path class="cls-1" d="M55.18,4.45c.85-.85,1.75-1.52,2.58-1.96-.15-.11-.24-.28-.24-.47,0-.07.01-.13.03-.19-.98.36-2.04,1.04-2.99,1.99-2.1,2.1-2.89,4.73-1.76,5.86.03.03.06.05.08.08-.76-.92.24-3.27,2.29-5.32Z"/>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Passenger Info -->
+                    <div>
+                        <p class="ticket-label">Passenger</p>
+                        <!-- JS will populate this span -->
+                        <p id="userName" class="ticket-data text-xl md:text-2xl">
+                            <span class="font-semibold" style="color: var(--text-title);">...</span>
+                        </p>
+                    </div>
+                    
+                    <!-- Flight & Dest Info -->
+                    <div class="flex gap-6">
+                        <div>
+                            <p class="ticket-label">Flight</p>
+                            <p class="ticket-data text-lg">ST-2025</p>
+                        </div>
+                        <div>
+                            <p class="ticket-label">Destination</p>
+                            <p class="ticket-data text-lg">Tropical Paradise</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- NEW: Pass card is now nested inside -->
-                <div id="userPassCard" class="tier-pending">
-                    <p id="userTier" class="text-2xl font-bold">Loading Pass...</p>
-                </div>
-                
-                <!-- NEW: Welcome message is now plain text inside the parent card -->
-                <div class="text-center">
-                    <p id="userName" class="text-xl md:text-2xl">Welcome, <span class="font-semibold" style="color: var(--text-title);">...</span></p>
+                <!-- NEW: Ticket Stub area -->
+                <div class="ticket-stub p-6 text-center">
+                    <p class="ticket-label mb-2">Ticket</p>
+                    <!-- Pass card is now nested inside -->
+                    <div id="userPassCard" class="tier-pending w-full">
+                        <p id="userTier" class="text-2xl font-bold">Loading...</p>
+                    </div>
                 </div>
             </div>
 
@@ -493,13 +541,12 @@
             <div id="grid-history" class="dashboard-card flex flex-col overflow-hidden history-card">
                 <!-- Top Section: Points -->
                 <div class="flex-shrink-0">
-                    <!-- NEW: Flex container for points and new logout button -->
-                    <div class="flex justify-between items-center" style="border-color: var(--card-border);">
+                    <div class="flex justify-between items-start" style="border-color: var(--card-border);"> <!-- items-start -->
                         <div class="flex items-center gap-2 md:gap-3">
                             <span class="font-semibold text-base md:text-lg">Points:</span>
                             <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
                         </div>
-                        <!-- NEW: Logout button moved here and enlarged -->
+                        <!-- Logout button -->
                         <button id="logoutButton" class="p-2 rounded-full hover:bg-slate-200 transition-colors" title="Logout">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color: var(--text-body);">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -755,7 +802,7 @@
         if (tier === 'pending') tierName = 'Ticket Pending';
         
         // Reset classes
-        dom.userPassCard.className = "tier-pending"; // Start with default
+        dom.userPassCard.className = "tier-pending w-full"; // Start with default
         
         if (tier.includes('economy')) {
             dom.userPassCard.classList.add('tier-economy');
@@ -768,7 +815,8 @@
         }
 
         dom.userTier.textContent = tierName;
-        dom.userName.querySelector('span').textContent = `${userData?.Name || "Guest"}!`;
+        // NEW: The JS just updates the name, the "Welcome," text is gone
+        dom.userName.querySelector('span').textContent = `${userData?.Name || "Guest"}`;
     }
 
     /**
