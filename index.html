@@ -310,18 +310,7 @@
       if (isVerifying) return; // Exit if a verification is already in progress
       isVerifying = true;
 
-      // --- PROBLEM WAS HERE ---
-      // This 'if' block was checking if the URL was equal to itself, which was always true.
-      // This caused it to show "Error: Web App URL is not set." and stop the login.
-      // I have removed this faulty check.
-      /*
-      if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec") {
-        showErrorMessage("Error: Web App URL is not set.");
-        isVerifying = false;
-        return;
-      }
-      */
-      // --- END OF FIX ---
+      
 
       showVerifyingMessage();
 

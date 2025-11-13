@@ -385,16 +385,7 @@
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
 
-      // This check is valid because the placeholder is different from your real URL
-      // --- FIX: Removing the unnecessary check ---
-      /*
-      if (GAS_WEB_APP_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-        console.error("GAS_WEB_APP_URL is not set.");
-        redirectToLogin(); // Can't fetch data, so log out
-        return;
-      }
-      */
-      // --- End of FIX ---
+    
 
       try {
         // Single fetch call to Google Apps Script
