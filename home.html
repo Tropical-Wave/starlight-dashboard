@@ -53,7 +53,7 @@
         /* --- Base Styles --- */
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; 
+            overflow: hidden; /* Prevent body scroll */
             background-color: var(--background);
             font-family: 'Inter', sans-serif; 
             color: var(--text-body);
@@ -86,10 +86,11 @@
         
         /* --- Dashboard Container --- */
         #dashboard {
-            display: none; height: 100dvh;
-            padding: var(--base-padding); gap: var(--base-gap); 
+            display: none; /* Hidden by default */
+            height: 100dvh;
+            padding: var(--base-padding);
             opacity: 0; transition: opacity 0.5s ease-in;
-            flex-direction: column;
+            flex-direction: column; /* Main layout is vertical */
             box-sizing: border-box;
             max-width: 2000px; 
             margin: 0 auto; 
@@ -102,7 +103,6 @@
             padding: var(--base-padding);
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             box-sizing: border-box;
-            /* NEW: Add transition for dynamic color changes */
             transition: background-color 0.5s ease, border-color 0.5s ease;
         }
 
@@ -131,29 +131,32 @@
                 --base-padding: 1rem;
                 --base-gap: 1rem;
             }
+            /* On mobile, the main grid is just a flex-col */
+            .main-grid {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                gap: var(--base-gap);
+                overflow: hidden;
+            }
+            .history-card {
+                min-height: 300px; /* Give history card a min height on mobile */
+            }
         }
 
-        /* Tablet & Landscape Mobile */
+        /* Tablet & Desktop */
         @media (min-width: 768px) {
-            #dashboard { 
-                flex-direction: row; 
-            }
-            /* NEW: Balanced 50/50 layout */
-            .left-panel { 
-                flex: 1 1 50%; 
-                display: flex; 
-                flex-direction: column; 
-                gap: var(--base-gap); 
-            }
-            .right-panel { 
-                flex: 1 1 50%; 
-                display: flex; 
-                flex-direction: column; 
-                gap: var(--base-gap); 
+            /* On desktop, switch to a 3-column grid */
+            .main-grid {
+                flex-grow: 1;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--base-gap);
+                overflow: hidden;
             }
         }
 
-        /* NEW: Large Desktop Optimization */
+        /* Large Desktop Optimization */
         @media (min-width: 1920px) {
             :root {
                 --base-font-size: 18px;
@@ -195,62 +198,85 @@
     <main id="dashboard" class="flex">
         <!-- 
           NEW LAYOUT: 
-          Left panel for Info (Welcome, Tier)
-          Right panel for Actions (Points, Game)
+          Row 1: Title (flex-shrink-0)
+          Row 2: Main Grid (flex-grow)
         -->
-        <div class="left-panel">
-            <!-- Welcome Card -->
-            <!-- MODIFIED: Added flex-grow to fill the vertical space -->
-            <div class="dashboard-card flex-shrink-0 flex-grow">
-                 <header class="font-bold text-4xl md:text-5xl" style="color: var(--text-title);">Starlight Dashboard</header>
-                 <p class="text-xl md:text-2xl mt-1">Welcome, <span id="userName" class="font-semibold" style="color: var(--text-title);">...</span></p>
-            </div>
-            
-            <!-- NEW: Ticket Tier Card (Replaces Stepper) -->
-            <!-- MODIFIED: Removed flex-grow, flex-col, items-center, justify-center, p-8. Made simpler. -->
-            <div id="tierCard" class="dashboard-card flex-shrink-0 p-6">
-                <!-- REMOVED: tierIcon div has been removed -->
-                <h3 class="text-lg font-semibold mb-1 text-center" style="color: var(--text-body);">Your Pass</h3> <!-- MODIFIED: Centered text -->
-                <p id="userTier" class="text-4xl font-bold text-center" style="color: var(--text-title);">Loading...</p> <!-- MODIFIED: Centered text -->
-            </div>
+        <!-- MODIFIED: Changed to a flex container to position logout button -->
+        <div class="flex-shrink-0 flex justify-between items-center">
+             <header class="font-bold text-4xl md:text-5xl" style="color: var(--text-title);">Starlight Dashboard</header>
+             <!-- NEW: Logout Button -->
+             <button id="logoutButton" class="p-2 rounded-full hover:bg-slate-200 transition-colors" title="Logout">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color: var(--text-body);">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+             </button>
         </div>
-
-        <div class="right-panel">
-            <!-- Points & Rewards Card -->
-            <div class="dashboard-card flex-shrink-0">
-                <div class="flex justify-between items-center" style="border-color: var(--card-border);">
-                    <div class="flex items-center gap-2 md:gap-3">
-                        <span class="font-semibold text-base md:text-lg">Points:</span>
-                        <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
-                        <button id="showHistoryBtn" class="text-slate-400 hover:text-cyan-500 transition-colors duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                    </div>
-                    <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full hover:opacity-90 transition-opacity shadow-lg" style="background-color: var(--cta-accent); color: var(--text-on-cta); box-shadow: 0 8px 15px -5px rgba(244, 211, 94, 0.4);">Rewards</a>
+        
+        <!-- NEW: Main Grid Container -->
+        <div class="main-grid mt-4 md:mt-6">
+            
+            <!-- Column 1: User Info (Welcome + Pass) -->
+            <div class="dashboard-card flex flex-col gap-6 p-6">
+                <div>
+                    <p class="text-xl md:text-2xl">Welcome, <span id="userName" class="font-semibold" style="color: var(--text-title);">...</span></p>
+                </div>
+                
+                <!-- Joined "Your Pass" section -->
+                <div id="tierCard" class="rounded-xl p-4" style="transition: background-color 0.5s ease, border-color 0.5s ease;">
+                    <h3 class="text-lg font-semibold mb-1 text-center" style="color: var(--text-body);">Your Pass</h3>
+                    <p id="userTier" class="text-4xl font-bold text-center" style="color: var(--text-title);">Loading...</p>
                 </div>
             </div>
 
-            <!-- Game Card -->
-            <div class="dashboard-card h-full flex flex-col">
-                <h3 class="font-bold text-xl text-center mb-6 flex-shrink-0" style="color: var(--text-title);">Ready to Play?</h3>
-                <div class="flex-grow flex items-center justify-center pt-4">
+            <!-- Column 2: Game Card -->
+            <div class="dashboard-card flex flex-col">
+                <h3 class="font-bold text-xl text-center mb-4 flex-shrink-0" style="color: var(--text-title);">Ready to Play?</h3>
+                
+                <!-- NEW: Paraphrased Game Rules -->
+                <div class="text-sm space-y-3 px-2 flex-shrink-0">
+                    <p>🎵 Listen to the K-Pop instrumental and guess the song!</p>
+                    <p>⏱️ Think fast! You'll have <strong>10 seconds</strong> to name that tune.</p>
+                    <p>🏆 Every correct answer earns you <strong>1 point</strong> to spend on cool rewards!</p>
+                </div>
+                
+                <!-- Game Button -->
+                <div class="flex-grow flex items-center justify-center pt-6">
                     <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium">Moderate</span></a>
                 </div>
             </div>
+
+            <!-- Column 3: Points & History (Replaces Popup) -->
+            <div class="dashboard-card flex flex-col overflow-hidden history-card"> <!-- overflow-hidden to contain scrollbar -->
+                
+                <!-- Top Section: Points & Rewards -->
+                <div class="flex-shrink-0">
+                    <div class="flex justify-between items-center" style="border-color: var(--card-border);">
+                        <div class="flex items-center gap-2 md:gap-3">
+                            <span class="font-semibold text-base md:text-lg">Points:</span>
+                            <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
+                        </div>
+                        <!-- REMOVED: showHistoryBtn (chevron) -->
+                        <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full hover:opacity-90 transition-opacity shadow-lg" style="background-color: var(--cta-accent); color: var(--text-on-cta); box-shadow: 0 8px 15px -5px rgba(244, 211, 94, 0.4);">Rewards</a>
+                    </div>
+                </div>
+
+                <!-- History Section Title -->
+                <div class="flex-shrink-0 flex justify-between items-center mt-6 pt-4 border-t" style="border-color: var(--card-border);">
+                     <h3 class="text-lg font-bold" style="color: var(--text-title);">Points History</h3>
+                     <!-- MOVED: Refresh button from popup to here -->
+                     <button id="refreshHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
+                </div>
+                
+                <!-- Scrollable List -->
+                <div id="historyList" class="flex-grow overflow-y-auto pt-2">
+                    <!-- History items will be injected here by JS -->
+                </div>
+            </div>
+
         </div>
     </main>
     
-    <!-- History Popup -->
-    <div id="historyPopup" class="fullscreen-overlay">
-        <div class="popup-card">
-            <div class="p-4 border-b flex items-center justify-between flex-shrink-0" style="border-color: var(--card-border);">
-                <button id="closeHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg></button>
-                <h3 class="text-center font-bold text-lg absolute left-1/2 -translate-x-1/2" style="color: var(--text-title);">Points History</h3>
-                <button id="refreshHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
-            </div>
-            <div id="historyList" class="flex-grow p-4 overflow-y-auto"></div>
-        </div>
-    </div>
+    <!-- REMOVED: History Popup is no longer needed -->
     
     <!-- General Info Modal (for errors) -->
     <div id="infoModal" class="fullscreen-overlay">
@@ -269,27 +295,17 @@
     const userNameEl = document.getElementById('userName');
     const userPointsEl = document.getElementById('userPoints');
     const historyList = document.getElementById('historyList');
-    const historyPopup = document.getElementById('historyPopup');
+    // REMOVED: historyPopup constant
 
     // --- App Configuration ---
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: Replace this
-    const INACTIVITY_TIMEOUT = 30000;
-    const AUTO_REFRESH_INTERVAL = 15000;
+    // REMOVED: INACTIVITY_TIMEOUT
+    // REMOVED: AUTO_REFRESH_INTERVAL
 
     // --- App State ---
-    let inactivityTimer = null;
-    let autoRefreshInterval = null;
+    // REMOVED: inactivityTimer
+    // REMOVED: autoRefreshInterval
     let currentUserCode = null;
-
-    // --- REMOVED: Tier Icons constant is no longer needed ---
-    /*
-    const TIER_ICONS = {
-        economy: '...',
-        business: '...',
-        first: '...',
-        default: '...'
-    };
-    */
 
     // --- UI Flow & Data Functions ---
     function showDashboard() {
@@ -300,12 +316,7 @@
       }, 50);
     }
 
-    function resetInactivityTimer() {
-      clearTimeout(inactivityTimer);
-      if (dashboard.style.opacity === '1') {
-        inactivityTimer = setTimeout(redirectToLogin, INACTIVITY_TIMEOUT);
-      }
-    }
+    // REMOVED: resetInactivityTimer function
 
     function redirectToLogin() {
         sessionStorage.removeItem('currentUserCode');
@@ -374,53 +385,47 @@
     function updateDashboardUI(userData, historyData) {
       userNameEl.textContent = `${userData.Name || "Guest"}!`;
       userPointsEl.textContent = parseInt(userData.Points || "0", 10);
-      renderTierCard(userData); // <-- MODIFIED
+      renderTierCard(userData);
       renderHistoryList(historyData || []);
     }
 
-    // NEW: Function to render the Ticket Tier card
+    // Function to render the Ticket Tier card
     function renderTierCard(userData) {
-        // We now read from Event1 (Column E) as requested
         const tier = userData.Event1 ? String(userData.Event1).toLowerCase() : 'unknown';
-        const tierCard = document.getElementById('tierCard');
+        const tierCard = document.getElementById('tierCard'); // This is the inner div
         const userTierEl = document.getElementById('userTier');
-        // REMOVED: tierIconEl constant
         
-        if (!tierCard || !userTierEl) return; // MODIFIED: Removed tierIconEl from check
+        if (!tierCard || !userTierEl) return;
 
-        let tierName, bgColor, borderColor, iconColor; // REMOVED: iconSvg
+        let tierName, bgColor, borderColor, iconColor;
 
         if (tier.includes('economy')) {
             tierName = 'Economy';
             bgColor = 'var(--tier1-green-bg)';
             borderColor = 'var(--tier1-green-border)';
             iconColor = 'var(--tier1-green-icon)';
-            // REMOVED: iconSvg assignment
         } else if (tier.includes('business')) {
             tierName = 'Business Class';
             bgColor = 'var(--tier2-blue-bg)';
             borderColor = 'var(--tier2-blue-border)';
             iconColor = 'var(--tier2-blue-icon)';
-            // REMOVED: iconSvg assignment
         } else if (tier.includes('first')) {
             tierName = 'First Class';
             bgColor = 'var(--tier3-yellow-bg)';
             borderColor = 'var(--tier3-yellow-border)';
             iconColor = 'var(--tier3-yellow-icon)';
-            // REMOVED: iconSvg assignment
         } else {
             tierName = 'Ticket Pending';
             bgColor = 'var(--card-bg)';
             borderColor = 'var(--card-border)';
             iconColor = 'var(--text-body)';
-            // REMOVED: iconSvg assignment
         }
 
         userTierEl.textContent = tierName;
         userTierEl.style.color = iconColor; // Match text color to icon
         tierCard.style.backgroundColor = bgColor;
-        tierCard.style.borderColor = borderColor;
-        // REMOVED: All logic related to setting tierIconEl.innerHTML and style
+        tierCard.style.borderColor = borderColor; // Apply border color to the inner div
+        tierCard.style.borderWidth = '1px'; // Ensure border is visible
     }
 
     // History List Rendering
@@ -458,18 +463,18 @@
       showDashboard();
       fetchDashboardData(currentUserCode); // Initial data fetch
       
-      ['click', 'keypress', 'mousemove', 'touchstart'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
+      // REMOVED: Inactivity event listeners
       
-      clearInterval(autoRefreshInterval);
-      autoRefreshInterval = setInterval(() => {
-          if(currentUserCode) fetchDashboardData(currentUserCode); // Auto-refresh data
-      }, AUTO_REFRESH_INTERVAL);
-
-      // Popup listeners
-      document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
-      document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
-      historyPopup.addEventListener('click', (e) => { if(e.target === historyPopup) historyPopup.classList.remove('visible'); });
+      // REMOVED: Auto-refresh interval
       
+      // NEW: Logout button listener
+      document.getElementById('logoutButton').addEventListener('click', () => {
+        showInfoModal("Logout", "Are you sure you want to log out?", () => {
+            redirectToLogin();
+        });
+      });
+      
+      // MOVED: Refresh button listener
       document.getElementById('refreshHistoryBtn').addEventListener('click', (e) => {
           e.stopPropagation();
           if (currentUserCode) fetchDashboardData(currentUserCode, true); // Manual refresh
