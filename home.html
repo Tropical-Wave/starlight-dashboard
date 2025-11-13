@@ -25,7 +25,7 @@
             --background: #F5F7F6;
             --card-bg: #F3F8F4;
             --card-border: #E1E5E3;
-            --primary-accent: #89B3D9;
+            --primary-accent: #89B3D9; /* <-- ADDED from target design */
             --cta-accent: #F4D35E;
             --text-title: #2D3748;
             --text-body: #5F7D97;
@@ -113,6 +113,8 @@
             justify-content: center; align-items: center;
             text-decoration: none;
             padding: 0.5rem;
+            /* NEW: Set a min-width for the button so it looks good */
+            min-width: 120px;
         }
         .interactive-card:hover {
             transform: translateY(-4px); 
@@ -278,11 +280,15 @@
                     </div>
                     <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full hover:opacity-90 transition-opacity shadow-lg" style="background-color: var(--cta-accent); color: var(--text-on-cta); box-shadow: 0 8px 15px -5px rgba(244, 211, 94, 0.4);">Rewards</a>
                 </div>
-                <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
-                    <!-- Links to games remain the same -->
-                    <a href="game1.html" class="interactive-card" data-label="K-Pop Quiz (Easy)"><div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">K-Pop Quiz</span><span class="card-subtitle block text-xs md:text-sm font-medium">Easy</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+5 Pts</span></a>
-                    <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium">Moderate</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+15 Pts</span></a>
-                    <a href="game3.html" class="interactive-card" data-label="True or False (Hard)"><div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">True or False</span><span class="card-subtitle block text-xs md:text-sm font-medium">Hard</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+45 Pts</span></a>
+                <!-- 
+                  MODIFICATION: 
+                  - Removed grid layout ("grid grid-cols-3 gap-2 md:gap-4")
+                  - Added flex layout ("flex items-center justify-center") to center the remaining button
+                  - Removed "K-Pop Quiz" and "True or False" buttons
+                  - Removed "+15 Pts" span from "Guess the Song"
+                -->
+                <div class="flex-grow flex items-center justify-center pt-4">
+                    <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium">Moderate</span></a>
                 </div>
             </div>
         </div>
