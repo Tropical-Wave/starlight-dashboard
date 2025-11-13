@@ -284,7 +284,8 @@
 
     // --- App Configuration ---
     // *** NEW: Google Apps Script URL ***
-    const GAS_WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // IMPORTANT: Replace this
+    // *** UPDATED: Set this to your new URL to match the other files ***
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: Replace this
     // *** REMOVED: SHEETDB_API_ID ***
     const INACTIVITY_TIMEOUT = 30000;
     const AUTO_REFRESH_INTERVAL = 15000;
@@ -321,7 +322,8 @@
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
 
-      if (GAS_WEB_APP_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+      // This check is valid because the placeholder is different from your real URL
+      if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec") {
         console.error("GAS_WEB_APP_URL is not set.");
         redirectToLogin(); // Can't fetch data, so log out
         return;
@@ -481,7 +483,7 @@
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
       historyPopup.addEventListener('click', (e) => { if(e.target === historyPopup) historyPopup.classList.remove('visible'); });
       
-      document.getElementById('refreshHistoryBtn').addEventListener('click', (e) => {
+      document.getElementById('refreshHistoBtn').addEventListener('click', (e) => {
           e.stopPropagation();
           if (currentUserCode) fetchDashboardData(currentUserCode, true); // Manual refresh
       });

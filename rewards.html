@@ -260,7 +260,7 @@
 
     // --- Configuration ---
     // *** NEW: GAS_WEB_APP_URL for GET requests ***
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: Replace this
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: This is your new URL
     // *** NEW: SHEETDB_POST_API_ID for POST requests ***
     const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID (if different)
     
@@ -454,7 +454,8 @@
 
         try {
             // 2. API Call: Send redemption record to SheetDB (POST)
-            const response = await fetch(`https://sheetdb.io/api/v1/${ESHETDB_POST_API_ID}`, {
+            // ***FIXED: Corrected variable name from ESHETDB_POST_API_ID to SHEETDB_POST_API_ID***
+            const response = await fetch(`https://sheetdb.io/api/v1/${SHEETDB_POST_API_ID}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(correctedPayload) // Use corrected payload
@@ -517,6 +518,11 @@
     async function fetchAllData() {
         showLoading(true); // Call showLoading first to display loading indicator
         
+        // --- PROBLEM WAS HERE ---
+        // This 'if' block was checking if the URL was equal to itself, which was always true.
+        // This caused it to show the "Configuration error" popup.
+        // I have removed this faulty check.
+        /*
         if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec") {
              console.error("GAS_WEB_APP_URL is not set.");
              showInfoModal("Error", "Configuration error. Please contact support.", () => {
@@ -524,6 +530,8 @@
              });
              return;
         }
+        */
+        // --- END OF FIX ---
 
         try {
             // Fetch user points and inventory in parallel for speed
