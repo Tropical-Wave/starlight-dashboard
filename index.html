@@ -22,7 +22,7 @@
         /* Base styles for a light, modern kiosk interface */
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background-color: #EEF7F6;
+            overflow: hidden; background-color: #F3F8F4; /* UPDATED: Changed from #EEF7F6 */
             font-family: 'Poppins', sans-serif; color: #334155;
             font-size: 16px; /* Base font size for responsiveness */
         }
@@ -45,6 +45,17 @@
         
         /* Gradient variables */
         :root {
+            /* Core Palette from home.html */
+            --background: #F5F7F6;
+            --card-bg: #F3F8F4;
+            --card-border: #E1E5E3;
+            --primary-accent: #89B3D9;
+            --cta-accent: #F4D35E;
+            --text-title: #2D3748;
+            --text-body: #5F7D97;
+            --text-on-cta: #1C2B26;
+
+            /* Original gradient/brand colors */
             --gradient-start: #4BA7AD; --gradient-mid: #89B3D9;
             --gradient-end: #837FD9; --gradient-angle: 135deg;
             --brand-color: #4BA7AD;
@@ -62,15 +73,18 @@
         
         /* --- Splash Screen --- */
         #splashScreen {
-            background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            background-color: #89B3D9; /* Replaced gradient with solid color */
             z-index: 200;
         }
-        .star-container svg {
+        .splash-logo svg { /* Changed from .star-container svg */
             width: 150px; height: 150px;
             animation: pulseLogo 2.5s infinite ease-in-out;
         }
+        .splash-logo-path { /* Added class from new SVG */
+            fill: #F3F8F4; /* UPDATED: Logo color */
+        }
         @media (max-width: 767px) {
-            .star-container svg {
+            .splash-logo svg { /* Changed from .star-container svg */
                 width: 100px; height: 100px; /* Smaller icon for small phones */
             }
         }
@@ -97,7 +111,8 @@
         }
 
         .popup-card {
-            background-color: white; border-radius: 1.5rem;
+            background-color: #F3F8F4; /* UPDATED: Was white */
+            border-radius: 1.5rem;
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex;
             flex-direction: column; width: 90%; max-width: 400px; max-height: 90vh;
             transform: scale(0.95); opacity: 0;
@@ -142,6 +157,7 @@
             width: 100%;
             padding: 0.75rem 1rem;
             border: 1px solid #CBD5E1;
+            background-color: #FFFFFF; /* ADDED: To contrast with card bg */
             border-radius: 0.5rem;
             font-size: 1rem;
             outline: none;
@@ -161,9 +177,9 @@
             transition: background-color 0.2s, opacity 0.2s;
         }
         .popup-button.primary {
-            background-color: var(--brand-color);
-            color: white;
-            box-shadow: 0 4px 8px rgba(75, 167, 173, 0.2);
+            background-color: #F4D35E; /* UPDATED: Login button color */
+            color: #1C2B26; /* UPDATED: Text color for contrast */
+            box-shadow: 0 4px 8px rgba(244, 211, 94, 0.3); /* UPDATED: Shadow color */
         }
         .popup-button.primary:hover {
             opacity: 0.9;
@@ -183,8 +199,15 @@
 <body class="antialiased">
     
     <div id="splashScreen" class="fullscreen-overlay visible">
-        <div class="star-container text-center">
-            <svg class="inline-block" fill="#EEF7F6" viewBox="144 144 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m407.87 521.39c13.617-78.246 35.426-100.05 113.67-113.67 4.3477 0 7.8711-3.5273 7.8711-7.875s-3.5234-7.8711-7.8711-7.8711c-78.406-13.305-100.21-35.109-113.67-113.36 0-4.3477-3.5234-7.875-7.875-7.875s-7.875 3.5273-7.875 7.875c-13.461 78.246-35.266 100.05-113.51 113.51-4.3477 0-7.875 3.5273-7.875 7.875s3.5273 7.8711 7.875 7.8711c78.246 13.617 100.05 35.426 113.67 113.67 0.58984 3.875 3.9414 6.7227 7.8594 6.6836 3.9219-0.039062 7.2148-2.957 7.7266-6.8398z"/></svg>
+        <!-- *** MODIFIED: Replaced text-center with flex for proper alignment *** -->
+        <div class="splash-logo flex flex-col items-center justify-center">
+            <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1052.89 770.27">
+                <g id="Layer_1-2" data-name="Layer 1">
+                    <!-- Added splash-logo-path class for desktop styling -->
+                    <path class="splash-logo-path" fill="white" d="M696.95,163.45c-76.06,11.68-161.32,39.61-245.88,83.63-217.9,113.41-348.4,290.11-291.48,394.72c2,3.67,4.18,7.17,6.56,10.55-16.81-11.18-30.07-25.18-39.2-41.95-58.66-107.79,75.86-289.97,300.42-406.85,121-62.98,243.42-94.09,339.81-92.58l-47.77,21.15c-12.82,5.66-21.32,17.76-22.46,31.33ZM806.88,229.55l-35.31-15.63c-4.27,13.62-8.09,27.2-11.97,39.74l-76.17,246.2c-.98,3.18-5.69,2.38-5.57-.94l8.01-229.1h0c-59.53-.02-114.97,45.61-127.96,105.31l-30.81,141.66c-.66,3.04-5.02,2.97-5.59-.08l-13.73-73.49h0c-60.32-.02-110.5,59.24-99.09,117.04l24.07,122.02c10.34,52.43,54.41,87.96,109.13,87.97l40.76-95.43c1.09-2.55,4.82-2.2,5.41.52l20.55,94.93c57.09.02,111.47-40.05,130.61-96.24l118.68-348.42-39-84.25c-2.44-5.27-6.71-9.47-12.02-11.82ZM879.66,4.74l-46.5,100.46c-.83,1.79-2.29,3.22-4.11,4.02l-102.73,45.48c-6.46,2.86-6.46,11.84,0,14.7l102.73,45.48c1.83.81,3.29,2.24,4.11,4.02l46.5,100.46c2.93,6.32,12.11,6.32,15.03,0l46.5-100.46c.83-1.79,2.29,3.22-4.11,4.02l102.73-45.48c6.46-2.86-6.46,11.84,0-14.7l-102.73-45.48c-1.83-.81-3.29-2.24-4.11-4.02l-46.5-100.46c-2.93-6.32-12.11-6.32-15.03,0ZM417.04,183.69l.06-.03c3.94-2.05,7.42-4.89,10.21-8.36l8.98-11.15c-56.28-47.43-132.95-47.33-171.25.23l-37.98,47.15-55.8-47.03c-56.28-47.43-132.95-47.33-171.25.23l106.43,89.7-36.25,11.79c-60.3,19.61-83.56,87.58-51.96,151.83l146.69-47.7c8.26-2.68,15.57-7.6,21.39-14.04,57.37-63.44,137.28-123.97,230.75-172.62ZM953.87,242.19c.59,63-42.17,138.9-115.73,210.81l-22.99,67.49c111.94-95.24,169.18-202.86,138.72-278.31ZM166.15,652.34c16.88,23.91,43.56,40.96,77.4,51.32-5.61-8.12-10.64-16.63-14.97-25.47-24.02-5.69-45.12-14.26-62.43-25.84ZM429.74,284.23c-93.57,53.65-170.75,120.72-216.41,186.48-4,5.76-5.62,12.83-4.31,19.72l26,137.4c14.86,78.54,90.3,142.12,168.5,142.02l-74.66-394.53c-.92-4.85,3.6-8.96,8.34-7.6l173.01,49.69c5.72-50.52-23.31-103.24-68.84-132.94-3.48-2.27-8.02-2.29-11.62-.22Z"/>
+                </g>
+            </svg>
+            <!-- *** ADDED: Prompt and Status containers back in *** -->
             <p id="nfcPrompt" class="text-xl font-semibold mt-8">Tap Passport to Log-In</p>
             <div id="statusContainer" class="h-10 mt-4"></div>
         </div>
@@ -224,11 +247,13 @@
 
     // --- App Configuration ---
     // *** NEW: Replace SheetDB_API_ID with your Google Apps Script URL ***
-    const GAS_WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // IMPORTANT: Replace this
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: Replace this
     const MIN_UID_LENGTH = 4; // Min length of NFC UID to trigger verification
 
     // --- App State ---
     let isVerifying = false; // Prevents double scans while a request is active
+    let tapCount = 0; // For 5-tap shortcut
+    let tapTimer = null; // For 5-tap shortcut
     
     // --- Focus management for HID reader ---
     function focusInput() {
@@ -260,7 +285,7 @@
     }
 
     function showErrorMessage(message) {
-        statusContainer.innerHTML = `<p class="text-red-300 text-lg font-bold">${message}</p>`;
+        statusContainer.innerHTML = `<p class="text-red-200 text-lg font-bold">${message}</p>`; /* UPDATED: text-red-200 for better visibility */
         // Clear message after a few seconds and reset state
         setTimeout(() => {
             clearStatusMessage();
@@ -344,25 +369,33 @@
           }
       });
 
-      // Keep focus on the hidden input whenever the splash screen is visible
-      splashScreen.addEventListener('transitionend', () => {
-        if (splashScreen.classList.contains('visible') && !testLoginPopup.classList.contains('visible')) {
-            focusInput();
-        }
-      });
+      // --- 5-Tap Shortcut for Manual Login ---
+      splashScreen.addEventListener('click', (event) => {
+          // Only respond to clicks directly on the splash screen, not the popup
+          if (event.target.closest('.popup-card')) {
+              return; // Do nothing if click is inside the popup
+          }
 
-      // Register Service Worker - only register on the main entry point
-      if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-              navigator.serviceWorker.register('/service-worker.js')
-                  .then(reg => {
-                      console.log('Service Worker registered! Scope:', reg.scope);
-                  })
-                  .catch(err => {
-                      console.error('Service Worker registration failed:', err);
-                  });
-          });
-      }
+          tapCount++;
+          
+          // Reset timer
+          clearTimeout(tapTimer);
+          tapTimer = setTimeout(() => {
+              tapCount = 0;
+          }, 2000); // Reset taps after 2 seconds
+
+          if (tapCount >= 5) {
+              tapCount = 0;
+              clearTimeout(tapTimer);
+              
+              // Trigger the manual login popup
+              testLoginPopup.classList.add('visible');
+              testLoginPopup.classList.remove('hidden');
+              splashScreen.classList.add('hidden');
+              manualAccessCodeInput.value = '';
+              setTimeout(() => manualAccessCodeInput.focus(), 100);
+          }
+      });
 
       // --- Keyboard Shortcut for Manual Login (Command + Control + M for macOS) ---
       document.addEventListener('keydown', (event) => {

@@ -195,6 +195,7 @@
         <!-- Rewards Grid -->
         <main id="rewardsGrid" class="p-4 md:p-8 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 flex-grow mx-auto w-full max-w-screen-lg">
             <!-- Reward buttons will be dynamically checked by JS -->
+            <!-- Price costs updated to match sheet structure -->
             <button class="reward-button" data-cost="5" data-label="Candy" data-reward-code="Reward1">
                 <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=混" alt="Candy Icon" class="bg-red-100">
                 <p class="label">Candy</p>
@@ -202,21 +203,21 @@
                 <p class="quantity"><span class="quantity-value">--</span> left</p>
                 <div class="disabled-overlay">Not enough<br>points</div>
             </button>
-            <button class="reward-button" data-cost="10" data-label="Cookie" data-reward-code="Reward2">
+            <button class="reward-button" data-cost="15" data-label="Cookie" data-reward-code="Reward2">
                 <img src="https://placehold.co/128x128/FFFBEB/D97706?text=根" alt="Cookie Icon" class="bg-amber-100">
                 <p class="label">Cookie</p>
                 <p class="points">15 pts</p>
                 <p class="quantity"><span class="quantity-value">--</span> left</p>
                 <div class="disabled-overlay">Not enough<br>points</div>
             </button>
-            <button class="reward-button" data-cost="15" data-label="Ramen" data-reward-code="Reward3">
+            <button class="reward-button" data-cost="45" data-label="Ramen" data-reward-code="Reward3">
                 <img src="https://placehold.co/128x128/FFF7ED/F97316?text=骨" alt="Ramen Icon" class="bg-orange-100">
                 <p class="label">Ramen</p>
                 <p class="points">45 pts</p>
                 <p class="quantity"><span class="quantity-value">--</span> left</p>
                 <div class="disabled-overlay">Not enough<br>points</div>
             </button>
-            <button class="reward-button" data-cost="20" data-label="Photocard" data-reward-code="Reward4">
+            <button class="reward-button" data-cost="75" data-label="Photocard" data-reward-code="Reward4">
                 <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=萄" alt="Photocard Icon" class="bg-sky-100">
                 <p class="label">Photocard</p>
                 <p class="points">75 pts</p>
@@ -258,7 +259,10 @@
     const dom = {}; // Initialize as an empty object globally
 
     // --- Configuration ---
-    const SHEETDB_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID
+    // *** NEW: GAS_WEB_APP_URL for GET requests ***
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: Replace this
+    // *** NEW: SHEETDB_POST_API_ID for POST requests ***
+    const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID (if different)
     
     // --- State ---
     let state = {
@@ -303,6 +307,7 @@
         dom.rewardButtons.forEach(button => {
             const cost = parseInt(button.dataset.cost, 10);
             const rewardCode = button.dataset.rewardCode; // This is 'Reward1', 'Reward2', etc.
+            
             // Get quantity from state.inventory using the rewardCode
             const quantity = state.inventory[rewardCode] ?? 0; // Use ?? for modern nullish coalescing
 
@@ -394,65 +399,12 @@
 
     // --- API & Data Functions ---
 
-    /**
-     * Fetches user data from the SheetDB API.
-     */
-    async function fetchUserData(code) {
-        const url = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?sheet=Users&Access%20Code=${encodeURIComponent(code)}&casesensitive=false`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Network error fetching user data: ${res.statusText}`);
-        
-        const data = await res.json();
-        if (!data || data.length === 0) throw new Error("Access code not found.");
-        
-        state.currentPoints = parseInt(data[0].Points || "0", 10);
-    }
-    
-    /**
-     * NEW & FIXED: Fetches inventory data from the SheetDB API (Sheet3 "Inventory").
-     * This function now correctly maps "Prize" names from the sheet to the
-     * data-reward-code values used in the HTML buttons.
-     */
-    async function fetchInventoryData() {
-        const url = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}?sheet=Inventory`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Network error fetching inventory: ${res.statusText}`);
-        
-        const rawInventoryData = await res.json();
-        console.log("Raw Inventory Data from SheetDB:", rawInventoryData); 
-        if (rawInventoryData.length > 0) {
-            console.log("Keys available in first inventory item:", Object.keys(rawInventoryData[0]));
-        }
-
-        // Create a temporary map for quick lookup: Prize Name -> Quantity
-        const prizeNameToQuantityMap = rawInventoryData.reduce((acc, item) => {
-            const prizeName = item["Prize"]; // This is "Candy", "Cookie", etc.
-            const quantity = item["Remaining Qty"]; // This is the numerical quantity
-
-            if (prizeName) {
-                acc[prizeName] = parseInt(quantity || "0", 10);
-            }
-            return acc;
-        }, {});
-        console.log("Temporary Prize Name -> Quantity Map:", prizeNameToQuantityMap);
-
-        // Now, populate state.inventory using the HTML button's data-reward-code as the key
-        // and looking up the quantity via the data-label (which matches the Prize Name)
-        state.inventory = {}; // Reset inventory
-        dom.rewardButtons.forEach(button => {
-            const rewardCode = button.dataset.rewardCode; // e.g., 'Reward1'
-            const prizeLabel = button.dataset.label;     // e.g., 'Candy'
-
-            // Look up the quantity using the prizeLabel from the temporary map
-            const quantityForReward = prizeNameToQuantityMap[prizeLabel] ?? 0;
-            state.inventory[rewardCode] = quantityForReward;
-        });
-        
-        console.log("Processed Inventory State (using data-reward-code as keys):", state.inventory);
-    }
+    // *** REMOVED: fetchUserData() ***
+    // *** REMOVED: fetchInventoryData() ***
 
     /**
      * Handles the reward redemption process with optimistic UI updates.
+     * This function still uses SheetDB for POST.
      */
     async function redeemReward(rewardCode, cost) {
         if (state.isRedeeming) return;
@@ -464,7 +416,6 @@
         } else {
             console.error("Error: dom.redeemModalConfirmBtn is null in redeemReward.");
         }
-
 
         const originalPoints = state.currentPoints;
         // Make a deep copy of inventory to easily rollback
@@ -481,17 +432,32 @@
             sheet: "History", // Target Sheet2 "History"
             data: [{
                 "Access Code": state.currentUserCode, // A1 Access Code
-                "Timestamp": new Date().toISOString(), // F1 Timestamp
-                "Code": rewardCode // G1 Code ('Reward1', 'Reward2', etc.)
+                "Timestamp": new Date().toISOString(), // G1 Timestamp (Was F1, corrected to G1)
+                "Code": rewardCode, // This is custom, let's assume it's for 'Transaction'
+                "Transaction": `Redeemed ${rewardCode}`, // E1 Transaction
+                "Points": -cost // F1 Points (negative value)
+            }]
+        };
+        
+        // Correct the payload to match the sheet structure from your prompt
+        // (Access Code, Transaction, Points, Timestamp)
+        // Note: 'Name' and 'Passport ID' are formula columns, so we don't send them.
+        const correctedPayload = {
+            sheet: "History",
+            data: [{
+                "Access Code": state.currentUserCode,
+                "Transaction": `Redeemed ${rewardCode}`, // E: Transaction
+                "Points": -cost, // F: Points
+                "Timestamp": new Date().toISOString() // G: Timestamp
             }]
         };
 
         try {
-            // 2. API Call: Send redemption record to SheetDB
-            const response = await fetch(`https://sheetdb.io/api/v1/${SHEETDB_API_ID}`, {
+            // 2. API Call: Send redemption record to SheetDB (POST)
+            const response = await fetch(`https://sheetdb.io/api/v1/${ESHETDB_POST_API_ID}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(correctedPayload) // Use corrected payload
             });
 
             if (!response.ok) {
@@ -545,18 +511,67 @@
     }
 
     /**
-     * Main data fetching and initialization function
+     * *** NEW: Main data fetching function using Google Apps Script ***
+     * Fetches user points and inventory in one call.
      */
     async function fetchAllData() {
         showLoading(true); // Call showLoading first to display loading indicator
+        
+        if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec") {
+             console.error("GAS_WEB_APP_URL is not set.");
+             showInfoModal("Error", "Configuration error. Please contact support.", () => {
+                window.location.href = 'index.html';
+             });
+             return;
+        }
+
         try {
             // Fetch user points and inventory in parallel for speed
-            await Promise.all([
-                fetchUserData(state.currentUserCode),
-                fetchInventoryData() // This now handles the mapping logic
-            ]);
+            const url = `${GAS_WEB_APP_URL}?action=getRewardsData&code=${encodeURIComponent(state.currentUserCode)}`;
+            const res = await fetch(url);
+            
+            if (!res.ok) throw new Error(`Network error fetching data: ${res.statusText}`);
+
+            const result = await res.json();
+            if (result.status !== 'success') {
+                throw new Error(result.message || "Failed to load data.");
+            }
+            
+            // 1. Set User Points
+            state.currentPoints = parseInt(result.points || "0", 10);
+            
+            // 2. Process Inventory
+            const rawInventoryData = result.inventory || [];
+            
+            // Create a temporary map for quick lookup: Prize Name -> Quantity
+            const prizeNameToQuantityMap = rawInventoryData.reduce((acc, item) => {
+                const prizeName = item["Prize"]; // This is "Candy", "Cookie", etc.
+                const quantity = item["Remaining Qty"]; // This is the numerical quantity
+
+                if (prizeName) {
+                    acc[prizeName] = parseInt(quantity || "0", 10);
+                }
+                return acc;
+            }, {});
+
+            // Now, populate state.inventory using the HTML button's data-reward-code as the key
+            // and looking up the quantity via the data-label (which matches the Prize Name)
+            state.inventory = {}; // Reset inventory
+            dom.rewardButtons.forEach(button => {
+                const rewardCode = button.dataset.rewardCode; // e.g., 'Reward1'
+                const prizeLabel = button.dataset.label;     // e.g., 'Candy'
+
+                // Look up the quantity using the prizeLabel from the temporary map
+                const quantityForReward = prizeNameToQuantityMap[prizeLabel] ?? 0;
+                state.inventory[rewardCode] = quantityForReward;
+            });
+
+            console.log("Processed Inventory State:", state.inventory);
+
+            // 3. Update UI
             state.isDataLoaded = true;
             updateRewardsUI(); // Update UI after all data is loaded and processed
+
         } catch (error) {
              console.error("Failed to load initial data:", error);
             showInfoModal("Error", `Could not load page data. Please try again or log in. (Details: ${error.message})`, () => {
@@ -589,12 +604,10 @@
         dom.rewardButtons = document.querySelectorAll('.reward-button'); // Select all reward buttons
 
         // Perform basic null checks for crucial elements before proceeding
-        // If any of these are null, it means there's an issue with the HTML structure/IDs.
         if (!dom.loadingText || !dom.loadingOverlay || !dom.rewardsGrid || 
             !dom.redeemModalCloseBtn || !dom.redeemModal || !dom.infoModal || 
             !dom.infoModalTitle || !dom.infoModalMessage || !dom.infoModalCloseBtn) {
             console.error("CRITICAL ERROR: One or more essential DOM elements are missing. Please ensure their IDs are correct and they exist in the HTML.");
-            // We can prevent further errors by stopping execution here if critical elements are not found.
             showInfoModal("Setup Error", "A critical part of the page could not load. Please contact support if this persists.");
             return; // Stop initialization if critical elements are not found
         }
@@ -610,7 +623,6 @@
         fetchAllData(); // Start fetching all necessary data
 
         // Event Listeners for reward buttons
-        // These can now be safely added as dom.rewardsGrid is guaranteed to be non-null
         dom.rewardsGrid.addEventListener('click', (e) => {
             const rewardButton = e.target.closest('.reward-button');
             if (rewardButton && !rewardButton.disabled) {
@@ -619,14 +631,15 @@
         });
 
         // Event Listeners for modals
-        // These can now be safely added as dom.redeemModalCloseBtn and dom.redeemModal are guaranteed to be non-null
         dom.redeemModalCloseBtn.addEventListener('click', closeRedeemModal);
         dom.redeemModal.addEventListener('click', (e) => {
             if (e.target === dom.redeemModal) closeRedeemModal();
         });
-        // Also ensure dom.infoModalCloseBtn exists before attaching its listener
         dom.infoModalCloseBtn.addEventListener('click', () => showInfoModal('Info', 'Operation complete.', null)); // Generic close for info modal
     }
 
     document.addEventListener('DOMContentLoaded', initialize);
 </script>
+
+</body>
+</html>

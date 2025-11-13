@@ -254,6 +254,7 @@
                     <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full hover:opacity-90 transition-opacity shadow-lg" style="background-color: var(--cta-accent); color: var(--text-on-cta); box-shadow: 0 8px 15px -5px rgba(244, 211, 94, 0.4);">Rewards</a>
                 </div>
                 <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
+                    <!-- Links to games remain the same -->
                     <a href="game1.html" class="interactive-card" data-label="K-Pop Quiz (Easy)"><div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">K-Pop Quiz</span><span class="card-subtitle block text-xs md:text-sm font-medium">Easy</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+5 Pts</span></a>
                     <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium">Moderate</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+15 Pts</span></a>
                     <a href="game3.html" class="interactive-card" data-label="True or False (Hard)"><div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">True or False</span><span class="card-subtitle block text-xs md:text-sm font-medium">Hard</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+45 Pts</span></a>
@@ -282,7 +283,9 @@
     const historyPopup = document.getElementById('historyPopup');
 
     // --- App Configuration ---
-    const SHEETDB_API_ID = "5ss66fnmfz8vl"; 
+    // *** NEW: Google Apps Script URL ***
+    const GAS_WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // IMPORTANT: Replace this
+    // *** REMOVED: SHEETDB_API_ID ***
     const INACTIVITY_TIMEOUT = 30000;
     const AUTO_REFRESH_INTERVAL = 15000;
 
@@ -312,23 +315,33 @@
         window.location.href = 'index.html';
     }
 
+    // *** MODIFIED: This function now uses Google Apps Script for GET ***
     async function fetchDashboardData(code, isManualRefresh = false) {
       if (isManualRefresh) {
         document.getElementById('refreshHistoryBtn')?.classList.add('animate-spin');
       }
+
+      if (GAS_WEB_APP_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+        console.error("GAS_WEB_APP_URL is not set.");
+        redirectToLogin(); // Can't fetch data, so log out
+        return;
+      }
+
       try {
-        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users`;
-        const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&sort_by=Timestamp&sort_order=desc`;
-        const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
+        // Single fetch call to Google Apps Script
+        const url = `${GAS_WEB_APP_URL}?action=getDashboardData&code=${encodeURIComponent(code)}`;
+        const res = await fetch(url);
 
-        if (!userRes.ok || !historyRes.ok) throw new Error(`Data refresh failed.`);
+        if (!res.ok) throw new Error(`Data refresh failed: ${res.status}`);
         
-        const userJson = await userRes.json();
-        const historyJson = await historyRes.json();
+        const result = await res.json();
 
-        if (!Array.isArray(userJson) || userJson.length === 0) throw new Error("Invalid user data.");
+        if (result.status !== 'success' || !result.user) {
+            throw new Error(result.message || "Invalid user data.");
+        }
         
-        updateDashboardUI(userJson[0], historyJson);
+        // Pass the user and history data from the result
+        updateDashboardUI(result.user, result.history || []);
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
@@ -341,6 +354,7 @@
     }
 
     // --- UI Rendering Functions ---
+    // (This function is compatible with the new data structure)
     function updateDashboardUI(userData, historyData) {
       userNameEl.textContent = `${userData.Name || "Guest"}!`;
       userPointsEl.textContent = parseInt(userData.Points || "0", 10);
@@ -348,6 +362,7 @@
       renderHistoryList(historyData || []);
     }
 
+    // (This function is compatible with the new data structure)
     function renderStepper(userData) {
         const elements = {
             c1: document.getElementById('c1'), c2: document.getElementById('c2'), c3: document.getElementById('c3'),
@@ -363,6 +378,7 @@
             { key: 'Event3', circle: elements.c3, label: elements.l3, color: 'yellow', connector: null, fill: null }
         ];
 
+        // Reset styles
         steps.forEach(step => {
             step.circle.classList.remove('done', 'green', 'blue', 'yellow');
             step.circle.style.animation = 'none';
@@ -380,7 +396,8 @@
         let lastCompletedIndex = -1;
 
         steps.forEach((step, index) => {
-            const isCompleted = userData[step.key] && ['Tier1', 'Tier2', 'Tier3'].includes(userData[step.key]);
+            // Check if Event key exists and has a value
+            const isCompleted = userData[step.key] && userData[step.key] !== ""; 
             
             if (isCompleted) {
                 lastCompletedIndex = index;
@@ -393,6 +410,7 @@
                 if (index > 0) {
                     const prevStep = steps[index - 1];
                     setTimeout(() => {
+                        // Use the color of the *previous* step for the connector fill
                         const connectorColor = getComputedStyle(document.documentElement).getPropertyValue(`--tier${index}-green-border`);
                         prevStep.fill.style.backgroundColor = connectorColor;
                         prevStep.fill.style.animation = `growLine ${growLineDuration}ms ease-out forwards`;
@@ -402,6 +420,7 @@
             }
         });
 
+        // Activate pulsing connector for the next step
         if (lastCompletedIndex > -1 && lastCompletedIndex < steps.length - 1) {
             const nextStep = steps[lastCompletedIndex + 1];
             const pulsingConnector = steps[lastCompletedIndex].connector;
@@ -415,6 +434,7 @@
         }
     }
 
+    // (This function is compatible with the new data structure)
     function renderHistoryList(historyData) {
         if (!historyData || historyData.length === 0) {
             historyList.innerHTML = `<p class="text-center py-8">No points history recorded.</p>`;
@@ -447,22 +467,23 @@
       }
 
       showDashboard();
-      fetchDashboardData(currentUserCode);
+      fetchDashboardData(currentUserCode); // Initial data fetch
       
       ['click', 'keypress', 'mousemove', 'touchstart'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       
       clearInterval(autoRefreshInterval);
       autoRefreshInterval = setInterval(() => {
-          if(currentUserCode) fetchDashboardData(currentUserCode);
+          if(currentUserCode) fetchDashboardData(currentUserCode); // Auto-refresh data
       }, AUTO_REFRESH_INTERVAL);
 
+      // Popup listeners
       document.getElementById('showHistoryBtn').addEventListener('click', () => historyPopup.classList.add('visible'));
       document.getElementById('closeHistoryBtn').addEventListener('click', () => historyPopup.classList.remove('visible'));
       historyPopup.addEventListener('click', (e) => { if(e.target === historyPopup) historyPopup.classList.remove('visible'); });
       
       document.getElementById('refreshHistoryBtn').addEventListener('click', (e) => {
           e.stopPropagation();
-          if (currentUserCode) fetchDashboardData(currentUserCode, true);
+          if (currentUserCode) fetchDashboardData(currentUserCode, true); // Manual refresh
       });
     });
   </script>
