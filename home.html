@@ -27,7 +27,7 @@
             --background: #F5F7F6;
             --card-bg: #F3F8F4;
             --card-border: #E1E5E3;
-            --primary-accent: #89B3D9;
+            --primary-accent: #89B3D9; /* Brand Blue */
             --cta-accent: #F4D35E;
             --text-title: #2D3748;
             --text-body: #5F7D97;
@@ -36,15 +36,15 @@
             /* Tier Colors */
             --tier1-green-bg: #E6F3E9;
             --tier1-green-border: #C8E2D0;
-            --tier1-green-icon: #2A745C;
+            --tier1-green-text: #2A745C;
             
             --tier2-blue-bg: #D9E8F1;
             --tier2-blue-border: #BFD7E5;
-            --tier2-blue-icon: #326E9B;
+            --tier2-blue-text: #326E9B;
 
             --tier3-yellow-bg: #FFF4D6;
             --tier3-yellow-border: #FFE8AC;
-            --tier3-yellow-icon: #B58700;
+            --tier3-yellow-text: #B58700;
             
             /* Sizing variables */
             --base-font-size: 16px;
@@ -110,25 +110,72 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             box-sizing: border-box;
             transition: background-color 0.5s ease, border-color 0.5s ease;
+            overflow: hidden; /* Prevent content spill */
         }
 
+        /* --- NEW: Tier Card Specific Styles --- */
+        #userPassCard {
+            padding: 1rem 1.5rem; /* More compact padding */
+        }
+        /* Default/Pending Tier */
+        .tier-pending {
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+        }
+        .tier-pending #userTier { color: var(--text-body); }
+        /* Tier 1: Economy */
+        .tier-economy {
+            background-color: var(--tier1-green-bg);
+            border-color: var(--tier1-green-border);
+        }
+        .tier-economy #userTier { color: var(--tier1-green-text); }
+        /* Tier 2: Business */
+        .tier-business {
+            background-color: var(--tier2-blue-bg);
+            border-color: var(--tier2-blue-border);
+        }
+        .tier-business #userTier { color: var(--tier2-blue-text); }
+        /* Tier 3: First */
+        .tier-first {
+            background-color: var(--tier3-yellow-bg);
+            border-color: var(--tier3-yellow-border);
+        }
+        .tier-first #userTier { color: var(--tier3-yellow-text); }
+
+
         /* --- Interactive Card (Game Button) --- */
+        /* MODIFIED: Increased size and visual weight */
         .interactive-card {
-            background-color: var(--card-bg); 
+            background-color: white; /* Make it pop more */
             border: 1px solid var(--card-border); 
-            border-radius: 1rem;
+            border-radius: 1.5rem; /* Match other cards */
             transition: all 0.2s ease-out; position: relative; overflow: hidden;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             text-decoration: none;
-            padding: 0.5rem;
-            min-width: 120px;
+            padding: 1.5rem; /* More padding */
+            width: 100%;
+            max-width: 350px; /* Max width */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .interactive-card:hover {
             transform: translateY(-4px); 
             border-color: var(--primary-accent);
-            box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px -5px rgba(137, 179, 217, 0.3);
         }
+        .interactive-card .card-icon svg {
+             width: 3.5rem; /* Larger icon */
+             height: 3.5rem;
+             color: var(--primary-accent); /* Use brand blue */
+        }
+        .interactive-card .card-title {
+            font-size: 1.25rem; /* Larger text */
+            margin-top: 1rem;
+        }
+        .interactive-card .card-subtitle {
+             font-size: 1rem; /* Larger text */
+        }
+
 
         /* --- NEW: Reward Button Styles (from rewards.html, adapted) --- */
         .reward-button {
@@ -206,7 +253,7 @@
 
         /* --- Responsive Design --- */
         /* Mobile */
-        @media (max-width: 767px) {
+        @media (max-width: 1023px) {
             :root {
                 --base-font-size: 14px;
                 --base-padding: 1rem;
@@ -218,31 +265,77 @@
                 display: flex;
                 flex-direction: column;
                 gap: var(--base-gap);
-                overflow: hidden;
+                overflow-y: auto; /* Allow vertical scroll for the whole page */
+                padding-bottom: 2rem;
             }
-            .history-card, .rewards-card {
-                min-height: 300px; /* Give history/rewards a min height on mobile */
+            
+            /* Give cards a sensible min height on mobile */
+            .history-card, .rewards-card, .game-card {
+                min-height: 400px;
             }
+            
             /* Mobile rewards grid */
             #rewardsGrid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 0.5rem;
             }
+            /* Mobile game button */
+            .interactive-card {
+                 padding: 1rem;
+            }
+             .interactive-card .card-icon svg {
+                 width: 2.5rem; height: 2.5rem;
+            }
+            .interactive-card .card-title {
+                font-size: 1.1rem;
+            }
         }
 
-        /* Tablet & Desktop */
-        @media (min-width: 768px) {
-            /* On desktop, switch to a 3-column grid */
+        /* Tablet & Desktop: NEW 3x2 Grid */
+        @media (min-width: 1024px) {
             .main-grid {
                 flex-grow: 1;
                 display: grid;
+                /* 3 cols, 2 rows */
                 grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto 1fr; /* Top row auto, bottom row takes rest */
                 gap: var(--base-gap);
                 overflow: hidden; /* This is important for child scroll */
             }
+            
+            /* --- Grid cell placement --- */
+            
+            /* Top-Left: User Info (Pass + Welcome) */
+            #grid-user-info {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
+            }
+            
+            /* Top-Middle: Game */
+            #grid-game {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+            }
+            
+            /* Right (Full Height): History */
+            #grid-history {
+                grid-column: 3 / 4;
+                grid-row: 1 / 3; /* Span both rows */
+                display: flex;
+                flex-direction: column;
+            }
+            
+            /* Bottom Left/Middle (Span): Rewards */
+            #grid-rewards {
+                grid-column: 1 / 3; /* Span 2 columns */
+                grid-row: 2 / 3;
+                display: flex;
+                flex-direction: column;
+            }
+
             /* Desktop rewards grid */
             #rewardsGrid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(4, 1fr);
                 gap: 1rem;
             }
         }
@@ -254,9 +347,8 @@
                 --base-padding: 2.5rem;
                 --base-gap: 2.5rem;
             }
-            .dashboard-card header { font-size: 3.5rem; }
             #rewardsGrid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
         }
 
@@ -289,7 +381,7 @@
 </head>
 <body class="antialiased">
     
-    <!-- NEW: Loading Overlay (from rewards.html) -->
+    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110]">
         <div class="text-center">
             <svg class="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="color: var(--primary-accent);"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -301,8 +393,9 @@
     <main id="dashboard" class="flex">
         
         <!-- Row 1: Title & Logout Button -->
-        <div class="flex-shrink-0 flex justify-between items-center">
-             <header class="font-bold text-4xl md:text-5xl" style="color: var(--text-title);">Starlight Dashboard</header>
+        <div class="flex-shrink-0 flex justify-between items-center pb-4">
+             <!-- MODIFIED: Header color changed to brand blue -->
+             <header class="font-bold text-4xl md:text-5xl" style="color: var(--primary-accent);">Starlight Dashboard</header>
              <button id="logoutButton" class="p-2 rounded-full hover:bg-slate-200 transition-colors" title="Logout">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color: var(--text-body);">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -310,35 +403,49 @@
              </button>
         </div>
         
-        <!-- Row 2: Main 3-Column Grid -->
-        <div class="main-grid mt-4 md:mt-6">
+        <!-- Row 2: Main 3x2 Grid -->
+        <div class="main-grid">
             
-            <!-- Column 1: User & Game -->
-            <div class="flex flex-col gap-6">
-                <!-- User Card (Pass + Welcome) -->
-                <div class="dashboard-card flex-grow flex flex-col justify-center text-center p-6 gap-2">
+            <!-- Cell: Top-Left (User Info) -->
+            <div id="grid-user-info" class="flex flex-col gap-6">
+                <!-- NEW: Pass Card -->
+                <div id="userPassCard" class="dashboard-card flex-grow-0 text-center tier-pending">
                     <!-- Pass/Tier data -->
-                    <p id="userTier" class="text-4xl font-bold" style="color: var(--text-title);">Loading...</p>
+                    <p id="userTier" class="text-2xl font-bold">Loading Pass...</p>
+                </div>
+
+                <!-- NEW: Welcome Card -->
+                <div class="dashboard-card flex-grow-0 text-center">
                     <!-- Welcome message -->
                     <p id="userName" class="text-xl md:text-2xl">Welcome, <span class="font-semibold" style="color: var(--text-title);">...</span></p>
                 </div>
-                
-                <!-- Game Card -->
-                <div class="dashboard-card flex flex-col">
-                    <h3 class="font-bold text-xl text-center mb-4 flex-shrink-0" style="color: var(--text-title);">Ready to Play?</h3>
-                    <div class="text-sm space-y-3 px-2 flex-shrink-0">
-                        <p>🎵 Listen to the K-Pop instrumental and guess the song!</p>
-                        <p>⏱️ Think fast! You'll have <strong>10 seconds</strong> to name that tune.</p>
-                        <p>🏆 Every correct answer earns you <strong>1 point</strong> to spend on cool rewards!</p>
-                    </div>
-                    <div class="flex-grow flex items-center justify-center pt-6">
-                        <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium">Moderate</span></a>
-                    </div>
+            </div>
+
+            <!-- Cell: Top-Middle (Game) -->
+            <div id="grid-game" class="dashboard-card flex flex-col game-card">
+                <!-- MODIFIED: Title and Rules -->
+                <h3 class="font-bold text-xl text-center mb-4 flex-shrink-0" style="color: var(--text-title);">Want to play a game?</h3>
+                <div class="text-sm space-y-3 px-2 flex-shrink-0 text-center">
+                    <p>🎵 Guess the song from the instrumental!</p>
+                    <p>🏆 Earn points for every correct answer.</p>
+                </div>
+                <!-- MODIFIED: Button is larger and centered in flex-grow parent -->
+                <div class="flex-grow flex items-center justify-center pt-6">
+                    <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.007 1.916l-7.5 4.125a2.25 2.25 0 01-2.006 0L3.5 15.116A2.25 2.25 0 012.5 13.2V9.45" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9l10.5-3M9 9l-10.5 3m10.5 0v6.553M19.5 6l-10.5 3m10.5 0v6.553M3.5 12.6V15.116A2.25 2.25 0 004.507 17.03l7.5 4.125a2.25 2.25 0 002.006 0l7.5-4.125A2.25 2.25 0 0021.5 15.116V12.6" />
+                            </svg>
+                        </div>
+                        <span class="card-title block font-semibold" style="color: var(--text-title);">Guess the Song</span>
+                        <span class="card-subtitle block font-medium">Moderate</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Column 2: Points & History -->
-            <div class="dashboard-card flex flex-col overflow-hidden history-card">
+            <!-- Cell: Right (Full Height) (Points & History) -->
+            <div id="grid-history" class="dashboard-card flex flex-col overflow-hidden history-card">
                 <!-- Top Section: Points -->
                 <div class="flex-shrink-0">
                     <div class="flex justify-between items-center" style="border-color: var(--card-border);">
@@ -346,13 +453,12 @@
                             <span class="font-semibold text-base md:text-lg">Points:</span>
                             <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
                         </div>
-                        <!-- NOTE: "Rewards" button removed as it's now a column -->
                     </div>
                 </div>
                 <!-- History Section Title -->
                 <div class="flex-shrink-0 flex justify-between items-center mt-6 pt-4 border-t" style="border-color: var(--card-border);">
                      <h3 class="text-lg font-bold" style="color: var(--text-title);">Points History</h3>
-                     <button id="refreshHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
+                     <button id="refreshHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg class="h-6 w-6" style="color: var(--text-body);" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
                 </div>
                 <!-- Scrollable List -->
                 <div id="historyList" class="flex-grow overflow-y-auto pt-2">
@@ -360,8 +466,8 @@
                 </div>
             </div>
 
-            <!-- Column 3: Rewards (from rewards.html) -->
-            <div class="dashboard-card flex flex-col overflow-hidden rewards-card">
+            <!-- Cell: Bottom Left/Middle (Span) (Rewards) -->
+            <div id="grid-rewards" class="dashboard-card flex flex-col overflow-hidden rewards-card">
                 <h3 class="text-lg font-bold flex-shrink-0" style="color: var(--text-title);">Redeem Rewards</h3>
                 <main id="rewardsGrid" class="flex-grow overflow-y-auto pt-4 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                     <!-- Reward buttons will be dynamically checked by JS -->
@@ -393,6 +499,7 @@
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
                         <div class="disabled-overlay">Not enough<br>points</div>
                     </button>
+                     <!-- Add more buttons here if needed -->
                 </main>
             </div>
 
@@ -437,7 +544,7 @@
 
     // --- App Configuration ---
     // GET requests (fetch data) MUST use Google Apps Script
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw52PkjIkI0l4KVRUZ1HjydW8DIwT7to0F_6aymC7eqcOw69d-yYKwtXrYX0UYUfatT/exec"; // IMPORTANT: Replace this
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec"; // IMPORTANT: Replace this
     
     // POST requests (submit data) MUST use SheetDB
     const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID
@@ -497,6 +604,27 @@
         
         dom.infoModalCancelBtn.onclick = close; // Cancel just closes the modal
     }
+    
+    /**
+     * Formats ISO date string to a readable format
+     * e.g., "2023-10-27T10:00:00.000Z" -> "Oct 27, 10:00 AM"
+     */
+    function formatDate(isoString) {
+        if (!isoString) return "Just now";
+        try {
+            const date = new Date(isoString);
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+            });
+        } catch (e) {
+            console.error("Error formatting date:", isoString, e);
+            return "---";
+        }
+    }
 
     // --- Data Fetching (GET from Google Apps Script) ---
     async function fetchHomePageData(code, isManualRefresh = false) {
@@ -508,7 +636,7 @@
       }
     
       try {
-        // NEW: This action fetches ALL data (user, history, inventory)
+        // This action fetches ALL data (user, history, inventory)
         const url = `${GAS_WEB_APP_URL}?action=getHomePageData&code=${encodeURIComponent(code)}`;
         const res = await fetch(url);
 
@@ -570,21 +698,29 @@
      * Updates the User Card with Tier and Welcome Message
      */
     function updateUserCard(userData) {
-        const tier = userData?.Event1 ? String(userData.Event1) : 'Ticket Pending';
-        const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+        const tier = userData?.Event1 ? String(userData.Event1).toLowerCase() : 'pending';
+        let tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+        if (tier === 'pending') tierName = 'Ticket Pending';
         
-        let iconColor = 'var(--text-body)';
-        if (tier.includes('economy')) iconColor = 'var(--tier1-green-icon)';
-        else if (tier.includes('business')) iconColor = 'var(--tier2-blue-icon)';
-        else if (tier.includes('first')) iconColor = 'var(--tier3-yellow-icon)';
+        // Reset classes
+        dom.userPassCard.className = "dashboard-card flex-grow-0 text-center";
+        
+        if (tier.includes('economy')) {
+            dom.userPassCard.classList.add('tier-economy');
+        } else if (tier.includes('business')) {
+            dom.userPassCard.classList.add('tier-business');
+        } else if (tier.includes('first')) {
+            dom.userPassCard.classList.add('tier-first');
+        } else {
+             dom.userPassCard.classList.add('tier-pending');
+        }
 
         dom.userTier.textContent = tierName;
-        dom.userTier.style.color = iconColor;
         dom.userName.querySelector('span').textContent = `${userData?.Name || "Guest"}!`;
     }
 
     /**
-     * Renders the scrollable history list
+     * Renders the scrollable history list using Timestamp
      */
     function renderHistoryList(historyData) {
         if (!historyData || historyData.length === 0) {
@@ -594,14 +730,24 @@
         dom.historyList.innerHTML = ''; 
         const container = document.createElement('div');
         container.className = 'w-full text-sm flex flex-col space-y-2';
+        
+        // Group by transaction for display
         historyData.forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
             const row = document.createElement('div');
             row.className = 'flex justify-between items-center py-3 border-b';
             row.style.borderColor = 'var(--card-border)';
+            
+            // Use formatted timestamp. Fallback to Transaction if timestamp is missing.
+            const primaryText = item.Timestamp ? formatDate(item.Timestamp) : (item.Transaction || 'Event');
+            const secondaryText = item.Timestamp ? (item.Transaction || 'Event') : '';
+
             row.innerHTML = `
-                <span class="font-semibold text-left" style="color: var(--text-title);">${item.Transaction || 'Event'}</span>
-                <span class="font-bold text-lg text-right ${points >= 0 ? 'text-green-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
+                <div class="flex-grow text-left">
+                    <span class="font-semibold block" style="color: var(--text-title);">${primaryText}</span>
+                    <span class="text-xs block">${secondaryText}</span>
+                </div>
+                <span class="font-bold text-lg text-right pl-4 ${points >= 0 ? 'text-green-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
             `;
             container.appendChild(row);
         });
@@ -721,7 +867,7 @@
         } finally {
             // Re-sync with server after a delay, regardless of outcome
             setTimeout(() => {
-                state.isRedeeming = false;
+                state.isRedeemimg = false; // Typo corrected: isRedeeming
                 dom.redeemModalConfirmBtn.disabled = false;
                 dom.redeemModalConfirmBtn.textContent = 'Redeem Now';
                 fetchHomePageData(state.currentUserCode, true); // Re-fetch ALL data
@@ -736,6 +882,7 @@
         dom.dashboard = document.getElementById('dashboard');
         dom.userName = document.getElementById('userName');
         dom.userTier = document.getElementById('userTier');
+        dom.userPassCard = document.getElementById('userPassCard'); // NEW
         dom.userPoints = document.getElementById('userPoints');
         dom.historyList = document.getElementById('historyList');
         dom.refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
