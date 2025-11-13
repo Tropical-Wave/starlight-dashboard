@@ -223,7 +223,8 @@
 
 
     // --- App Configuration ---
-    const SHEETDB_API_ID = "5ss66fnmfz8vl"; 
+    // *** NEW: Replace SheetDB_API_ID with your Google Apps Script URL ***
+    const GAS_WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // IMPORTANT: Replace this
     const MIN_UID_LENGTH = 4; // Min length of NFC UID to trigger verification
 
     // --- App State ---
@@ -279,26 +280,34 @@
         statusContainer.innerHTML = '';
     }
 
+    // *** MODIFIED: This function now uses Google Apps Script for GET ***
     async function handleLogin(code) {
       if (isVerifying) return; // Exit if a verification is already in progress
       isVerifying = true;
 
+      if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbx4gnu4M58111FVS9gDEHvurXZXp9PthE2e6PyACUpBRJk8adG_L4oK7EuG6nOsbflN/exec") {
+        showErrorMessage("Error: Web App URL is not set.");
+        isVerifying = false;
+        return;
+      }
+
       showVerifyingMessage();
 
       try {
-        const userUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=Users`;
+        // Use Google Apps Script for GET request
+        const userUrl = `${GAS_WEB_APP_URL}?action=getUser&code=${encodeURIComponent(code)}`;
         
         const userRes = await fetch(userUrl);
 
-        if (!userRes.ok) { // Check user response first
-             if (userRes.status === 404) throw new Error("Passport not recognized.");
-             throw new Error(`User data fetch failed: ${userRes.status}`);
+        if (!userRes.ok) { // Check for network or GAS execution errors
+             throw new Error(`Verification service failed: ${userRes.status}`);
         }
         
-        const userJson = await userRes.json();
+        const result = await userRes.json();
 
-        if (!Array.isArray(userJson) || userJson.length === 0 || !userJson[0].Name) {
-            throw new Error("Passport not recognized.");
+        // Check the status from our GAS response
+        if (result.status !== 'success' || !result.user || !result.user.Name) {
+            throw new Error(result.message || "Passport not recognized.");
         }
         
         // Store current user code in sessionStorage for home.html
@@ -310,6 +319,7 @@
       } catch (error) {
         console.error("Login failed:", error);
         showErrorMessage(error.message || "Verification failed. Try again.");
+        // Note: isVerifying is reset in the finally block
       } finally {
           isVerifying = false; // Reset verification state after handling login attempt
       }

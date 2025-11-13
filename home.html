@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Starlight Dashboard</title>
 
-    <meta name="theme-color" content="#EEF7F6"/>
+    <meta name="theme-color" content="#F5F7F6"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Starlight">
@@ -16,39 +16,55 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Base styles for a light, modern kiosk interface */
-        html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background-color: #EEF7F6;
-            font-family: 'Poppins', sans-serif; color: #334155;
-            font-size: 16px; /* Base font size for responsiveness */
-        }
-        @media (max-width: 767px) {
-            html, body {
-                font-size: 14px; /* Slightly smaller base font for small phones */
-            }
-        }
-        @media (min-width: 768px) and (max-width: 1023px) {
-            html, body {
-                font-size: 15px; /* Medium font size for tablets/larger phones */
-            }
+        /* --- NEW: Color Palette & Font from index.html --- */
+        :root {
+            /* Core Palette */
+            --background: #F5F7F6;
+            --card-bg: #F3F8F4;
+            --card-border: #E1E5E3;
+            --primary-accent: #89B3D9;
+            --cta-accent: #F4D35E;
+            --text-title: #2D3748;
+            --text-body: #5F7D97;
+            --text-on-cta: #1C2B26;
+
+            /* Stepper/Tier Colors */
+            --tier1-green-bg: #E6F3E9;
+            --tier1-green-border: #C8E2D0;
+            --tier1-green-icon: #2A745C;
+            
+            --tier2-blue-bg: #D9E8F1;
+            --tier2-blue-border: #BFD7E5;
+            --tier2-blue-icon: #326E9B;
+
+            --tier3-yellow-bg: #FFF4D6;
+            --tier3-yellow-border: #FFE8AC;
+            --tier3-yellow-icon: #B58700;
+            
+            /* Sizing variables for responsiveness */
+            --base-font-size: 16px;
+            --base-padding: 1.5rem;
+            --base-gap: 1.5rem;
         }
 
-        /* Custom scrollbar for popups */
+        /* --- Base Styles --- */
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; 
+            background-color: var(--background);
+            font-family: 'Inter', sans-serif; 
+            color: var(--text-body);
+            font-size: var(--base-font-size);
+        }
+        
+        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #E0EBEA; }
-        ::-webkit-scrollbar-thumb { background: #A8C5C1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #82A39F; }
-        
-        /* Gradient variables */
-        :root {
-            --gradient-start: #4BA7AD; --gradient-mid: #89B3D9;
-            --gradient-end: #837FD9; --gradient-angle: 135deg;
-            --brand-color: #4BA7AD;
-        }
+        ::-webkit-scrollbar-thumb { background: var(--primary-accent); opacity: 0.7; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-accent); opacity: 1; }
         
         /* Fullscreen overlays (popups) */
         .fullscreen-overlay {
@@ -59,9 +75,8 @@
         }
         .fullscreen-overlay.visible { display: flex; opacity: 1; visibility: visible; }
         
-        /* Popup card styles */
         .popup-card {
-            background-color: white; border-radius: 1.5rem;
+            background-color: var(--card-bg); border-radius: 1.5rem;
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15); display: flex;
             flex-direction: column; width: 90%; max-width: 400px; max-height: 90vh;
             transform: scale(0.95); opacity: 0;
@@ -72,174 +87,131 @@
         /* --- Dashboard Container --- */
         #dashboard {
             display: none; height: 100dvh;
-            padding: 1rem; gap: 1rem; opacity: 0; transition: opacity 0.5s ease-in;
-            flex-direction: column; /* Mobile-first: single column */
-            box-sizing: border-box; /* Include padding in element's total width and height */
+            padding: var(--base-padding); gap: var(--base-gap); 
+            opacity: 0; transition: opacity 0.5s ease-in;
+            flex-direction: column;
+            box-sizing: border-box;
+            max-width: 2000px; /* NEW: Max width for large screens */
+            margin: 0 auto; /* NEW: Center the container */
         }
-        /* Landscape layout: 2 columns */
-        @media (min-width: 768px) and (orientation: landscape) { /* Adjusted breakpoint for landscape */
-            #dashboard { 
-                flex-direction: row; 
-                padding: 1.5rem; /* Slightly reduced padding for landscape */
-                gap: 1.5rem; /* Slightly reduced gap for landscape */
-            }
-            .left-panel { flex: 1 1 50%; display: flex; flex-direction: column; gap: 1.5rem; } /* Ensure left panel is column-flex */
-            .right-panel { flex: 1 1 50%; }
-        }
-        @media (max-width: 767px) {
-            #dashboard {
-                padding: 0.75rem;
-                gap: 0.75rem;
-            }
-        }
-
+        
         .dashboard-card {
-            background-color: white; border-radius: 1.5rem;
-            border: 1px solid #D1E0DE; padding: 1.5rem;
+            background-color: var(--card-bg); 
+            border-radius: 1.5rem;
+            border: 1px solid var(--card-border); 
+            padding: var(--base-padding);
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             box-sizing: border-box;
         }
-        @media (max-width: 767px) {
-            .dashboard-card {
-                padding: 1rem; /* Smaller padding for small screens */
-                border-radius: 1rem;
-            }
-            .dashboard-card header {
-                font-size: 2rem; /* Adjust header size */
-            }
-            .dashboard-card p {
-                font-size: 1.1rem; /* Adjust paragraph size */
-            }
-        }
-        @media (min-width: 768px) and (orientation: landscape) {
-            .dashboard-card {
-                padding: 1.25rem; /* Slightly less padding for landscape */
-            }
-        }
 
         .interactive-card {
-            background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 1rem;
+            background-color: var(--card-bg); 
+            border: 1px solid var(--card-border); 
+            border-radius: 1rem;
             transition: all 0.2s ease-out; position: relative; overflow: hidden;
-            display: flex; /* Changed to flex for better vertical alignment of content */
-            flex-direction: column; /* Stack content vertically */
-            justify-content: center; /* Center content vertically */
-            align-items: center; /* Center content horizontally */
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             text-decoration: none;
-            padding: 0.5rem; /* Adjusted padding for smaller screens */
+            padding: 0.5rem;
         }
         .interactive-card:hover {
-            transform: translateY(-4px); border-color: #D1E0DE;
+            transform: translateY(-4px); 
+            border-color: var(--primary-accent);
             box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
         }
+
+        /* --- Stepper UI --- */
+        .stepper-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        .stepper {
+            --circle-size: 80px;
+            --track-h: 8px;
+            display: grid;
+            grid-template-columns: var(--circle-size) 1fr var(--circle-size) 1fr var(--circle-size);
+            grid-template-rows: auto 16px auto;
+            grid-template-areas:
+                "c1 conn1 c2 conn2 c3"
+                ".  .     .  .     . "
+                "l1 .     l2 .     l3";
+            align-items: center;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .circle {
+            width: var(--circle-size); height: var(--circle-size);
+            border-radius: 9999px; border: 6px solid #e5e7eb;
+            background: #fff; display: grid; place-items: center;
+            box-shadow: 0 6px 16px rgba(0,0,0,.05);
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .icon { width: 50%; height: 50%; stroke: #9ca3af; fill: none; stroke-width: 2; transition: stroke 0.3s; }
+        .label { font-weight: 600; color: var(--text-body); text-align: center; transition: color 0.3s; }
+        
+        #c1 { grid-area: c1; } #c2 { grid-area: c2; } #c3 { grid-area: c3; }
+        #l1 { grid-area: l1; } #l2 { grid-area: l2; } #l3 { grid-area: l3; }
+        .connector { height: var(--track-h); background: #e5e7eb; border-radius: 9999px; position: relative; overflow: hidden; }
+        #conn1 { grid-area: conn1; } #conn2 { grid-area: conn2; }
+        .fill { position: absolute; inset: 0; width: 0; background: var(--conn, #e5e7eb); border-radius: inherit; }
+        
+        .connector.pulsing::after {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent 0%, var(--wave, rgba(59,130,246,.9)) 50%, transparent 100%);
+            background-size: 200% 100%; animation: wave 2s linear infinite;
+            filter: blur(2px); opacity: .8;
+        }
+        @keyframes wave { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes growLine { from { width: 0; } to { width: 100%; } }
+        
+        /* Stepper Color Application */
+        .done.green { border-color: var(--tier1-green-border); background: var(--tier1-green-bg); }
+        .done.green .icon { stroke: var(--tier1-green-icon); }
+        .tint-green { color: var(--tier1-green-icon); font-weight: 700; }
+
+        .done.blue { border-color: var(--tier2-blue-border); background: var(--tier2-blue-bg); }
+        .done.blue .icon { stroke: var(--tier2-blue-icon); }
+        .tint-blue { color: var(--tier2-blue-icon); font-weight: 700; }
+
+        .done.yellow { border-color: var(--tier3-yellow-border); background: var(--tier3-yellow-bg); }
+        .done.yellow .icon { stroke: var(--tier3-yellow-icon); }
+        .tint-yellow { color: var(--tier3-yellow-icon); font-weight: 700; }
+
+        /* --- Responsive Design --- */
+        /* Mobile */
         @media (max-width: 767px) {
-            .interactive-card {
-                padding: 0.25rem; /* Even less padding for tiny screens */
-                border-radius: 0.75rem;
+            :root {
+                --base-font-size: 14px;
+                --base-padding: 1rem;
+                --base-gap: 1rem;
             }
-            .interactive-card .card-icon {
-                height: 2.5rem;
-                width: 2.5rem;
-            }
-            .interactive-card .card-title {
-                font-size: 0.75rem;
-            }
-            .interactive-card .card-subtitle,
-            .interactive-card .card-points {
-                font-size: 0.65rem;
-            }
+            .stepper { --circle-size: 60px; --track-h: 6px; }
+            .label { font-size: 0.8rem; }
         }
 
-        /* --- Streak Tracker & Stamping Animation --- */
-        .streak-stamp {
-            flex-shrink: 0; /* Prevent shrinking in landscape */
-            min-width: 90px; /* Give a minimum width */
-        }
-        .streak-stamp .stamp-icon-wrapper {
-            width: 80px; height: 80px; /* Base size */
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            background-color: #E2E8F0; /* Default gray for unattended */
-            border: 4px solid #CBD5E1;
-            transition: all 0.4s ease;
-            position: relative; z-index: 1;
-        }
-        @media (max-width: 767px) {
-            .streak-stamp .stamp-icon-wrapper {
-                width: 60px; height: 60px; /* Smaller for small phones */
-                border-width: 3px;
-            }
-        }
+        /* Tablet & Landscape Mobile */
         @media (min-width: 768px) {
-            .streak-stamp .stamp-icon-wrapper { width: 100px; height: 100px; }
-        }
-        @media (min-width: 768px) and (orientation: landscape) {
-             .streak-stamp .stamp-icon-wrapper {
-                width: 80px; height: 80px; /* Adjust size for landscape */
-            }
-        }
-        
-        .event-label {
-            margin-top: 0.75rem; font-weight: 600; color: #94A3B8; /* Faded color for unattended */
-            transition: all 0.3s ease; text-align: center;
-            filter: blur(2px); opacity: 0.6; /* Blurred label for unattended */
-            font-size: 0.9rem; /* Adjust font size */
-        }
-        @media (max-width: 767px) {
-            .event-label {
-                margin-top: 0.5rem;
-                font-size: 0.75rem; /* Smaller for small phones */
-            }
-        }
-        
-        /* Styles for a completed stamp */
-        .streak-stamp.completed .stamp-icon-wrapper {
-            background-color: white; border-color: var(--brand-color);
-        }
-        .streak-stamp.completed .event-label {
-            color: #1E293B; filter: blur(0); opacity: 1;
-        }
-        
-        /* Fade-in animation for icons */
-        .stamp-icon {
-            opacity: 0; /* Start invisible */
-            transform: scale(0.8); /* Start slightly smaller */
-        }
-        .streak-stamp.is-stamping .stamp-icon {
-            animation: fade-in-scale 0.5s ease-out forwards; /* Fade in and scale up */
-        }
-        @keyframes fade-in-scale {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
+            #dashboard { flex-direction: row; }
+            .left-panel { flex: 1 1 55%; display: flex; flex-direction: column; gap: var(--base-gap); }
+            .right-panel { flex: 1 1 45%; display: flex; flex-direction: column; }
         }
 
-        /* Responsive adjustments for points and rewards section */
-        #userPoints {
-            font-size: 2.25rem; /* Default size */
-        }
-        #showRewardsBtn {
-            font-size: 0.875rem; /* Default size */
-            padding: 0.5rem 1rem;
-        }
-        @media (max-width: 767px) {
-            #userPoints {
-                font-size: 1.75rem; /* Smaller for small phones */
+        /* NEW: Large Desktop Optimization (e.g., 2560x1600) */
+        @media (min-width: 1920px) {
+            :root {
+                --base-font-size: 18px;
+                --base-padding: 2.5rem;
+                --base-gap: 2.5rem;
             }
-            #showRewardsBtn {
-                font-size: 0.75rem; /* Smaller for small phones */
-                padding: 0.4rem 0.8rem;
-            }
-            .right-panel .dashboard-card .flex-grow.grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr)); /* Ensure 3 columns */
-                gap: 0.5rem; /* Smaller gap */
-            }
-        }
-        @media (min-width: 768px) and (orientation: landscape) {
-            #userPoints {
-                font-size: 2rem;
-            }
-            #showRewardsBtn {
-                font-size: 0.8rem;
-                padding: 0.45rem 1rem;
-            }
+            .stepper { --circle-size: 100px; max-width: 900px; }
+            .label { font-size: 1.1rem; }
+            .dashboard-card header { font-size: 3.5rem; }
         }
 
     </style>
@@ -247,33 +219,44 @@
 <body class="antialiased">
     
     <main id="dashboard" class="flex">
-        <div class="left-panel flex flex-col gap-4 lg:gap-8">
+        <div class="left-panel">
             <div class="dashboard-card flex-shrink-0">
-                 <header class="font-bold font-['Oswald'] text-4xl md:text-5xl text-slate-800">Starlight Dashboard</header>
-                 <p class="text-xl md:text-2xl mt-1 text-slate-500">Welcome, <span id="userName" class="font-semibold text-slate-800">...</span></p>
+                 <header class="font-bold text-4xl md:text-5xl" style="color: var(--text-title);">Starlight Dashboard</header>
+                 <p class="text-xl md:text-2xl mt-1">Welcome, <span id="userName" class="font-semibold" style="color: var(--text-title);">...</span></p>
             </div>
             <div class="dashboard-card flex-grow flex flex-col">
-                <h3 class="font-bold text-xl text-slate-800 text-center mb-4 flex-shrink-0">Event Stamps</h3>
-                <div id="streakTrackerContainer" class="flex-grow flex items-center justify-around flex-wrap"></div>
+                <div class="stepper-container">
+                    <h3 class="font-bold text-xl text-center mb-6 flex-shrink-0" style="color: var(--text-title);">Event Progress</h3>
+                    <div class="stepper">
+                        <div class="circle" id="c1" aria-label="Onboarding"><svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg></div>
+                        <div class="circle" id="c2" aria-label="Take Off"><svg class="icon" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg></div>
+                        <div class="circle" id="c3" aria-label="Touchdown"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v8"></path><path d="m19 12-7 7-7-7"></path></svg></div>
+                        <div class="connector" id="conn1"><span class="fill"></span></div>
+                        <div class="connector" id="conn2"><span class="fill"></span></div>
+                        <div class="label" id="l1">Onboarding</div>
+                        <div class="label" id="l2">Take Off</div>
+                        <div class="label" id="l3">Touchdown</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="right-panel flex flex-col">
+        <div class="right-panel">
             <div class="dashboard-card h-full flex flex-col">
-                <div class="flex justify-between items-center border-b border-slate-200 pb-4 flex-shrink-0">
+                <div class="flex justify-between items-center border-b pb-4 flex-shrink-0" style="border-color: var(--card-border);">
                     <div class="flex items-center gap-2 md:gap-3">
-                        <span class="font-semibold text-base md:text-lg text-slate-600">Points:</span>
-                        <span id="userPoints" class="text-3xl md:text-4xl font-bold text-slate-800">0</span>
+                        <span class="font-semibold text-base md:text-lg">Points:</span>
+                        <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
                         <button id="showHistoryBtn" class="text-slate-400 hover:text-cyan-500 transition-colors duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 md:h-7 w-6 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
-                    <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full text-white hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20" style="background: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid));">Rewards</a>
+                    <a href="rewards.html" id="showRewardsBtn" class="font-semibold text-center text-sm py-2 px-4 md:px-5 rounded-full hover:opacity-90 transition-opacity shadow-lg" style="background-color: var(--cta-accent); color: var(--text-on-cta); box-shadow: 0 8px 15px -5px rgba(244, 211, 94, 0.4);">Rewards</a>
                 </div>
                 <div class="flex-grow grid grid-cols-3 gap-2 md:gap-4 pt-4">
-                    <a href="game1.html" class="interactive-card" data-label="K-Pop Quiz (Easy)"><div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div><span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">K-Pop Quiz</span><span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Easy</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+5 Pts</span></a>
-                    <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Moderate</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+15 Pts</span></a>
-                    <a href="game3.html" class="interactive-card" data-label="True or False (Hard)"><div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-slate-700 text-xs md:text-base">True or False</span><span class="card-subtitle block text-xs md:text-sm font-medium text-slate-500">Hard</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+45 Pts</span></a>
+                    <a href="game1.html" class="interactive-card" data-label="K-Pop Quiz (Easy)"><div class="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V8H7a1 1 0 01-1-1V4z"/><path d="M3 9a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">K-Pop Quiz</span><span class="card-subtitle block text-xs md:text-sm font-medium">Easy</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+5 Pts</span></a>
+                    <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)"><div class="h-10 w-10 md:h-12 md:w-12 text-purple-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.59 14.37a6 6 0 01-5.64 2.13a6 6 0 01-1.1-11.95a6 6 0 018.66 8.66L19 18zM10 16a6 6 0 100-12a6 6 0 000 12z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">Guess the Song</span><span class="card-subtitle block text-xs md:text-sm font-medium">Moderate</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+15 Pts</span></a>
+                    <a href="game3.html" class="interactive-card" data-label="True or False (Hard)"><div class="h-10 w-10 md:h-12 md:w-12 text-cyan-500 mx-auto card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v5a1 1 0 102 0V7zM9 4a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd" /></svg></div><span class="card-title block font-semibold mt-2 text-xs md:text-base" style="color: var(--text-title);">True or False</span><span class="card-subtitle block text-xs md:text-sm font-medium">Hard</span><span class="card-points block text-xs md:text-sm font-medium text-green-500">+45 Pts</span></a>
                 </div>
             </div>
         </div>
@@ -281,10 +264,10 @@
     
     <div id="historyPopup" class="fullscreen-overlay">
         <div class="popup-card">
-            <div class="p-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
-                <button id="closeHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg></button>
-                <h3 class="text-center font-bold text-lg text-slate-800 absolute left-1/2 -translate-x-1/2">Points History</h3>
-                <button id="refreshHistoryBtn" class="text-slate-500 hover:text-slate-800 p-1 rounded-full hover:bg-slate-100"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
+            <div class="p-4 border-b flex items-center justify-between flex-shrink-0" style="border-color: var(--card-border);">
+                <button id="closeHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg></button>
+                <h3 class="text-center font-bold text-lg absolute left-1/2 -translate-x-1/2" style="color: var(--text-title);">Points History</h3>
+                <button id="refreshHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
             </div>
             <div id="historyList" class="flex-grow p-4 overflow-y-auto"></div>
         </div>
@@ -295,19 +278,18 @@
     const dashboard = document.getElementById('dashboard');
     const userNameEl = document.getElementById('userName');
     const userPointsEl = document.getElementById('userPoints');
-    const streakTrackerContainer = document.getElementById('streakTrackerContainer');
     const historyList = document.getElementById('historyList');
     const historyPopup = document.getElementById('historyPopup');
 
     // --- App Configuration ---
     const SHEETDB_API_ID = "5ss66fnmfz8vl"; 
-    const INACTIVITY_TIMEOUT = 30000; // 30 seconds
-    const AUTO_REFRESH_INTERVAL = 15000; // 15 seconds
+    const INACTIVITY_TIMEOUT = 30000;
+    const AUTO_REFRESH_INTERVAL = 15000;
 
     // --- App State ---
     let inactivityTimer = null;
     let autoRefreshInterval = null;
-    let currentUserCode = null; // Will be loaded from sessionStorage
+    let currentUserCode = null;
 
     // --- UI Flow & Data Functions ---
     function showDashboard() {
@@ -326,8 +308,8 @@
     }
 
     function redirectToLogin() {
-        sessionStorage.removeItem('currentUserCode'); // Clear user session
-        window.location.href = 'index.html'; // Redirect to login page
+        sessionStorage.removeItem('currentUserCode');
+        window.location.href = 'index.html';
     }
 
     async function fetchDashboardData(code, isManualRefresh = false) {
@@ -339,25 +321,17 @@
         const historyUrl = `https://sheetdb.io/api/v1/${SHEETDB_API_ID}/search?Access%20Code=${code}&sheet=History&sort_by=Timestamp&sort_order=desc`;
         const [userRes, historyRes] = await Promise.all([fetch(userUrl), fetch(historyUrl)]);
 
-        if (!userRes.ok || !historyRes.ok) {
-             // If data fetch fails, assume session might be invalid or network issue.
-             // Redirect to login to allow re-scan.
-             throw new Error(`Data refresh failed.`);
-        }
+        if (!userRes.ok || !historyRes.ok) throw new Error(`Data refresh failed.`);
         
         const userJson = await userRes.json();
         const historyJson = await historyRes.json();
 
-        if (!Array.isArray(userJson) || userJson.length === 0) {
-             // User data not found, redirect to login
-             throw new Error("Invalid user data received. Redirecting to login.");
-        }
+        if (!Array.isArray(userJson) || userJson.length === 0) throw new Error("Invalid user data.");
         
         updateDashboardUI(userJson[0], historyJson);
 
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        // If an error occurs during refresh, redirect to login
         redirectToLogin(); 
       } finally {
         if (isManualRefresh) {
@@ -370,52 +344,80 @@
     function updateDashboardUI(userData, historyData) {
       userNameEl.textContent = `${userData.Name || "Guest"}!`;
       userPointsEl.textContent = parseInt(userData.Points || "0", 10);
-      renderStreakTracker(userData);
+      renderStepper(userData);
       renderHistoryList(historyData || []);
     }
 
-    function renderStreakTracker(data) {
-      streakTrackerContainer.innerHTML = '';
-      const steps = [
-        { key: 'Event1', label: 'Onboarding' },
-        { key: 'Event2', label: 'Take Off' },
-        { key: 'Event3', label: 'Touchdown' }
-      ];
-      const tierIcons = {
-        'Tier1': `<svg class="w-full h-full stamp-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,15 100,85 0,85" fill="#10B981"/></svg>`,
-        'Tier2': `<svg class="w-full h-full stamp-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="15" width="70" height="70" fill="#3B82F6"/></svg>`,
-        'Tier3': `<svg class="w-full h-full stamp-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#FBBF24"/></svg>`
-      };
-      
-      let animationInitialDelay = 500; 
-      let animationStaggerDelay = 700; 
-      let currentAnimationDelay = animationInitialDelay;
+    function renderStepper(userData) {
+        const elements = {
+            c1: document.getElementById('c1'), c2: document.getElementById('c2'), c3: document.getElementById('c3'),
+            l1: document.getElementById('l1'), l2: document.getElementById('l2'), l3: document.getElementById('l3'),
+            conn1: document.getElementById('conn1'), conn2: document.getElementById('conn2'),
+            fill1: document.getElementById('conn1').querySelector('.fill'),
+            fill2: document.getElementById('conn2').querySelector('.fill')
+        };
+        
+        const steps = [
+            { key: 'Event1', circle: elements.c1, label: elements.l1, color: 'green', connector: elements.conn1, fill: elements.fill1 },
+            { key: 'Event2', circle: elements.c2, label: elements.l2, color: 'blue',  connector: elements.conn2, fill: elements.fill2 },
+            { key: 'Event3', circle: elements.c3, label: elements.l3, color: 'yellow', connector: null, fill: null }
+        ];
 
-      steps.forEach((step, index) => {
-        const tier = data[step.key];
-        const isCompleted = tier && tierIcons[tier];
-        const stampEl = document.createElement('div');
-        stampEl.className = `streak-stamp flex flex-col items-center ${isCompleted ? 'completed' : ''}`;
-        stampEl.innerHTML = `
-          <div class="stamp-icon-wrapper">
-            ${isCompleted ? tierIcons[tier] : ''}
-          </div>
-          <div class="event-label">${step.label}</div>
-        `;
-        streakTrackerContainer.appendChild(stampEl);
+        steps.forEach(step => {
+            step.circle.classList.remove('done', 'green', 'blue', 'yellow');
+            step.circle.style.animation = 'none';
+            step.label.classList.remove('tint-green', 'tint-blue', 'tint-yellow');
+            if (step.connector) step.connector.classList.remove('pulsing');
+            if (step.fill) {
+                step.fill.style.animation = 'none';
+                step.fill.style.width = '0';
+            }
+        });
+        
+        let delay = 300;
+        const popInDuration = 500;
+        const growLineDuration = 600;
+        let lastCompletedIndex = -1;
 
-        if (isCompleted) {
-            setTimeout(() => {
-                stampEl.classList.add('is-stamping');
-            }, currentAnimationDelay);
-            currentAnimationDelay += animationStaggerDelay;
+        steps.forEach((step, index) => {
+            const isCompleted = userData[step.key] && ['Tier1', 'Tier2', 'Tier3'].includes(userData[step.key]);
+            
+            if (isCompleted) {
+                lastCompletedIndex = index;
+                setTimeout(() => {
+                    step.circle.style.animation = `popIn ${popInDuration}ms ease-out forwards`;
+                    step.circle.classList.add('done', step.color);
+                    step.label.classList.add(`tint-${step.color}`);
+                }, delay);
+
+                if (index > 0) {
+                    const prevStep = steps[index - 1];
+                    setTimeout(() => {
+                        const connectorColor = getComputedStyle(document.documentElement).getPropertyValue(`--tier${index}-green-border`);
+                        prevStep.fill.style.backgroundColor = connectorColor;
+                        prevStep.fill.style.animation = `growLine ${growLineDuration}ms ease-out forwards`;
+                    }, delay - growLineDuration / 2);
+                }
+                delay += popInDuration + growLineDuration - 200;
+            }
+        });
+
+        if (lastCompletedIndex > -1 && lastCompletedIndex < steps.length - 1) {
+            const nextStep = steps[lastCompletedIndex + 1];
+            const pulsingConnector = steps[lastCompletedIndex].connector;
+            if (pulsingConnector) {
+                setTimeout(() => {
+                    const waveColor = getComputedStyle(document.documentElement).getPropertyValue(`--tier${lastCompletedIndex + 2}-blue-icon`);
+                    pulsingConnector.style.setProperty('--wave', waveColor);
+                    pulsingConnector.classList.add('pulsing');
+                }, delay);
+            }
         }
-      });
     }
 
     function renderHistoryList(historyData) {
         if (!historyData || historyData.length === 0) {
-            historyList.innerHTML = '<p class="text-center text-slate-500 py-8">No points history recorded.</p>';
+            historyList.innerHTML = `<p class="text-center py-8">No points history recorded.</p>`;
             return;
         }
         historyList.innerHTML = ''; 
@@ -424,9 +426,10 @@
         historyData.forEach(item => {
             const points = parseInt(item.Points, 10) || 0;
             const row = document.createElement('div');
-            row.className = 'flex justify-between items-center py-3 border-b border-slate-100';
+            row.className = 'flex justify-between items-center py-3 border-b';
+            row.style.borderColor = 'var(--card-border)';
             row.innerHTML = `
-                <span class="font-semibold text-slate-800 text-left">${item.Transaction || 'Event'}</span>
+                <span class="font-semibold text-left" style="color: var(--text-title);">${item.Transaction || 'Event'}</span>
                 <span class="font-bold text-lg text-right ${points >= 0 ? 'text-green-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
             `;
             container.appendChild(row);
@@ -436,20 +439,16 @@
     
     // --- Event Listeners Setup ---
     document.addEventListener('DOMContentLoaded', () => {
-      // Try to load current user code from sessionStorage
       currentUserCode = sessionStorage.getItem('currentUserCode');
 
       if (!currentUserCode) {
-          // If no user code found, redirect to login page
           redirectToLogin();
-          return; // Stop further execution
+          return;
       }
 
-      // If user code exists, show dashboard and fetch data
       showDashboard();
       fetchDashboardData(currentUserCode);
       
-      // Keep the app responsive to user activity to reset the inactivity timer
       ['click', 'keypress', 'mousemove', 'touchstart'].forEach(evt => document.addEventListener(evt, resetInactivityTimer));
       
       clearInterval(autoRefreshInterval);
