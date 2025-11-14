@@ -303,7 +303,7 @@
                 font-size: 1.1rem;
             }
 
-            /* NEW: On mobile, the wrapper just acts as a container */
+            /* On mobile, the wrapper just acts as a container */
             #grid-col-3-wrapper {
                 display: flex;
                 flex-direction: column;
@@ -314,13 +314,13 @@
             }
         }
 
-        /* Tablet & Desktop: NEW 3x2 Grid */
+        /* Tablet & Desktop: REDESIGNED 2-Column Grid */
         @media (min-width: 1024px) {
             .main-grid {
                 flex-grow: 1;
                 display: grid;
-                /* MODIFIED: Adjusted column widths. 1.4fr for pass, 1fr for game, 1.2fr for history */
-                grid-template-columns: 1.4fr 1fr 1.2fr; 
+                /* MODIFIED: Changed to 2-column layout */
+                grid-template-columns: 2fr 1fr; 
                 grid-template-rows: auto 1fr; 
                 gap: var(--base-gap);
                 overflow: hidden; 
@@ -340,15 +340,13 @@
             /* Ticket main/stub classes for desktop */
             .ticket-main {
                 flex-grow: 1;
-                /* MODIFICATION: Use CSS variable for padding */
                 padding: var(--base-padding);
             }
             .ticket-stub {
                 flex-shrink: 0;
-                width: 120px; /* NEW: Narrower width for rotated text */
+                width: 120px; 
                 border-left: 2px dashed var(--card-border);
                 border-top: none; /* Remove mobile border */
-                /* MODIFICATION: Use CSS variable for padding */
                 padding: var(--base-padding);
                 padding-top: var(--base-padding); /* Reset mobile padding */
                 display: flex;
@@ -357,7 +355,7 @@
                 align-items: center;
             }
             
-            /* NEW: Rotated stub content */
+            /* Rotated stub content */
             .ticket-stub-content {
                 writing-mode: vertical-rl;
                 transform: rotate(180deg);
@@ -368,18 +366,20 @@
             }
 
             
-            /* Top-Middle: Game */
+            /* Top-Right: Game */
             #grid-game {
+                /* MODIFIED: Moved to sidebar */
                 grid-column: 2 / 3;
                 grid-row: 1 / 2;
                 display: flex; 
                 flex-direction: column;
             }
             
-            /* Right (Full Height): History Column Wrapper */
+            /* Bottom-Right: History Column Wrapper */
             #grid-col-3-wrapper {
-                grid-column: 3 / 4;
-                grid-row: 1 / 3; 
+                /* MODIFIED: Moved to sidebar, bottom */
+                grid-column: 2 / 3;
+                grid-row: 2 / 3; 
                 display: flex;
                 flex-direction: column;
                 gap: var(--base-gap);
@@ -389,7 +389,8 @@
             #grid-history {
                 /* This is now a flex child, it should grow */
                 flex-grow: 1;
-                /* It already has display:flex, flex-direction:column */
+                display: flex;
+                flex-direction: column;
             }
             
             #logoutButton {
@@ -397,9 +398,10 @@
                 flex-shrink: 0;
             }
             
-            /* Bottom Left/Middle (Span): Rewards */
+            /* Bottom-Left: Rewards */
             #grid-rewards {
-                grid-column: 1 / 3; 
+                /* MODIFIED: Moved to main column, bottom */
+                grid-column: 1 / 2; 
                 grid-row: 2 / 3;
                 display: flex;
                 flex-direction: column;
@@ -467,24 +469,21 @@
         
         <!-- Row 1: HEADER REMOVED -->
         
-        <!-- Row 2: Main 3x2 Grid -->
+        <!-- Row 2: Main Grid (Redesigned) -->
         <div class="main-grid">
             
             <!-- Cell: Top-Left (User Info) -->
             <div id="grid-user-info" class="dashboard-card flex flex-col">
                 
                 <!-- Main ticket area -->
-                <!-- MODIFICATION: Changed p-6 to lg:p-6 -->
-                <div class="ticket-main lg:p-6">
+                <div class="ticket-main">
                     <!-- SVG logo -->
-                    <!-- MODIFICATION: SVG container width adjusted -->
                     <div class="w-full max-w-[300px] mx-auto mb-4">
-                        <!-- MODIFICATION: Replaced SVG code -->
+                        <!-- SVG code updated and fill color set -->
                         <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-auto w-full">
                             <defs>
                                 <style>
                                     .cls-1 {
-                                        /* MODIFICATION: Changed fill to CSS variable to be visible */
                                         fill: var(--primary-accent);
                                     }
                                 </style>
@@ -547,9 +546,8 @@
                 </div>
 
                 <!-- Ticket Stub area -->
-                <!-- MODIFICATION: Changed p-6 to lg:p-6 -->
-                <div class="ticket-stub lg:p-6 text-center">
-                    <!-- NEW: Wrapper for rotated content -->
+                <div class="ticket-stub text-center">
+                    <!-- Wrapper for rotated content -->
                     <div class="ticket-stub-content">
                         <p class="ticket-label mb-2">Ticket</p>
                         <!-- Pass card is now nested inside -->
@@ -560,7 +558,7 @@
                 </div>
             </div>
 
-            <!-- Cell: Top-Middle (Game) -->
+            <!-- Cell: Top-Right (Game) -->
             <div id="grid-game" class="dashboard-card flex flex-col game-card">
                 <h3 class="font-bold text-xl text-center mb-4 flex-shrink-0" style="color: var(--text-title);">Want to play a game?</h3>
                 <div class="text-sm space-y-3 px-2 flex-shrink-0 text-center">
@@ -581,8 +579,7 @@
                 </div>
             </div>
 
-            <!-- Cell: Right (Full Height) (Points & History) -->
-            <!-- NEW WRAPPER for 3rd column content -->
+            <!-- Cell: Bottom-Right (Points & History) -->
             <div id="grid-col-3-wrapper" class="flex flex-col" style="gap: var(--base-gap);">
                 <div id="grid-history" class="dashboard-card flex flex-col overflow-hidden history-card">
                     <!-- Top Section: Points -->
@@ -592,7 +589,6 @@
                                 <span class="font-semibold text-base md:text-lg">Points:</span>
                                 <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
                             </div>
-                            <!-- NEW: Logout button removed from here -->
                         </div>
                     </div>
                     <!-- History Section Title -->
@@ -604,10 +600,9 @@
                     <div id="historyList" class="flex-grow overflow-y-auto pt-2">
                         <!-- History items will be injected here by JS -->
                     </div>
-                    <!-- MODIFIED: Logout Button removed from here -->
                 </div>
 
-                <!-- NEW: Logout button as a separate element below the card -->
+                <!-- Logout button as a separate element below the card -->
                 <button id="logoutButton" 
                         class="w-full text-center py-3 px-6 rounded-xl text-sm font-medium transition-colors 
                                bg-white border border-gray-200 hover:bg-gray-50 
@@ -616,7 +611,7 @@
                 </button>
             </div>
 
-            <!-- Cell: Bottom Left/Middle (Span) (Rewards) -->
+            <!-- Cell: Bottom-Left (Rewards) -->
             <div id="grid-rewards" class="dashboard-card flex flex-col overflow-hidden rewards-card">
                 <h3 class="text-lg font-bold flex-shrink-0" style="color: var(--text-title);">Redeem Rewards</h3>
                 <main id="rewardsGrid" class="flex-grow overflow-y-auto pt-4 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
