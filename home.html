@@ -112,11 +112,10 @@
             box-sizing: border-box;
             transition: all 0.5s ease;
             overflow: hidden; /* Prevent content spill */
-            /* All cards get padding by default */
             padding: var(--base-padding);
         }
 
-        /* --- NEW: Boarding Pass / Ticket Styles --- */
+        /* --- Boarding Pass / Ticket Styles --- */
         .ticket-label {
             font-size: 0.75rem; /* 12px */
             font-weight: 600;
@@ -323,18 +322,18 @@
                 grid-column: 1 / 2;
                 grid-row: 1 / 2;
                 display: flex; 
-                flex-direction: row; /* NEW: Horizontal layout */
-                padding: 0; /* NEW: Remove padding for edge-to-edge content */
+                flex-direction: row; /* Horizontal layout */
+                padding: 0; /* Remove padding for edge-to-edge content */
             }
             
-            /* NEW: Ticket main/stub classes for desktop */
+            /* Ticket main/stub classes for desktop */
             .ticket-main {
                 flex-grow: 1;
                 padding: var(--base-padding);
             }
             .ticket-stub {
                 flex-shrink: 0;
-                width: 180px; /* Fixed width for stub */
+                width: 120px; /* NEW: Narrower width for rotated text */
                 border-left: 2px dashed var(--card-border);
                 border-top: none; /* Remove mobile border */
                 padding: var(--base-padding);
@@ -343,6 +342,16 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+            }
+            
+            /* NEW: Rotated stub content */
+            .ticket-stub-content {
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--base-gap);
             }
 
             
@@ -436,14 +445,14 @@
         <div class="main-grid">
             
             <!-- Cell: Top-Left (User Info) -->
-            <!-- NEW: Redesigned as Boarding Pass. p-0 to remove padding -->
             <div id="grid-user-info" class="dashboard-card flex flex-col p-0">
                 
-                <!-- NEW: Main ticket area -->
+                <!-- Main ticket area -->
                 <div class="ticket-main p-6">
                     <!-- SVG logo -->
-                    <div class="h-8 mb-4"> <!-- Sized logo -->
-                        <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-full w-auto">
+                    <!-- NEW: SVG container widened and centered -->
+                    <div class="w-full max-w-[280px] mx-auto mb-4">
+                        <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-auto w-full"> <!-- NEW: w-full h-auto -->
                             <defs>
                                 <style>
                                     .cls-1 { fill: var(--primary-accent); }
@@ -506,12 +515,15 @@
                     </div>
                 </div>
 
-                <!-- NEW: Ticket Stub area -->
+                <!-- Ticket Stub area -->
                 <div class="ticket-stub p-6 text-center">
-                    <p class="ticket-label mb-2">Ticket</p>
-                    <!-- Pass card is now nested inside -->
-                    <div id="userPassCard" class="tier-pending w-full">
-                        <p id="userTier" class="text-2xl font-bold">Loading...</p>
+                    <!-- NEW: Wrapper for rotated content -->
+                    <div class="ticket-stub-content">
+                        <p class="ticket-label mb-2">Ticket</p>
+                        <!-- Pass card is now nested inside -->
+                        <div id="userPassCard" class="tier-pending w-full">
+                            <p id="userTier" class="text-2xl font-bold">Loading...</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -546,12 +558,7 @@
                             <span class="font-semibold text-base md:text-lg">Points:</span>
                             <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
                         </div>
-                        <!-- Logout button -->
-                        <button id="logoutButton" class="p-2 rounded-full hover:bg-slate-200 transition-colors" title="Logout">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color: var(--text-body);">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                        </button>
+                        <!-- NEW: Logout button removed from here -->
                     </div>
                 </div>
                 <!-- History Section Title -->
@@ -562,6 +569,12 @@
                 <!-- Scrollable List -->
                 <div id="historyList" class="flex-grow overflow-y-auto pt-2">
                     <!-- History items will be injected here by JS -->
+                </div>
+                <!-- NEW: Logout Button moved here -->
+                <div class="flex-shrink-0 pt-2 mt-auto">
+                    <button id="logoutButton" class="w-full text-center py-4 border-t text-sm font-medium transition-colors hover:bg-gray-50 hover:text-red-500" style="color: var(--text-body); border-color: var(--card-border);">
+                        Logout
+                    </button>
                 </div>
             </div>
 
