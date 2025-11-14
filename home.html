@@ -340,6 +340,7 @@
             /* Ticket main/stub classes for desktop */
             .ticket-main {
                 flex-grow: 1;
+                /* MODIFICATION: Use CSS variable for padding */
                 padding: var(--base-padding);
             }
             .ticket-stub {
@@ -347,6 +348,7 @@
                 width: 120px; /* NEW: Narrower width for rotated text */
                 border-left: 2px dashed var(--card-border);
                 border-top: none; /* Remove mobile border */
+                /* MODIFICATION: Use CSS variable for padding */
                 padding: var(--base-padding);
                 padding-top: var(--base-padding); /* Reset mobile padding */
                 display: flex;
@@ -469,23 +471,27 @@
         <div class="main-grid">
             
             <!-- Cell: Top-Left (User Info) -->
-            <!-- MODIFIED: Removed inline p-0 to allow CSS to handle padding -->
             <div id="grid-user-info" class="dashboard-card flex flex-col">
                 
                 <!-- Main ticket area -->
-                <div class="ticket-main p-6">
+                <!-- MODIFICATION: Changed p-6 to lg:p-6 -->
+                <div class="ticket-main lg:p-6">
                     <!-- SVG logo -->
-                    <!-- MODIFIED: SVG container made slightly wider -->
+                    <!-- MODIFICATION: SVG container width adjusted -->
                     <div class="w-full max-w-[300px] mx-auto mb-4">
-                        <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-auto w-full"> <!-- NEW: w-full h-auto -->
+                        <!-- MODIFICATION: Replaced SVG code -->
+                        <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-auto w-full">
                             <defs>
                                 <style>
-                                    .cls-1 { fill: var(--primary-accent); }
+                                    .cls-1 {
+                                        /* MODIFICATION: Changed fill to CSS variable to be visible */
+                                        fill: var(--primary-accent);
+                                    }
                                 </style>
                             </defs>
                             <g id="Layer_1-2" data-name="Layer 1">
-                                <path class="cls-1" d="M9.75,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85-.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62s.2-.58.2-.93-.07-.67-.2-.93c-.13-.27-.32-.47-.57-.62Z"/>
-                                <path class="cls-1" d="M33.04,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85-.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62.13-.27.2-.58.2-.93s-.07-.67-.2-.93-.32-.47-.57-.62Z"/>
+                                <path class="cls-1" d="M9.75,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62s.2-.58.2-.93-.07-.67-.2-.93c-.13-.27-.32-.47-.57-.62Z"/>
+                                <path class="cls-1" d="M33.04,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62.13-.27.2-.58.2-.93s-.07-.67-.2-.93-.32-.47-.57-.62Z"/>
                                 <polygon class="cls-1" points="39.28 33.01 40.67 33.01 39.99 31.14 39.28 33.01"/>
                                 <path class="cls-1" d="M24.81,32.87h-1.2v1.45h1.2c.19,0,.35-.06.46-.19.12-.13.17-.3.17-.51,0-.23-.06-.41-.17-.55-.12-.14-.27-.21-.46-.21Z"/>
                                 <path class="cls-1" d="M48.54,31.68c0-.19-.03-.35-.1-.48s-.16-.23-.29-.3c-.13-.07-.28-.1-.45-.1h-1.02v1.76h1.02c.17,0,.32-.03.45-.1s.22-.17.29-.3c.07-.13.1-.29.1-.48Z"/>
@@ -541,7 +547,8 @@
                 </div>
 
                 <!-- Ticket Stub area -->
-                <div class="ticket-stub p-6 text-center">
+                <!-- MODIFICATION: Changed p-6 to lg:p-6 -->
+                <div class="ticket-stub lg:p-6 text-center">
                     <!-- NEW: Wrapper for rotated content -->
                     <div class="ticket-stub-content">
                         <p class="ticket-label mb-2">Ticket</p>
