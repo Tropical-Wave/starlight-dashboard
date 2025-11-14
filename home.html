@@ -128,11 +128,8 @@
             color: var(--text-title);
             margin-bottom: 0.75rem; /* 12px */
         }
-        .ticket-stub {
-            /* Mobile-first: top border */
-            border-top: 2px dashed var(--card-border);
-            padding-top: var(--base-padding);
-        }
+        
+        /* MODIFICATION: Removed mobile-only .ticket-stub rule */
 
         /* --- Inner Pass Card Styles --- */
         #userPassCard {
@@ -271,159 +268,105 @@
         }
 
         /* --- Responsive Design --- */
-        /* Mobile */
-        @media (max-width: 1023px) {
-            :root {
-                --base-font-size: 14px;
-                --base-padding: 1rem;
-                --base-gap: 1rem;
-            }
-            .main-grid {
-                flex-grow: 1;
-                display: flex;
-                flex-direction: column;
-                gap: var(--base-gap);
-                overflow-y: auto; 
-                padding-bottom: 2rem;
-            }
-            .history-card, .rewards-card, .game-card {
-                min-height: 400px;
-            }
-            #rewardsGrid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.5rem;
-            }
-            .interactive-card {
-                 padding: 1rem;
-            }
-             .interactive-card .card-icon svg {
-                 width: 2.5rem; height: 2.5rem;
-            }
-            .interactive-card .card-title {
-                font-size: 1.1rem;
-            }
+        /* MODIFICATION: Removed all @media (max-width: 1023px) rules */
 
-            /* On mobile, the wrapper just acts as a container */
-            #grid-col-3-wrapper {
-                display: flex;
-                flex-direction: column;
-                gap: var(--base-gap);
-            }
-            #grid-history {
-                min-height: 400px; /* Keep the min-height */
-            }
+        /* MODIFICATION: All styles below are now global */
+        
+        .main-grid {
+            flex-grow: 1;
+            display: grid;
+            /* MODIFIED: Adjusted column widths. 1.4fr for pass, 1fr for game, 1.2fr for history */
+            grid-template-columns: 1.4fr 1fr 1.2fr; 
+            grid-template-rows: auto 1fr; 
+            gap: var(--base-gap);
+            overflow: hidden; 
+        }
+        
+        /* --- Grid cell placement --- */
+        
+        /* Top-Left: User Info (Pass + Welcome) */
+        #grid-user-info {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            display: flex; 
+            flex-direction: row; /* Horizontal layout */
+            padding: 0; /* MODIFICATION: Removed padding from parent card */
+        }
+        
+        /* Ticket main/stub classes */
+        .ticket-main {
+            flex-grow: 1;
+            /* MODIFICATION: Added padding to child */
+            padding: var(--base-padding);
+        }
+        .ticket-stub {
+            flex-shrink: 0;
+            width: 120px; /* NEW: Narrower width for rotated text */
+            border-left: 2px dashed var(--card-border);
+            border-top: none; /* Remove mobile border */
+            /* MODIFICATION: Added padding to child (and cleaned up) */
+            padding: var(--base-padding);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* NEW: Rotated stub content */
+        .ticket-stub-content {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--base-gap);
         }
 
-        /* Tablet & Desktop: REDESIGNED 2-Column Grid */
-        @media (min-width: 1024px) {
-            .main-grid {
-                flex-grow: 1;
-                display: grid;
-                /* MODIFIED: Changed to 2-column layout */
-                grid-template-columns: 2fr 1fr; 
-                grid-template-rows: auto 1fr; 
-                gap: var(--base-gap);
-                overflow: hidden; 
-            }
-            
-            /* --- Grid cell placement --- */
-            
-            /* Top-Left: User Info (Pass + Welcome) */
-            #grid-user-info {
-                grid-column: 1 / 2;
-                grid-row: 1 / 2;
-                display: flex; 
-                flex-direction: row; /* Horizontal layout */
-                padding: 0; /* Remove padding for edge-to-edge content */
-            }
-            
-            /* Ticket main/stub classes for desktop */
-            .ticket-main {
-                flex-grow: 1;
-                padding: var(--base-padding);
-            }
-            .ticket-stub {
-                flex-shrink: 0;
-                width: 120px; 
-                border-left: 2px dashed var(--card-border);
-                border-top: none; /* Remove mobile border */
-                padding: var(--base-padding);
-                padding-top: var(--base-padding); /* Reset mobile padding */
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-            
-            /* Rotated stub content */
-            .ticket-stub-content {
-                writing-mode: vertical-rl;
-                transform: rotate(180deg);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: var(--base-gap);
-            }
-
-            
-            /* Top-Right: Game */
-            #grid-game {
-                /* MODIFIED: Moved to sidebar */
-                grid-column: 2 / 3;
-                grid-row: 1 / 2;
-                display: flex; 
-                flex-direction: column;
-            }
-            
-            /* Bottom-Right: History Column Wrapper */
-            #grid-col-3-wrapper {
-                /* MODIFIED: Moved to sidebar, bottom */
-                grid-column: 2 / 3;
-                grid-row: 2 / 3; 
-                display: flex;
-                flex-direction: column;
-                gap: var(--base-gap);
-                overflow: hidden; /* To contain its children */
-            }
-
-            #grid-history {
-                /* This is now a flex child, it should grow */
-                flex-grow: 1;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            #logoutButton {
-                /* This is the second flex child, it should not grow */
-                flex-shrink: 0;
-            }
-            
-            /* Bottom-Left: Rewards */
-            #grid-rewards {
-                /* MODIFIED: Moved to main column, bottom */
-                grid-column: 1 / 2; 
-                grid-row: 2 / 3;
-                display: flex;
-                flex-direction: column;
-            }
-
-            #rewardsGrid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 1rem;
-            }
+        
+        /* Top-Middle: Game */
+        #grid-game {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+            display: flex; 
+            flex-direction: column;
+        }
+        
+        /* Right (Full Height): History Column Wrapper */
+        #grid-col-3-wrapper {
+            grid-column: 3 / 4;
+            grid-row: 1 / 3; 
+            display: flex;
+            flex-direction: column;
+            gap: var(--base-gap);
+            overflow: hidden; /* To contain its children */
         }
 
-        /* Large Desktop Optimization */
-        @media (min-width: 1920px) {
-            :root {
-                --base-font-size: 18px;
-                --base-padding: 2.5rem;
-                --base-gap: 2.5rem;
-            }
-            #rewardsGrid {
-                grid-template-columns: repeat(5, 1fr);
-            }
+        #grid-history {
+            /* This is now a flex child, it should grow */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
+        
+        #logoutButton {
+            /* This is the second flex child, it should not grow */
+            flex-shrink: 0;
+        }
+        
+        /* Bottom Left/Middle (Span): Rewards */
+        #grid-rewards {
+            grid-column: 1 / 3; 
+            grid-row: 2 / 3;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #rewardsGrid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        
+        /* MODIFICATION: Removed @media (min-width: 1920px) rules */
 
         /* --- Modal Buttons (Unified) --- */
         .modal-button { 
@@ -469,21 +412,24 @@
         
         <!-- Row 1: HEADER REMOVED -->
         
-        <!-- Row 2: Main Grid (Redesigned) -->
+        <!-- Row 2: Main 3x2 Grid -->
         <div class="main-grid">
             
             <!-- Cell: Top-Left (User Info) -->
             <div id="grid-user-info" class="dashboard-card flex flex-col">
                 
                 <!-- Main ticket area -->
+                <!-- MODIFICATION: Removed lg:p-6 class -->
                 <div class="ticket-main">
                     <!-- SVG logo -->
+                    <!-- MODIFICATION: SVG container width adjusted -->
                     <div class="w-full max-w-[300px] mx-auto mb-4">
-                        <!-- SVG code updated and fill color set -->
+                        <!-- MODIFICATION: Replaced SVG code -->
                         <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-auto w-full">
                             <defs>
                                 <style>
                                     .cls-1 {
+                                        /* MODIFICATION: Changed fill to CSS variable to be visible */
                                         fill: var(--primary-accent);
                                     }
                                 </style>
@@ -546,8 +492,9 @@
                 </div>
 
                 <!-- Ticket Stub area -->
+                <!-- MODIFICATION: Removed lg:p-6 class -->
                 <div class="ticket-stub text-center">
-                    <!-- Wrapper for rotated content -->
+                    <!-- NEW: Wrapper for rotated content -->
                     <div class="ticket-stub-content">
                         <p class="ticket-label mb-2">Ticket</p>
                         <!-- Pass card is now nested inside -->
@@ -558,7 +505,7 @@
                 </div>
             </div>
 
-            <!-- Cell: Top-Right (Game) -->
+            <!-- Cell: Top-Middle (Game) -->
             <div id="grid-game" class="dashboard-card flex flex-col game-card">
                 <h3 class="font-bold text-xl text-center mb-4 flex-shrink-0" style="color: var(--text-title);">Want to play a game?</h3>
                 <div class="text-sm space-y-3 px-2 flex-shrink-0 text-center">
@@ -579,7 +526,8 @@
                 </div>
             </div>
 
-            <!-- Cell: Bottom-Right (Points & History) -->
+            <!-- Cell: Right (Full Height) (Points & History) -->
+            <!-- NEW WRAPPER for 3rd column content -->
             <div id="grid-col-3-wrapper" class="flex flex-col" style="gap: var(--base-gap);">
                 <div id="grid-history" class="dashboard-card flex flex-col overflow-hidden history-card">
                     <!-- Top Section: Points -->
@@ -589,6 +537,7 @@
                                 <span class="font-semibold text-base md:text-lg">Points:</span>
                                 <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
                             </div>
+                            <!-- NEW: Logout button removed from here -->
                         </div>
                     </div>
                     <!-- History Section Title -->
@@ -600,9 +549,10 @@
                     <div id="historyList" class="flex-grow overflow-y-auto pt-2">
                         <!-- History items will be injected here by JS -->
                     </div>
+                    <!-- MODIFIED: Logout Button removed from here -->
                 </div>
 
-                <!-- Logout button as a separate element below the card -->
+                <!-- NEW: Logout button as a separate element below the card -->
                 <button id="logoutButton" 
                         class="w-full text-center py-3 px-6 rounded-xl text-sm font-medium transition-colors 
                                bg-white border border-gray-200 hover:bg-gray-50 
@@ -611,7 +561,7 @@
                 </button>
             </div>
 
-            <!-- Cell: Bottom-Left (Rewards) -->
+            <!-- Cell: Bottom Left/Middle (Span) (Rewards) -->
             <div id="grid-rewards" class="dashboard-card flex flex-col overflow-hidden rewards-card">
                 <h3 class="text-lg font-bold flex-shrink-0" style="color: var(--text-title);">Redeem Rewards</h3>
                 <main id="rewardsGrid" class="flex-grow overflow-y-auto pt-4 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -1013,7 +963,7 @@
         } finally {
             // Re-sync with server after a delay, regardless of outcome
             setTimeout(() => {
-                state.isRedeeming = false; 
+                state.isRedeRedeeming = false; 
                 dom.redeemModalConfirmBtn.disabled = false;
                 dom.redeemModalConfirmBtn.textContent = 'Redeem Now';
                 fetchHomePageData(state.currentUserCode, true); // Re-fetch ALL data
