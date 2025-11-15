@@ -127,10 +127,11 @@
             font-weight: 700;
             color: var(--text-title);
             margin-bottom: 0.75rem; /* 12px */
+            /* NEW: Smaller base size to fit ticket # */
+            font-size: 1rem; /* 16px */
+            line-height: 1.5rem;
         }
         
-        /* MODIFICATION: Removed mobile-only .ticket-stub rule */
-
         /* --- Inner Pass Card Styles --- */
         #userPassCard {
             padding: 1rem 1.5rem;
@@ -138,6 +139,9 @@
             text-align: center;
             transition: all 0.5s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            /* NEW: Allow the card to fill the horizontal space in the stub */
+            width: 100%;
+            box-sizing: border-box;
         }
         /* Tier Colors */
         .tier-pending {
@@ -268,9 +272,6 @@
         }
 
         /* --- Responsive Design --- */
-        /* MODIFICATION: Removed all @media (max-width: 1023px) rules */
-
-        /* MODIFICATION: All styles below are now global */
         
         .main-grid {
             flex-grow: 1;
@@ -291,20 +292,18 @@
             display: flex; 
             flex-direction: row; /* Horizontal layout */
             padding: 0; /* MODIFICATION: Removed padding from parent card */
+            /* This card will fill its grid cell, and the flex children inside will fill this card. */
         }
         
         /* Ticket main/stub classes */
         .ticket-main {
-            flex-grow: 1;
-            /* MODIFICATION: Added padding to child */
+            flex-grow: 1; /* This (left side) will grow to fill space */
             padding: var(--base-padding);
         }
         .ticket-stub {
-            flex-shrink: 0;
+            flex-shrink: 0; /* This (right side) will not grow or shrink */
             width: 120px; /* NEW: Narrower width for rotated text */
             border-left: 2px dashed var(--card-border);
-            border-top: none; /* Remove mobile border */
-            /* MODIFICATION: Added padding to child (and cleaned up) */
             padding: var(--base-padding);
             display: flex;
             flex-direction: column;
@@ -320,6 +319,7 @@
             flex-direction: column;
             align-items: center;
             gap: var(--base-gap);
+            width: 100%; /* Fill the stub's width */
         }
 
         
@@ -366,8 +366,6 @@
             gap: 1rem;
         }
         
-        /* MODIFICATION: Removed @media (min-width: 1920px) rules */
-
         /* --- Modal Buttons (Unified) --- */
         .modal-button { 
             flex-grow: 1; 
@@ -399,7 +397,7 @@
 <body class="antialiased">
     
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110]">
+    <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110] visible"> <!-- Start visible -->
         <div class="text-center">
             <svg class="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="color: var(--primary-accent);"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8
  0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -410,8 +408,6 @@
     <!-- Main Dashboard -->
     <main id="dashboard" class="flex">
         
-        <!-- Row 1: HEADER REMOVED -->
-        
         <!-- Row 2: Main 3x2 Grid -->
         <div class="main-grid">
             
@@ -419,53 +415,51 @@
             <div id="grid-user-info" class="dashboard-card flex flex-col">
                 
                 <!-- Main ticket area -->
-                <!-- MODIFICATION: Removed lg:p-6 class -->
                 <div class="ticket-main">
                     <!-- SVG logo -->
-                    <!-- MODIFICATION: SVG container width adjusted -->
                     <div class="w-full max-w-[300px] mx-auto mb-4">
                         <!-- MODIFICATION: Replaced SVG code -->
+                        <?xml version="1.0" encoding="UTF-8"?>
                         <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-auto w-full">
-                            <defs>
-                                <style>
-                                    .cls-1 {
-                                        /* MODIFICATION: Changed fill to CSS variable to be visible */
-                                        fill: var(--primary-accent);
-                                    }
-                                </style>
-                            </defs>
-                            <g id="Layer_1-2" data-name="Layer 1">
-                                <path class="cls-1" d="M9.75,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62s.2-.58.2-.93-.07-.67-.2-.93c-.13-.27-.32-.47-.57-.62Z"/>
-                                <path class="cls-1" d="M33.04,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62.13-.27.2-.58.2-.93s-.07-.67-.2-.93-.32-.47-.57-.62Z"/>
-                                <polygon class="cls-1" points="39.28 33.01 40.67 33.01 39.99 31.14 39.28 33.01"/>
-                                <path class="cls-1" d="M24.81,32.87h-1.2v1.45h1.2c.19,0,.35-.06.46-.19.12-.13.17-.3.17-.51,0-.23-.06-.41-.17-.55-.12-.14-.27-.21-.46-.21Z"/>
-                                <path class="cls-1" d="M48.54,31.68c0-.19-.03-.35-.1-.48s-.16-.23-.29-.3c-.13-.07-.28-.1-.45-.1h-1.02v1.76h1.02c.17,0,.32-.03.45-.1s.22-.17.29-.3c.07-.13.1-.29.1-.48Z"/>
-                                <path class="cls-1" d="M24.88,31.94c.1-.12.15-.27.15-.45,0-.21-.06-.38-.17-.5-.11-.12-.26-.18-.46-.18h-.8v1.32h.85c.18,0,.32-.06.42-.18Z"/>
-                                <path class="cls-1" d="M55.59,31.03c-.25-.15-.54-.22-.86-.22h-.66v3.5h.66c.33,0,.62-.07.86-.21s.44-.35.58-.62.21-.57.21-.93-.07-.65-.21-.91-.33-.47-.58-.62Z"/>
-                                <path class="cls-1" d="M76.87,27.72H7.29c-2.65,0-4.8,2.15-4.8,4.8v.09c0,2.65,2.15,4.8,4.8,4.8h69.58c2.65,0,4.8-2.15,4.8-4.8v-.09c0-2.65-2.15-4.8-4.8-4.8ZM11.07,33.87c-.21.38-.5.68-.88.89-.38.21-.8.32-1.28.32s-.91-.11-1.28-.32c-.38-.21-.67-.51-.88-.9-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.68.88-.89.38-.21.8-.32,1.28.32s.9.11,1.28.32c.38.21.67.51.88.9.21.38.32.82.32,1.3s-.11.92-.32,1.3ZM19,35.08h-.97l-2.31-3.56v3.56h-.87v-5.03h.98l2.3,3.56v-3.56h.87v5.03ZM26.14,34.38c-.12.22-.28.39-.49.52-.21.12-.45.18-.72.18h-2.21v-5.03h1.78c.26,0,.5.06.71.17.21.11.37.28.49.48.12.21.17.44.17.71,0,.18-.05.36-.14.55-.07.14-.15.26-.25.36.06.03.11.06.17.1l.02.02c.18.13.34.3.45.52.12.22.18.44.18.65,0,.28-.06.53-.18.76ZM34.36,33.87c-.21.38-.5.68-.88.89-.38.21-.8.32-1.28.32s-.91-.11-1.28-.32c-.38-.21-.67-.51-.88-.9-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.68.88-.89.38-.21.8-.32,1.28.32s.9.11,1.28.32c.38.21.67.51.88.9.21.38.32.82.32,1.3s-.11.92-.32,1.3ZM41.43,35.08l-.48-1.31h-1.94l-.5,1.31h-.93l1.88-5.03h1.06l1.84,5.03h-.93ZM48.6,35.08l-1.17-1.76h-.76v1.76h-.87v-5.03h2.06c.3,0,.57.07.81.2.24.13.42.32.55.56.13.24.2.53.2.84,0,.22-.03.42-.1.61-.06.18-.17.35-.33.5-.15.15-.36.29-.61.41l1.27,1.9h-1.05ZM56.92,33.87c-.22.38-.51.68-.89.89-.38.21-.81.32-1.3.32h-1.54v-5.03h1.54c.49,0,.92.11,1.3.32.38.21.68.51.89.89.22.38.32.81.32,1.3s-.11.93-.32,1.31ZM61.62,35.08h-.87v-5.03h.87v5.03ZM69.46,35.08h-.97l-2.31-3.56v3.56h-.87v-5.03h.98l2.3,3.56v-3.56h.87v5.03ZM77.73,32.88c0,.45-.09.84-.28,1.17-.19.33-.46.59-.8.76-.35.18-.75.27-1.22.27s-.9-.11-1.27-.32-.67-.51-.88-.89c-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.67.88-.89.37-.21.8-.32,1.27.32.51,0,.94.11,1.3.34.36.23.63.51.8.84l-.72.39c-.12-.24-.3-.43-.54-.6-.24-.16-.52-.24-.84-.24s-.6.07-.85.22c-.25.14-.43.35-.57.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.57.62.25.14.53.22.85.22.27,0,.51-.05.73-.14.22-.09.39-.22.53-.4.13-.18.2-.41.2-.68h-1.39v-.69h2.24v.46Z"/>
-                                <rect class="cls-1" y="24.92" width="84.16" height=".71"/>
-                                <path class="cls-1" d="M6.24,8.21c.33.22.66.33,1,.33.57,0,.99-.11,1.26-.34.27-.22.4-.53.4-.92,0-.23-.08-.42-.23-.58-.15-.16-.35-.29-.58-.4-.23-.11-.56-.23-.97-.37-.63-.23-1.15-.45-1.55-.65-.4-.21-.75-.51-1.04-.91-.29-.4-.44-.92-.44-1.55,0-.57.14-1.07.42-1.49.28-.42.68-.75,1.18-.98C6.21.11,6.79,0,7.45,0,7.85,0,8.26.09,8.69.26c.43.17.82.44,1.19.81.37.37.65.83.87,1.38l-1.61.59c-.32-.49-.6-.83-.87-1.03-.27-.2-.54-.3-.81-.3-.29,0-.54.05-.75.15-.21.1-.36.23-.46.4-.15.25-.19.55-.11.9.18.29.44.51.8.68.24.11.58.26,1.01.42.63.25,1.14.48,1.53.69.39.21.73.51,1.01.89.28.38.42.87.42,1.45s-.15,1.1-.44,1.54c-.3.45-.72.79-1.27,1.04-.55.25-1.2.38-1.95.38s-1.4-.2-2.02-.61c-.61-.41-1.14-.98-1.58-1.71l1.54-.88c.42.56.73.95,1.06,1.17Z"/>
-                                <path class="cls-1" d="M19.52,1.76h-2.68v8.49h-2.06V1.76h-2.73c0-.97.79-1.76,1.76-1.76h3.95c.97,0,1.76.79,1.76,1.76h0Z"/>
-                                <path class="cls-1" d="M29.5,10.25h-2.19l-.92-2.57h-3.72l-.95,2.57h-2.19l3.4-9.19C23.16.42,23.77,0,24.45,0h1.36s3.69,10.25,3.69,10.25ZM25.75,5.92l-1.19-3.37-1.24,3.37h2.43Z"/>
-                                <path class="cls-1" d="M36.53,10.25l-2.2-3.35h-1.39v3.35h-2.06V1.62C30.88.73,31.6,0,32.5,0h2.83C35.95,0,36.5.14,36.98.41c.48.28.85.67,1.12,1.18.27.51.41,1.1.41,1.78,0,.44-.05.84-.16,1.2-.1.36-.3.7-.59,1.03-.29.33-.69.64-1.22.94l2.45,3.72h-2.46ZM35.72,4.95c.23-.13.41-.32.54-.57.13-.25.19-.56.19-.93s-.06-.68-.19-.93c-.13-.25-.31-.44-.54-.57-.23-.13-.51-.19-.84-.19h-1.54c-.22,0-.41.18-.41.41v2.98h1.95c.32,0,.6-.06.84-.19Z"/>
-                                <path class="cls-1" d="M42.51,8.49h4.34v1.76h-6.4V2.06C40.45.92,41.37,0,42.51,0h0v8.49Z"/>
-                                <path class="cls-1" d="M50.51,0v10.25h-2.06V2.06C48.46.92,49.38,0,50.51,0h0Z"/>
-                                <path class="cls-1" d="M71.68,10.25h-2.06v-4.38h-4.14v4.38h-2.06V2.06C63.43.92,64.35,0,65.48,0h0v4.11h4.14V0h0c1.14,0,2.06.92,2.06,2.06v8.19Z"/>
-                                <path class="cls-1" d="M80.48,1.76h-2.68v8.49h-2.06V1.76h-2.73C73.02.79,73.8,0,74.77,0h3.95c.97,0,1.76.79,1.76,1.76h0Z"/>
-                                <path class="cls-1" d="M13.61,22.71h-2.19l-.92-2.57h-3.72l-.95,2.57h-2.19l3.4-9.19c.24-.64.84-1.06,1.52-1.06h1.36l3.69,10.25ZM9.86,18.38l-1.19-3.37-1.24,3.37h2.43Z"/>
-                                <path class="cls-1" d="M17.18,12.46v10.25h-2.06v-8.19c0-1.14.92-2.06,2.06-2.06h0Z"/>
-                                <path class="cls-1" d="M24.72,22.71l-2.2-3.35h-1.39v3.35h-2.06v-8.63c0-.9.73-1.62,1.62-1.62h2.83c.62,0,1.17.14,1.65.41.48.28.85.67,1.12,1.18.27.51.41,1.1.41,1.78,0,.44-.05.84-.16,1.2-.1.36-.3.7-.59,1.03-.29.33-.69.64-1.22.94l2.45,3.72h-2.46ZM23.91,17.41c.23-.13.41-.32.54-.57.13-.25.19-.56.19-.93s-.06-.68-.19-.93c-.13-.25-.31-.44-.54-.57-.23-.13-.51-.19-.84-.19h-1.54c-.22,0-.41.18-.41.41v2.98h1.95c.32,0,.6-.06.84-.19Z"/>
-                                <path class="cls-1" d="M30.7,20.95h4.34v1.76h-6.4v-8.19c0-1.14.92-2.06,2.06-2.06h0v8.49Z"/>
-                                <path class="cls-1" d="M38.71,12.46v10.25h-2.06v-8.19c0-1.14.92-2.06,2.06-2.06h0Z"/>
-                                <path class="cls-1" d="M49.28,22.71h-2.33l-4.34-6.83v6.83h-2.06v-8.26c0-1.1.89-1.99,1.99-1.99h.33l4.34,6.84v-6.84h0c1.14,0,2.06.92,2.06,2.06v8.19Z"/>
-                                <path class="cls-1" d="M58.1,14.22h-4.53c-.22,0-.41.18-.41.41v1.93h4.22v1.76h-4.22v2.64h4.94v1.76h-6.99v-8.63c0-.9.73-1.62,1.62-1.62h5.37v1.76Z"/>
-                                <path class="cls-1" d="M62.09,20.67c.33.22.66.33,1,.33.57,0,.99-.11,1.26-.34.27-.22.4-.53.4-.92,0-.23-.08-.42-.23-.58-.15-.16-.35-.29-.58-.4-.23-.11-.56-.23-.97-.37-.63-.23-1.15-.45-1.55-.65-.4-.21-.75-.51-1.04-.91-.29-.4-.44-.92-.44-1.55,0-.57.14-1.07.42-1.49.28-.42.68-.75,1.18-.98.51-.23,1.09-.34,1.75-.34.4,0,.81.09,1.24.26.43.17.82.44,1.19.81.37.37.65.83.87,1.38l-1.61.59c-.32-.49-.6-.83-.87-1.03-.27-.2-.54-.3-.81-.3-.29,0-.54.05-.75.15-.21.1-.36.23-.46.4-.15.25-.19.55-.11.9.18.29.44.51.8.68.24.11.58.26,1.01.42.63.25,1.14.48,1.53.69.39.21.73.51,1.01.89.28.38.42.87.42,1.45s-.15,1.1-.44,1.54c-.3.45-.72.79-1.27,1.04-.55.25-1.2.38-1.95.38s-1.4-.2-2.02-.61c-.61-.41-1.14-.98-1.58-1.71l1.54-.88c.42.56.73.95,1.06,1.17Z"/>
-                                <path class="cls-1" d="M76.85,17.46l-3.13-2.97c-.08-.08-.2-.11-.31-.09l-.93.16c-.12.02-.19.16-.12.27l1.79,3.09s0,.1-.05.11l-2.75.49c-.05,0-.1,0-.14-.04l-1.7-1.39c-.08-.07-.19-.09-.29-.07l-.5.09c-.12.02-.19.16-.12.27l1.34,2.31c.3.52.9.8,1.49.69l8.35-1.47c.5-.09.84-.57.75-1.07h0c-.09-.5-.57-.84-1.07-.75l-2.43.43c-.06,0-.11,0-.15-.05Z"/>
-                                <path class="cls-1" d="M61.98,1.94l-1.25-.57s-.04-.03-.05-.05l-.57-1.25c-.04-.08-.15-.08-.18,0l-.57,1.25s-.03.04-.05.05l-1.25.57c-.08.04-.08.15,0,.18l1.25.57s.04.03.05.05l.57,1.25c.04.08.15.08.18,0l.57-1.25s.03-.04.05-.05l1.25-.57c.08-.04.08-.15,0-.18Z"/>
-                                <path class="cls-1" d="M56.26.39c.08-.04.04-.16-.04-.14-2.36.4-4.15,2.49-4.09,4.99,0,.37.06.72.15,1.07.33-.76.82-1.54,1.47-2.28.08-1.63,1.09-3.01,2.52-3.63Z"/>
-                                <path class="cls-1" d="M61.77,5.9c-.6,1.38-1.93,2.38-3.5,2.51.15-.13.3-.27.45-.42,1.7-1.7,2.54-3.75,2.2-5.07.15,1.13-.83,3.03-2.53,4.73-.27.27-.54.52-.82.75-1.42-.12-2.64-.96-3.3-2.14-.36.5-.64.99-.84,1.46-.07.17-.13.34-.18.49.58.71,1.36,1.26,2.24,1.56-.7.33-1.34.48-1.83.41.63.16,1.43.06,2.27-.29.32.08.66.12,1,.13,2.49.06,4.58-1.73,4.99-4.09.01-.09-.11-.12-.14-.04Z"/>
-                                <path class="cls-1" d="M55.18,4.45c.85-.85,1.75-1.52,2.58-1.96-.15-.11-.24-.28-.24-.47,0-.07.01-.13.03-.19-.98.36-2.04,1.04-2.99,1.99-2.1,2.1-2.89,4.73-1.76,5.86.03.03.06.05.08.08-.76-.92.24-3.27,2.29-5.32Z"/>
-                            </g>
+                          <defs>
+                            <style>
+                              .cls-1 {
+                                fill: var(--primary-accent); /* MODIFIED: Set fill color to brand blue */
+                              }
+                            </style>
+                          </defs>
+                          <g id="Layer_1-2" data-name="Layer 1">
+                            <path class="cls-1" d="M9.75,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62s.2-.58.2-.93-.07-.67-.2-.93c-.13-.27-.32-.47-.57-.62Z"/>
+                            <path class="cls-1" d="M33.04,31.01c-.24-.14-.53-.22-.85-.22s-.61.07-.85.22c-.24.14-.43.35-.56.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.56.62.24.14.53.22.85.22s.61-.07.85-.22c.24-.14.43-.35.57-.62.13-.27.2-.58.2-.93s-.07-.67-.2-.93-.32-.47-.57-.62Z"/>
+                            <polygon class="cls-1" points="39.28 33.01 40.67 33.01 39.99 31.14 39.28 33.01"/>
+                            <path class="cls-1" d="M24.81,32.87h-1.2v1.45h1.2c.19,0,.35-.06.46-.19.12-.13.17-.3.17-.51,0-.23-.06-.41-.17-.55-.12-.14-.27-.21-.46-.21Z"/>
+                            <path class="cls-1" d="M48.54,31.68c0-.19-.03-.35-.1-.48s-.16-.23-.29-.3c-.13-.07-.28-.1-.45-.1h-1.02v1.76h1.02c.17,0,.32-.03.45-.1s.22-.17.29-.3c.07-.13.1-.29.1-.48Z"/>
+                            <path class="cls-1" d="M24.88,31.94c.1-.12.15-.27.15-.45,0-.21-.06-.38-.17-.5-.11-.12-.26-.18-.46-.18h-.8v1.32h.85c.18,0,.32-.06.42-.18Z"/>
+                            <path class="cls-1" d="M55.59,31.03c-.25-.15-.54-.22-.86-.22h-.66v3.5h.66c.33,0,.62-.07.86-.21s.44-.35.58-.62.21-.57.21-.93-.07-.65-.21-.91-.33-.47-.58-.62Z"/>
+                            <path class="cls-1" d="M76.87,27.72H7.29c-2.65,0-4.8,2.15-4.8,4.8v.09c0,2.65,2.15,4.8,4.8,4.8h69.58c2.65,0,4.8-2.15,4.8-4.8v-.09c0-2.65-2.15-4.8-4.8-4.8ZM11.07,33.87c-.21.38-.5.68-.88.89-.38.21-.8.32-1.28.32s-.91-.11-1.28-.32c-.38-.21-.67-.51-.88-.9-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.68.88-.89.38-.21.8-.32,1.28.32s.9.11,1.28.32c.38.21.67.51.88.9.21.38.32.82.32,1.3s-.11.92-.32,1.3ZM19,35.08h-.97l-2.31-3.56v3.56h-.87v-5.03h.98l2.3,3.56v-3.56h.87v5.03ZM26.14,34.38c-.12.22-.28.39-.49.52-.21.12-.45.18-.72.18h-2.21v-5.03h1.78c.26,0,.5.06.71.17.21.11.37.28.49.48.12.21.17.44.17.71,0,.18-.05.36-.14.55-.07.14-.15.26-.25.36.06.03.11.06.17.1l.02.02c.18.13.34.3.45.52.12.22.18.44.18.65,0,.28-.06.53-.18.76ZM34.36,33.87c-.21.38-.5.68-.88.89-.38.21-.8.32-1.28.32s-.91-.11-1.28-.32c-.38-.21-.67-.51-.88-.9-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.68.88-.89.38-.21.8-.32,1.28.32s.9.11,1.28.32c.38.21.67.51.88.9.21.38.32.82.32,1.3s-.11.92-.32,1.3ZM41.43,35.08l-.48-1.31h-1.94l-.5,1.31h-.93l1.88-5.03h1.06l1.84,5.03h-.93ZM48.6,35.08l-1.17-1.76h-.76v1.76h-.87v-5.03h2.06c.3,0,.57.07.81.2.24.13.42.32.55.56.13.24.2.53.2.84,0,.22-.03.42-.1.61-.06.18-.17.35-.33.5-.15.15-.36.29-.61.41l1.27,1.9h-1.05ZM56.92,33.87c-.22.38-.51.68-.89.89-.38.21-.81.32-1.3.32h-1.54v-5.03h1.54c.49,0,.92.11,1.3.32.38.21.68.51.89.89.22.38.32.81.32,1.3s-.11.93-.32,1.31ZM61.62,35.08h-.87v-5.03h.87v5.03ZM69.46,35.08h-.97l-2.31-3.56v3.56h-.87v-5.03h.98l2.3,3.56v-3.56h.87v5.03ZM77.73,32.88c0,.45-.09.84-.28,1.17-.19.33-.46.59-.8.76-.35.18-.75.27-1.22.27s-.9-.11-1.27-.32-.67-.51-.88-.89c-.21-.38-.32-.82-.32-1.3s.11-.92.32-1.3c.21-.38.51-.67.88-.89.37-.21.8-.32,1.27.32.51,0,.94.11,1.3.34.36.23.63.51.8.84l-.72.39c-.12-.24-.3-.43-.54-.6-.24-.16-.52-.24-.84-.24s-.6.07-.85.22c-.25.14-.43.35-.57.62-.13.27-.2.58-.2.93s.07.67.2.93c.13.27.32.47.57.62.25.14.53.22.85.22.27,0,.51-.05.73-.14.22-.09.39-.22.53-.4.13-.18.2-.41.2-.68h-1.39v-.69h2.24v.46Z"/>
+                            <rect class="cls-1" y="24.92" width="84.16" height=".71"/>
+                            <path class="cls-1" d="M6.24,8.21c.33.22.66.33,1,.33.57,0,.99-.11,1.26-.34.27-.22.4-.53.4-.92,0-.23-.08-.42-.23-.58-.15-.16-.35-.29-.58-.4-.23-.11-.56-.23-.97-.37-.63-.23-1.15-.45-1.55-.65-.4-.21-.75-.51-1.04-.91-.29-.4-.44-.92-.44-1.55,0-.57.14-1.07.42-1.49.28-.42.68-.75,1.18-.98C6.21.11,6.79,0,7.45,0,7.85,0,8.26.09,8.69.26c.43.17.82.44,1.19.81.37.37.65.83.87,1.38l-1.61.59c-.32-.49-.6-.83-.87-1.03-.27-.2-.54-.3-.81-.3-.29,0-.54.05-.75.15-.21.1-.36.23-.46.4-.15.25-.19.55-.11.9.18.29.44.51.8.68.24.11.58.26,1.01.42.63.25,1.14.48,1.53.69.39.21.73.51,1.01.89.28.38.42.87.42,1.45s-.15,1.1-.44,1.54c-.3.45-.72.79-1.27,1.04-.55.25-1.2.38-1.95.38s-1.4-.2-2.02-.61c-.61-.41-1.14-.98-1.58-1.71l1.54-.88c.42.56.73.95,1.06,1.17Z"/>
+                            <path class="cls-1" d="M19.52,1.76h-2.68v8.49h-2.06V1.76h-2.73c0-.97.79-1.76,1.76-1.76h3.95c.97,0,1.76.79,1.76,1.76h0Z"/>
+                            <path class="cls-1" d="M29.5,10.25h-2.19l-.92-2.57h-3.72l-.95,2.57h-2.19l3.4-9.19C23.16.42,23.77,0,24.45,0h1.36s3.69,10.25,3.69,10.25ZM25.75,5.92l-1.19-3.37-1.24,3.37h2.43Z"/>
+                            <path class="cls-1" d="M36.53,10.25l-2.2-3.35h-1.39v3.35h-2.06V1.62C30.88.73,31.6,0,32.5,0h2.83C35.95,0,36.5.14,36.98.41c.48.28.85.67,1.12,1.18.27.51.41,1.1.41,1.78,0,.44-.05.84-.16,1.2-.1.36-.3.7-.59,1.03-.29.33-.69.64-1.22.94l2.45,3.72h-2.46ZM35.72,4.95c.23-.13.41-.32.54-.57.13-.25.19-.56.19-.93s-.06-.68-.19-.93c-.13-.25-.31-.44-.54-.57-.23-.13-.51-.19-.84-.19h-1.54c-.22,0-.41.18-.41.41v2.98h1.95c.32,0,.6-.06.84-.19Z"/>
+                            <path class="cls-1" d="M42.51,8.49h4.34v1.76h-6.4V2.06C40.45.92,41.37,0,42.51,0h0v8.49Z"/>
+                            <path class="cls-1" d="M50.51,0v10.25h-2.06V2.06C48.46.92,49.38,0,50.51,0h0Z"/>
+                            <path class="cls-1" d="M71.68,10.25h-2.06v-4.38h-4.14v4.38h-2.06V2.06C63.43.92,64.35,0,65.48,0h0v4.11h4.14V0h0c1.14,0,2.06.92,2.06,2.06v8.19Z"/>
+                            <path class="cls-1" d="M80.48,1.76h-2.68v8.49h-2.06V1.76h-2.73C73.02.79,73.8,0,74.77,0h3.95c.97,0,1.76.79,1.76,1.76h0Z"/>
+                            <path class="cls-1" d="M13.61,22.71h-2.19l-.92-2.57h-3.72l-.95,2.57h-2.19l3.4-9.19c.24-.64.84-1.06,1.52-1.06h1.36l3.69,10.25ZM9.86,18.38l-1.19-3.37-1.24,3.37h2.43Z"/>
+                            <path class="cls-1" d="M17.18,12.46v10.25h-2.06v-8.19c0-1.14.92-2.06,2.06-2.06h0Z"/>
+                            <path class="cls-1" d="M24.72,22.71l-2.2-3.35h-1.39v3.35h-2.06v-8.63c0-.9.73-1.62,1.62-1.62h2.83c.62,0,1.17.14,1.65.41.48.28.85.67,1.12,1.18.27.51.41,1.1.41,1.78,0,.44-.05.84-.16,1.2-.1.36-.3.7-.59,1.03-.29.33-.69.64-1.22.94l2.45,3.72h-2.46ZM23.91,17.41c.23-.13.41-.32.54-.57.13-.25.19-.56.19-.93s-.06-.68-.19-.93c-.13-.25-.31-.44-.54-.57-.23-.13-.51-.19-.84-.19h-1.54c-.22,0-.41.18-.41.41v2.98h1.95c.32,0,.6-.06.84-.19Z"/>
+                            <path class="cls-1" d="M30.7,20.95h4.34v1.76h-6.4v-8.19c0-1.14.92-2.06,2.06-2.06h0v8.49Z"/>
+                            <path class="cls-1" d="M38.71,12.46v10.25h-2.06v-8.19c0-1.14.92-2.06,2.06-2.06h0Z"/>
+                            <path class="cls-1" d="M49.28,22.71h-2.33l-4.34-6.83v6.83h-2.06v-8.26c0-1.1.89-1.99,1.99-1.99h.33l4.34,6.84v-6.84h0c1.14,0,2.06.92,2.06,2.06v8.19Z"/>
+                            <path class="cls-1" d="M58.1,14.22h-4.53c-.22,0-.41.18-.41.41v1.93h4.22v1.76h-4.22v2.64h4.94v1.76h-6.99v-8.63c0-.9.73-1.62,1.62-1.62h5.37v1.76Z"/>
+                            <path class="cls-1" d="M62.09,20.67c.33.22.66.33,1,.33.57,0,.99-.11,1.26-.34.27-.22.4-.53.4-.92,0-.23-.08-.42-.23-.58-.15-.16-.35-.29-.58-.4-.23-.11-.56-.23-.97-.37-.63-.23-1.15-.45-1.55-.65-.4-.21-.75-.51-1.04-.91-.29-.4-.44-.92-.44-1.55,0-.57.14-1.07.42-1.49.28-.42.68-.75,1.18-.98.51-.23,1.09-.34,1.75-.34.4,0,.81.09,1.24.26.43.17.82.44,1.19.81.37.37.65.83.87,1.38l-1.61.59c-.32-.49-.6-.83-.87-1.03-.27-.2-.54-.3-.81-.3-.29,0-.54.05-.75.15-.21.1-.36.23-.46.4-.15.25-.19.55-.11.9.18.29.44.51.8.68.24.11.58.26,1.01.42.63.25,1.14.48,1.53.69.39.21.73.51,1.01.89.28.38.42.87.42,1.45s-.15,1.1-.44,1.54c-.3.45-.72.79-1.27,1.04-.55.25-1.2.38-1.95.38s-1.4-.2-2.02-.61c-.61-.41-1.14-.98-1.58-1.71l1.54-.88c.42.56.73.95,1.06,1.17Z"/>
+                            <path class="cls-1" d="M76.85,17.46l-3.13-2.97c-.08-.08-.2-.11-.31-.09l-.93.16c-.12.02-.19.16-.12.27l1.79,3.09s0,.1-.05.11l-2.75.49c-.05,0-.1,0-.14-.04l-1.7-1.39c-.08-.07-.19-.09-.29-.07l-.5.09c-.12.02-.19.16-.12.27l1.34,2.31c.3.52.9.8,1.49.69l8.35-1.47c.5-.09.84-.57.75-1.07h0c-.09-.5-.57-.84-1.07-.75l-2.43.43c-.06,0-.11,0-.15-.05Z"/>
+                            <path class="cls-1" d="M61.98,1.94l-1.25-.57s-.04-.03-.05-.05l-.57-1.25c-.04-.08-.15-.08-.18,0l-.57,1.25s-.03.04-.05.05l-1.25.57c-.08.04-.08.15,0,.18l1.25.57s.04.03.05.05l.57,1.25c.04.08.15.08.18,0l.57-1.25s.03-.04.05-.05l1.25-.57c.08-.04.08-.15,0-.18Z"/>
+                            <path class="cls-1" d="M56.26.39c.08-.04.04-.16-.04-.14-2.36.4-4.15,2.49-4.09,4.99,0,.37.06.72.15,1.07.33-.76.82-1.54,1.47-2.28.08-1.63,1.09-3.01,2.52-3.63Z"/>
+                            <path class="cls-1" d="M61.77,5.9c-.6,1.38-1.93,2.38-3.5,2.51.15-.13.3-.27.45-.42,1.7-1.7,2.54-3.75,2.2-5.07.15,1.13-.83,3.03-2.53,4.73-.27.27-.54.52-.82.75-1.42-.12-2.64-.96-3.3-2.14-.36.5-.64.99-.84,1.46-.07.17-.13.34-.18.49.58.71,1.36,1.26,2.24,1.56-.7.33-1.34.48-1.83.41.63.16,1.43.06,2.27-.29.32.08.66.12,1,.13,2.49.06,4.58-1.73,4.99-4.09.01-.09-.11-.12-.14-.04Z"/>
+                            <path class="cls-1" d="M55.18,4.45c.85-.85,1.75-1.52,2.58-1.96-.15-.11-.24-.28-.24-.47,0-.07.01-.13.03-.19-.98.36-2.04,1.04-2.99,1.99-2.1,2.1-2.89,4.73-1.76,5.86.03.03.06.05.08.08-.76-.92.24-3.27,2.29-5.32Z"/>
+                          </g>
                         </svg>
                     </div>
 
@@ -478,26 +472,30 @@
                         </p>
                     </div>
                     
-                    <!-- Flight & Dest Info -->
-                    <div class="flex gap-6">
+                    <!-- Flight, Dest, & Ticket Info -->
+                    <!-- NEW: Changed to a 3-column grid to fit all info -->
+                    <div class="grid grid-cols-3 gap-4">
                         <div>
                             <p class="ticket-label">Flight</p>
-                            <p class="ticket-data text-lg">ST-2025</p>
+                            <p class="ticket-data">ST-2025</p>
                         </div>
                         <div>
                             <p class="ticket-label">Destination</p>
-                            <p class="ticket-data text-lg">Tropical Paradise</p>
+                            <p class="ticket-data">Tropical Paradise</p>
+                        </div>
+                        <div>
+                            <p class="ticket-label">Ticket #</p>
+                            <p id="userTicket" class="ticket-data">...</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Ticket Stub area -->
-                <!-- MODIFICATION: Removed lg:p-6 class -->
                 <div class="ticket-stub text-center">
                     <!-- NEW: Wrapper for rotated content -->
                     <div class="ticket-stub-content">
                         <!-- Pass card is now nested inside -->
-                        <div id="userPassCard" class="tier-pending w-full">
+                        <div id="userPassCard" class="tier-pending"> <!-- Width 100% is applied by style -->
                             <p id="userTier" class="text-2xl font-bold">Loading...</p>
                         </div>
                     </div>
@@ -512,15 +510,14 @@
                     <p>🏆 Earn points for every correct answer.</p>
                 </div>
                 <div class="flex-grow flex items-center justify-center pt-6">
-                    <a href="game2.html" class="interactive-card" data-label="Guess the Song (Moderate)">
+                    <!-- MODIFIED: Updated game button link, icon, and removed subtitle -->
+                    <a href="game2.html" class="interactive-card" data-label="Guess the Song">
                         <div class="card-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.007 1.916l-7.5 4.125a2.25 2.25 0 01-2.006 0L3.5 15.116A2.25 2.25 0 012.5 13.2V9.45" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9l10.5-3M9 9l-10.5 3m10.5 0v6.553M19.5 6l-10.5 3m10.5 0v6.553M3.5 12.6V15.116A2.25 2.25 0 004.507 17.03l7.5 4.125a2.25 2.25 0 002.006 0l7.5-4.125A2.25 2.25 0 0021.5 15.116V12.6" />
-                            </svg>
+                            <!-- NEW SVG ICON -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 24 24"><g fill="none"><path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21 3.694v3.585a2 2 0 0 1-1.367 1.897L15 10.721V17.5a4.5 4.5 0 1 1-2-3.742V6.44a3 3 0 0 1 2.051-2.846l3.975-1.324A1.5 1.5 0 0 1 21 3.694M7 1a1 1 0 0 1 .946.677l.13.378a3 3 0 0 0 1.869 1.87l.378.129a1 1 0 0 1 0 1.892l-.378.13a3 3 0 0 0-1.87 1.869l-.129.378a1 1 0 0 1-1.892 0l-.13-.378a3 3 0 0 0-1.869-1.87l-.378-.129a1 1 0 0 1 0-1.892l.378-.13a3 3 0 0 0 1.87-1.869l.129-.378A1 1 0 0 1 7 1"/></g></svg>
                         </div>
                         <span class="card-title block font-semibold" style="color: var(--text-title);">Guess the Song</span>
-                        <span class="card-subtitle block font-medium">Moderate</span>
+                        <!-- REMOVED Subtitle -->
                     </a>
                 </div>
             </div>
@@ -536,7 +533,6 @@
                                 <span class="font-semibold text-base md:text-lg">Points:</span>
                                 <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
                             </div>
-                            <!-- NEW: Logout button removed from here -->
                         </div>
                     </div>
                     <!-- History Section Title -->
@@ -548,7 +544,6 @@
                     <div id="historyList" class="flex-grow overflow-y-auto pt-2">
                         <!-- History items will be injected here by JS -->
                     </div>
-                    <!-- MODIFIED: Logout Button removed from here -->
                 </div>
 
                 <!-- NEW: Logout button as a separate element below the card -->
@@ -563,37 +558,41 @@
             <!-- Cell: Bottom Left/Middle (Span) (Rewards) -->
             <div id="grid-rewards" class="dashboard-card flex flex-col overflow-hidden rewards-card">
                 <h3 class="text-lg font-bold flex-shrink-0" style="color: var(--text-title);">Redeem Rewards</h3>
-                <main id="rewardsGrid" class="flex-grow overflow-y-auto pt-4 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    <!-- Reward buttons will be dynamically checked by JS -->
-                    <button class="reward-button" data-cost="5" data-label="Candy" data-reward-code="Reward1">
-                        <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=混" alt="Candy Icon" class="bg-red-100">
-                        <p class="label">Candy</p>
-                        <p class="points">5 pts</p>
+                <main id="rewardsGrid" class="flex-grow overflow-y-auto pt-4 grid grid-cols-4 gap-4 md:gap-6"> <!-- MODIFIED: 4 columns -->
+                    
+                    <!-- NEW REWARD BUTTONS -->
+                    <button class="reward-button" data-cost="10" data-label="₱10 Voucher" data-reward-code="Voucher10">
+                        <img src="https://placehold.co/128x128/FFFBEB/D97706?text=₱10" alt="Voucher Icon" class="bg-amber-100">
+                        <p class="label">₱10 Voucher</p>
+                        <p class="points">10 pts</p>
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
                         <div class="disabled-overlay">Not enough<br>points</div>
                     </button>
-                    <button class="reward-button" data-cost="15" data-label="Cookie" data-reward-code="Reward2">
-                        <img src="https://placehold.co/128x128/FFFBEB/D97706?text=根" alt="Cookie Icon" class="bg-amber-100">
-                        <p class="label">Cookie</p>
-                        <p class="points">15 pts</p>
+
+                    <button class="reward-button" data-cost="50" data-label="Lomo Card" data-reward-code="LomoCard">
+                        <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=LC" alt="Lomo Card Icon" class="bg-sky-100">
+                        <p class="label">Lomo Card</p>
+                        <p class="points">50 pts</p>
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
                         <div class="disabled-overlay">Not enough<br>points</div>
                     </button>
-                    <button class="reward-button" data-cost="45" data-label="Ramen" data-reward-code="Reward3">
-                        <img src="https://placehold.co/128x128/FFF7ED/F97316?text=骨" alt="Ramen Icon" class="bg-orange-100">
-                        <p class="label">Ramen</p>
-                        <p class="points">45 pts</p>
+
+                    <button class="reward-button" data-cost="100" data-label="Official PC" data-reward-code="OfficialPC">
+                        <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=PC" alt="Photocard Icon" class="bg-red-100">
+                        <p class="label">Official PC</p>
+                        <p class="points">100 pts</p>
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
                         <div class="disabled-overlay">Not enough<br>points</div>
                     </button>
-                    <button class="reward-button" data-cost="75" data-label="Photocard" data-reward-code="Reward4">
-                        <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=萄" alt="Photocard Icon" class="bg-sky-100">
-                        <p class="label">Photocard</p>
-                        <p class="points">75 pts</p>
+
+                    <button class="reward-button" data-cost="200" data-label="Official Album" data-reward-code="OfficialAlbum">
+                        <img src="https://placehold.co/128x128/F5F3FF/6D28D9?text=ALBUM" alt="Album Icon" class="bg-violet-100">
+                        <p class="label">Official Album</p>
+                        <p class="points">200 pts</p>
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
                         <div class="disabled-overlay">Not enough<br>points</div>
                     </button>
-                     <!-- Add more buttons here if needed -->
+                    
                 </main>
             </div>
 
@@ -638,7 +637,7 @@
 
     // --- App Configuration ---
     // GET requests (fetch data) MUST use Google Apps Script
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwb2YDEuFLayiuqShjTN9IkhDOWUInGrJCZWuW4_RQ_lky0lo6Xf_Z7E7SUm0e60oBA/exec"; // IMPORTANT: This URL MUST be correct
+    const GAS_WEB_APP_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; // IMPORTANT: This URL MUST be correct
     
     // POST requests (submit data) MUST use SheetDB
     const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID
@@ -647,7 +646,7 @@
     const state = {
         currentUserCode: null,
         currentPoints: 0,
-        inventory: {}, // e.g., { Reward1: 15, Reward2: 5, ... }
+        inventory: {}, // e.g., { Voucher10: 10, LomoCard: 5, ... }
         isRedeeming: false,
         isDataLoaded: false,
     };
@@ -706,13 +705,15 @@
     function formatDate(isoString) {
         if (!isoString) return "Just now";
         try {
+            // NEW: Use local timezone based on prompt
             const date = new Date(isoString);
             return date.toLocaleString('en-US', {
                 month: 'short',
                 day: 'numeric',
                 hour: 'numeric',
                 minute: 'numeric',
-                hour12: true
+                hour12: true,
+                timeZone: 'Asia/Manila' // Set to Philippines time
             });
         } catch (e) {
             console.error("Error formatting date:", isoString, e);
@@ -730,6 +731,10 @@
       }
     
       try {
+        if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbwZCT9QZb7ynw9VKQySRkzGVnbZ2d_djXhFCV0NJNTd28WmfxXpNUpCSvkjtI1DmF0h/exec") {
+            throw new Error("GAS_WEB_APP_URL not set.");
+        }
+        
         // This action fetches ALL data (user, history, inventory)
         const url = `${GAS_WEB_APP_URL}?action=getHomePageData&code=${encodeURIComponent(code)}`;
         const res = await fetch(url);
@@ -746,7 +751,7 @@
         
         // 1. Update User Info & Points
         state.currentPoints = parseInt(result.user?.Points || "0", 10);
-        updateUserCard(result.user); // Update welcome/tier card
+        updateUserCard(result.user); // Update welcome/tier/ticket card
         dom.userPoints.textContent = state.currentPoints; // Update points in history column
 
         // 2. Render History
@@ -754,6 +759,7 @@
 
         // 3. Process Inventory & Update Rewards
         const rawInventoryData = result.inventory || [];
+        // This maps the "Prize" name (e.g., "Lomo Card") to its "Remaining Qty"
         const prizeNameToQuantityMap = rawInventoryData.reduce((acc, item) => {
             const prizeName = item["Prize"];
             const quantity = item["Remaining Qty"];
@@ -764,9 +770,12 @@
         }, {});
 
         state.inventory = {}; // Reset inventory
+        
+        // Map the button's `data-label` to the quantity in the map
         dom.rewardButtons.forEach(button => {
-            const rewardCode = button.dataset.rewardCode;
-            const prizeLabel = button.dataset.label;
+            const rewardCode = button.dataset.rewardCode; // e.g., "LomoCard"
+            const prizeLabel = button.dataset.label; // e.g., "Lomo Card"
+            // Find the quantity from the map using the prizeLabel
             state.inventory[rewardCode] = prizeNameToQuantityMap[prizeLabel] ?? 0;
         });
 
@@ -797,7 +806,8 @@
         if (tier === 'pending') tierName = 'Ticket Pending';
         
         // Reset classes
-        dom.userPassCard.className = "tier-pending w-full"; // Start with default
+        dom.userPassCard.className = "tier-pending"; // Start with default
+        dom.userPassCard.classList.add('w-full'); // Re-add w-full
         
         if (tier.includes('economy')) {
             dom.userPassCard.classList.add('tier-economy');
@@ -810,8 +820,10 @@
         }
 
         dom.userTier.textContent = tierName;
-        // NEW: The JS just updates the name, the "Welcome," text is gone
         dom.userName.querySelector('span').textContent = `${userData?.Name || "Guest"}`;
+        
+        // NEW: Populate Ticket #
+        dom.userTicket.textContent = userData['Ticket #'] || 'N/A';
     }
 
     /**
@@ -838,9 +850,9 @@
             const secondaryText = item.Timestamp ? (item.Transaction || 'Event') : '';
 
             row.innerHTML = `
-                <div class="flex-grow text-left">
-                    <span class="font-semibold block" style="color: var(--text-title);">${primaryText}</span>
-                    <span class="text-xs block">${secondaryText}</span>
+                <div class="flex-grow text-left overflow-hidden mr-2">
+                    <span class="font-semibold block truncate" style="color: var(--text-title);">${primaryText}</span>
+                    <span class="text-xs block truncate">${secondaryText}</span>
                 </div>
                 <span class="font-bold text-lg text-right pl-4 ${points >= 0 ? 'text-green-600' : 'text-red-500'}">${points >= 0 ? '+' : ''}${points}</span>
             `;
@@ -889,7 +901,8 @@
         dom.redeemStatus.classList.add('hidden');
         dom.redeemModal.classList.add('visible');
         
-        dom.redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, parseInt(cost, 10));
+        // MODIFIED: Pass label and cost to the redeem function
+        dom.redeemModalConfirmBtn.onclick = () => redeemReward(rewardCode, parseInt(cost, 10), label);
     }
 
     function closeRedeemModal() { 
@@ -899,17 +912,20 @@
 
     /**
      * Handles the reward redemption (POST to SheetDB)
+     * MODIFIED: Now accepts `label` for the transaction field
      */
-    async function redeemReward(rewardCode, cost) {
+    async function redeemReward(rewardCode, cost, label) {
         if (state.isRedeeming) return;
         state.isRedeeming = true;
 
         dom.redeemModalConfirmBtn.disabled = true;
         dom.redeemModalConfirmBtn.textContent = 'Redeeming...';
+        dom.redeemStatus.classList.add('hidden'); // Hide status on new attempt
 
         // Optimistic UI Update: Deduct points and quantity
         const originalPoints = state.currentPoints;
         const originalInventory = JSON.parse(JSON.stringify(state.inventory)); 
+        
         state.currentPoints -= cost;
         if (state.inventory[rewardCode] !== undefined) {
             state.inventory[rewardCode]--;
@@ -918,17 +934,22 @@
         dom.userPoints.textContent = state.currentPoints; // Update main points display
 
         // This payload POSTS to SheetDB
+        // MODIFIED: Uses the `label` and `-cost` as requested
         const correctedPayload = {
             sheet: "History", // Target "History" sheet
             data: [{
-                "Access Code": state.currentUserCode,
-                "Transaction": `Redeemed ${rewardCode}`, // E: Transaction
-                "Points": -cost, // F: Points
-                "Timestamp": new Date().toISOString() // G: Timestamp
+                "Access Code": state.currentUserCode, // Column A
+                "Transaction": label, // Column D: Use the button's label (e.g., "₱10 Voucher")
+                "Points": -cost, // Column E: Use the negative cost (e.g., -10)
+                "Timestamp": new Date().toISOString() // Column F
             }]
         };
 
         try {
+            if (SHEETDB_POST_API_ID === "5ss66fnmfz8vl" || !SHEETDB_POST_API_ID) {
+                throw new Error("SheetDB API ID not set.");
+            }
+            
             const response = await fetch(`https://sheetdb.io/api/v1/${SHEETDB_POST_API_ID}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -936,7 +957,13 @@
             });
 
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
+                // Try to parse error from SheetDB
+                let errorMsg = `API Error: ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    errorMsg = errorData.error || errorMsg;
+                } catch (e) { /* ignore parsing error */ }
+                throw new Error(errorMsg);
             }
 
             // Success
@@ -955,17 +982,19 @@
             updateRewardsUI();
             dom.userPoints.textContent = state.currentPoints;
 
-            dom.redeemStatus.textContent = `Error: Could not redeem.`;
+            dom.redeemStatus.textContent = `Error: ${error.message}`;
             dom.redeemStatus.className = 'font-semibold mt-2 text-red-500';
             dom.redeemStatus.classList.remove('hidden');
 
         } finally {
-            // Re-sync with server after a delay, regardless of outcome
+            // Re-enable button and re-sync with server after a delay
             setTimeout(() => {
-                state.isRedeRedeeming = false; 
+                state.isRedeeming = false; // Corrected state name
                 dom.redeemModalConfirmBtn.disabled = false;
                 dom.redeemModalConfirmBtn.textContent = 'Redeem Now';
-                fetchHomePageData(state.currentUserCode, true); // Re-fetch ALL data
+                
+                // Full re-fetch to get accurate points and inventory
+                fetchHomePageData(state.currentUserCode, true); 
             }, 2000);
         }
     }
@@ -977,7 +1006,8 @@
         dom.dashboard = document.getElementById('dashboard');
         dom.userName = document.getElementById('userName');
         dom.userTier = document.getElementById('userTier');
-        dom.userPassCard = document.getElementById('userPassCard'); // NEW
+        dom.userTicket = document.getElementById('userTicket'); // NEW
+        dom.userPassCard = document.getElementById('userPassCard');
         dom.userPoints = document.getElementById('userPoints');
         dom.historyList = document.getElementById('historyList');
         dom.refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
