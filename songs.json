@@ -558,5 +558,125 @@
       "Invitation - Junny",
       "Bad Boy - Red Velvet"
     ]
+  },
+  {
+    "audio": "song57.mp3",
+    "correctAnswer": "Whiplash - Aespa",
+    "choices": [
+      "Whiplash - Aespa",
+      "PTT(Paint the Town) - Loona",
+      "Maestro - Seventeen",
+      "Step back - Got the Beat"
+    ]
+  },
+  {
+    "audio": "song58.mp3",
+    "correctAnswer": "PTT(Paint the Town) - Loona",
+    "choices": [
+      "PTT(Paint the Town) - Loona",
+      "Work - ATEEZ",
+      "Loco - Itzy",
+      "Flash - X1"
+    ]
+  },
+  {
+    "audio": "song59.mp3",
+    "correctAnswer": "Maestro - Seventeen",
+    "choices": [
+      "Maestro - Seventeen",
+      "Drama - Aespa",
+      "Eve Psyche & The Bluebeard's Wife - Lesserafim",
+      "Bon Bon Chocolat - Everglow"
+    ]
+  },
+  {
+    "audio": "song60.mp3",
+    "correctAnswer": "Step back - Got the Beat",
+    "choices": [
+      "Step back - Got the Beat",
+      "Midas Touch - Kiss of Life",
+      "Crazy - Le Serrafim",
+      "Work - ATEEZ"
+    ]
+  },
+  {
+    "audio": "song61.mp3",
+    "correctAnswer": "Work - ATEEZ",
+    "choices": [
+      "Work - ATEEZ",
+      "Loco - Itzy",
+      "Flash - X1",
+      "Drama - Aespa"
+    ]
+  },
+  {
+    "audio": "song62.mp3",
+    "correctAnswer": "Loco - Itzy",
+    "choices": [
+      "Loco - Itzy",
+      "Eve Psyche & The Bluebeard's Wife - Lesserafim",
+      "Bon Bon Chocolat - Everglow",
+      "Midas Touch - Kiss of Life"
+    ]
+  },
+  {
+    "audio": "song63.mp3",
+    "correctAnswer": "Flash - X1",
+    "choices": [
+      "Flash - X1",
+      "Crazy - Le Serrafim",
+      "Whiplash - Aespa",
+      "PTT(Paint the Town) - Loona"
+    ]
+  },
+  {
+    "audio": "song64.mp3",
+    "correctAnswer": "Drama - Aespa",
+    "choices": [
+      "Drama - Aespa",
+      "Maestro - Seventeen",
+      "Step back - Got the Beat",
+      "Work - ATEEZ"
+    ]
+  },
+  {
+    "audio": "song65.mp3",
+    "correctAnswer": "Eve Psyche & The Bluebeard's Wife - Lesserafim",
+    "choices": [
+      "Eve Psyche & The Bluebeard's Wife - Lesserafim",
+      "Loco - Itzy",
+      "Flash - X1",
+      "Bon Bon Chocolat - Everglow"
+    ]
+  },
+  {
+    "audio": "song66.mp3",
+    "correctAnswer": "Bon Bon Chocolat - Everglow",
+    "choices": [
+      "Bon Bon Chocolat - Everglow",
+      "Midas Touch - Kiss of Life",
+      "Crazy - Le Serrafim",
+      "Whiplash - Aespa"
+    ]
+  },
+  {
+    "audio": "song67.mp3",
+    "correctAnswer": "Midas Touch - Kiss of Life",
+    "choices": [
+      "Midas Touch - Kiss of Life",
+      "PTT(Paint the Town) - Loona",
+      "Maestro - Seventeen",
+      "Step back - Got the Beat"
+    ]
+  },
+  {
+    "audio": "song68.mp3",
+    "correctAnswer": "Crazy - Le Serrafim",
+    "choices": [
+      "Crazy - Le Serrafim",
+      "Work - ATEEZ",
+      "Drama - Aespa",
+      "Eve Psyche & The Bluebeard's Wife - Lesserafim"
+    ]
   }
 ]
