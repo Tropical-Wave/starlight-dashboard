@@ -905,7 +905,10 @@
         };
 
         try {
-            if (SHEETDB_POST_API_ID === "5ss66fnmfz8vl" || !SHEETDB_POST_API_ID) {
+            // *** THE FIX IS HERE ***
+            // Changed from: if (SHEETDB_POST_API_ID === "5ss66fnmfz8vl" || !SHEETDB_POST_API_ID)
+            // Now correctly checks only if the ID is missing.
+            if (!SHEETDB_POST_API_ID) {
                 throw new Error("SheetDB API ID not set.");
             }
             
