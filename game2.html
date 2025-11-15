@@ -24,8 +24,8 @@
     <!-- Audio Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     
-    <!-- LOTTIEFILE SCRIPT -->
-    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
+    <!-- LOTTIEFILE SCRIPT (REMOVED) -->
+    <!-- <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script> -->
 
     <style>
         /* --- UNIFIED Color Palette & Font from home.html --- */
@@ -249,22 +249,80 @@
             transition: stroke-dasharray 1s linear;
         }
 
-        /* Lottie Animation Container */
-        #lottieContainer {
+        /* --- NEW: Music Note Animation --- */
+        #musicNoteContainer {
             width: 100%;
-            max-width: 400px; /* Max width of the animation */
-            height: auto;
-            min-height: 300px; /* Give it space */
-            /* REMOVED card styles (background, border, shadow, padding) */
+            max-width: 400px; /* Max width of the animation area */
+            height: 300px; /* Fixed height for the animation area */
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative; /* Parent for absolute positioned notes */
+            overflow: hidden; /* Hide notes that float outside */
+            margin-bottom: 1rem; /* Space below the animation */
         }
-        #lottieContainer dotlottie-wc {
-            width: 300px;
-            height: 300px;
-            max-width: 100%;
+        
+        .music-note {
+            position: absolute;
+            bottom: -40px; /* Start below the container */
+            color: white;
+            font-size: 2rem; /* Base size */
+            opacity: 0;
+            animation: dance 4s infinite linear;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+
+        /* Create variations in animation */
+        .music-note.note-1 {
+            left: 15%;
+            animation-delay: 0s;
+            font-size: 1.5rem;
+        }
+        .music-note.note-2 {
+            left: 35%;
+            animation-delay: 1s;
+            font-size: 2.5rem;
+        }
+        .music-note.note-3 {
+            left: 55%;
+            animation-delay: 2s;
+            font-size: 1.75rem;
+        }
+        .music-note.note-4 {
+            left: 75%;
+            animation-delay: 3s;
+            font-size: 2.25rem;
+        }
+        .music-note.note-5 { /* Add one more */
+            left: 45%;
+            animation-delay: 3.5s;
+            font-size: 1.25rem;
+        }
+
+        @keyframes dance {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                /* Fade in */
+                opacity: 0.8;
+            }
+            80% {
+                /* Move up, slightly sideways, and rotate */
+                transform: translateY(-300px) translateX(20px) rotate(20deg);
+                opacity: 0.5;
+            }
+            100% {
+                /* Float all the way up and fade out */
+                transform: translateY(-350px) translateX(-20px) rotate(-20deg);
+                opacity: 0;
+            }
+        }
+
+
+        /* Lottie Animation Container (REMOVED) */
+        /* #lottieContainer { ... } */
 
         /* Choices Section */
         .choices-section {
@@ -434,14 +492,17 @@
             </div>
         </div>
 
-        <!-- Lottie Animation Container -->
-        <div id="lottieContainer">
-            <dotlottie-wc 
-                src="https://lottie.host/47bc7a94-703c-4950-8cf5-c6ae3e2239e3/6vTIvEnXOV.lottie" 
-                autoplay 
-                loop>
-            </dotlottie-wc>
+        <!-- NEW: Music Note Animation Container -->
+        <div id="musicNoteContainer">
+            <div class="music-note note-1">🎵</div>
+            <div class="music-note note-2">🎶</div>
+            <div class="music-note note-3">🎶</div>
+            <div class="music-note note-4">🎵</div>
+            <div class="music-note note-5">🎵</div>
         </div>
+
+        <!-- Lottie Animation Container (REMOVED) -->
+        <!-- <div id="lottieContainer"> ... </div> -->
 
         <!-- Choices -->
         <div id="choicesSection" class="choices-section">
@@ -465,6 +526,8 @@
                 Sound Effect by <a href="https://pixabay.com/users/n2kstudio-17715924/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">N2kStudio</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">Pixabay</a>
                 <br>
                 Lottie Animation by <a href="https://lottiefiles.com/user/131268" target="_blank" rel="noopener noreferrer">M S</a> on <a href="https://lottiefiles.com/animations/sound-wave-4-mJgEUxx2iX" target="_blank" rel="noopener noreferrer">LottieFiles</a>
+                <br>
+                Music Note Icons: 🎵, 🎶
             </footer>
         </div>
     </div>
@@ -493,8 +556,8 @@
     const pointsEarnedText = document.getElementById('pointsEarnedText');
     const doneButton = document.getElementById('doneButton');
     
-    // LOTTIEFILE container
-    const lottieContainer = document.getElementById('lottieContainer');
+    // LOTTIEFILE container (RENAMED)
+    const musicNoteContainer = document.getElementById('musicNoteContainer');
 
     // --- Sound Effects (using Tone.js) ---
     // We wrap sound playback in try...catch blocks to prevent errors if Tone.js fails
@@ -635,7 +698,7 @@
         // 1. Reset UI
         choicesSection.classList.remove('visible');
         countdownTimerContainer.classList.add('hidden');
-        lottieContainer.classList.remove('hidden'); // Show Lottie animation
+        musicNoteContainer.classList.remove('hidden'); // Show music notes
         resetChoiceButtons();
 
         // 2. Clear timers
@@ -674,7 +737,7 @@
             displayChoices(songData.choices);
             countdownTimerContainer.classList.remove('hidden');
             startCountdownTimer(CHOICES_DISPLAY_DURATION / 1000);
-            lottieContainer.classList.add('hidden'); // Hide Lottie when choices appear
+            musicNoteContainer.classList.add('hidden'); // Hide music notes
         }, CHOICES_APPEAR_DELAY);
 
         // Timer for the whole round (fail-safe)
@@ -745,7 +808,7 @@
         clearTimeout(choicesTimer);
         clearInterval(countdownInterval);
         countdownTimerContainer.classList.add('hidden');
-        lottieContainer.classList.add('hidden');
+        musicNoteContainer.classList.add('hidden');
         if (songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
 
         // 2. Show feedback on buttons
