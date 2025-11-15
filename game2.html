@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Guess the Song</title>
 
+    <!-- PWA Meta Tags from home.html -->
     <meta name="theme-color" content="#89B3D9"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,9 +18,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Font is unified to "Inter" from home.html -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Audio Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     
+    <!-- LOTTIEFILE SCRIPT -->
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
 
     <style>
@@ -50,6 +55,7 @@
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; /* Prevent body scroll */
+            /* FIXED: Using exact background from home.html */
             background-color: var(--primary-accent);
             background: linear-gradient(135deg, var(--primary-accent) 0%, #7aa8cc 100%);
             font-family: 'Inter', sans-serif; 
@@ -67,6 +73,11 @@
             overflow: hidden;
             padding: var(--base-padding);
         }
+        @media (max-width: 767px) {
+            .screen-container {
+                padding: 1rem;
+            }
+        }
         .screen-container.active {
             opacity: 1; visibility: visible;
         }
@@ -78,7 +89,7 @@
             border: 1px solid var(--card-border); 
             box-shadow: 0 8px 16px rgba(45, 55, 72, 0.1), 0 4px 6px rgba(45, 55, 72, 0.05);
             padding: clamp(1.5rem, 5vw, 2.5rem);
-            width: 90%;
+            width: 100%;
             max-width: 500px;
             text-align: center;
         }
@@ -94,6 +105,7 @@
             cursor: pointer;
             width: 100%;
             font-size: 1.1rem;
+            line-height: 1.5rem; /* Ensure text doesn't jump when changing */
         }
         .modal-button.primary { 
             background-color: var(--cta-accent); 
@@ -105,7 +117,8 @@
             transform: translateY(-2px);
         }
         .modal-button.primary:disabled { 
-            background: #94A3B8; 
+            background: #94A3B8; /* Muted color */
+            color: white;
             opacity: 0.7; 
             cursor: wait; 
             transform: none;
@@ -157,6 +170,13 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: background-color 0.2s, transform 0.1s;
             z-index: 10;
+        }
+        @media (max-width: 767px) {
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.6rem;
+            }
         }
         .back-button:hover {
             background-color: rgba(255, 255, 255, 1);
@@ -229,9 +249,10 @@
 
         /* Lottie Animation Container */
         #lottieContainer {
-            width: 90%;
+            width: 100%;
             max-width: 400px;
             height: auto;
+            min-height: 320px; /* Give it space */
             background-color: var(--card-bg);
             border-radius: 1.5rem;
             border: 1px solid var(--card-border); 
@@ -260,12 +281,17 @@
             visibility: hidden;
             transition: opacity 0.3s ease-in;
         }
+        @media (max-width: 767px) {
+            .choices-section {
+                gap: 0.75rem;
+            }
+        }
         .choices-section.visible {
             opacity: 1;
             visibility: visible;
         }
 
-        /* Choice Button (Styled like reward-button) */
+        /* Choice Button (Styled like reward-button from home.html) */
         .choice-button {
             background-color: white; 
             border: 1px solid var(--card-border);
@@ -307,16 +333,23 @@
             text-align: center;
         }
 
-        /* Answer feedback colors */
+        /* Answer feedback colors (from home.html tier styles) */
         .choice-button.correct {
             background-color: var(--tier1-green-bg);
             border-color: var(--tier1-green-border);
             box-shadow: 0 0 15px rgba(42, 116, 92, 0.4);
         }
+        .choice-button.correct .song-title,
+        .choice-button.correct .artist-name {
+            color: var(--tier1-green-text);
+        }
         .choice-button.wrong {
             background-color: #FEE2E2; /* Light red */
-            border-color: #EF4444; /* Red */
+            border-color: #FCA5A5; /* Red border */
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+        .choice-button.wrong .song-title {
+            color: #B91C1C; /* Dark red text */
         }
 
         /* Result Screen */
@@ -344,7 +377,7 @@
         .result-footer {
             margin-top: 2rem;
             font-size: 0.75rem;
-            color: #9CA3AF;
+            color: #A0AEC0; /* Lighter text-body */
         }
         .result-footer a {
             color: var(--text-body);
@@ -360,6 +393,7 @@
 </head>
 <body>
 
+    <!-- Intro Screen -->
     <div id="introScreen" class="screen-container active">
         <a href="home.html" class="back-button">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -379,6 +413,7 @@
         </div>
     </div>
 
+    <!-- Game Screen -->
     <div id="gameScreen" class="screen-container hidden">
         <a href="home.html" class="back-button">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -397,15 +432,16 @@
             </div>
         </div>
 
+        <!-- Lottie Animation Container -->
         <div id="lottieContainer">
             <dotlottie-wc 
                 src="https://lottie.host/f1156bd6-dacb-4851-b1d5-3d8a32e9eb04/AmPd63uxQj.lottie" 
-                style="width: 300px; height: 300px;" 
                 autoplay 
                 loop>
             </dotlottie-wc>
         </div>
 
+        <!-- Choices -->
         <div id="choicesSection" class="choices-section">
             <button class="choice-button" data-choice-index="0"></button>
             <button class="choice-button" data-choice-index="1"></button>
@@ -414,6 +450,7 @@
         </div>
     </div>
 
+    <!-- Result Screen -->
     <div id="resultScreen" class="screen-container hidden">
         <div class="dashboard-card">
             <h2 id="resultMessage" class="message">Quiz Complete!</h2>
@@ -424,6 +461,8 @@
             </div>
             <footer class="result-footer">
                 Sound Effect by <a href="https://pixabay.com/users/n2kstudio-17715924/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">N2kStudio</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">Pixabay</a>
+                <br>
+                Lottie Animation by <a href="https://lottiefiles.com/user/207005" target="_blank" rel="noopener noreferrer">Margarita Ivanchikova</a> on <a href="https://lottiefiles.com/animations/music-A0wJ1ZYdAf" target="_blank" rel="noopener noreferrer">LottieFiles</a>
             </footer>
         </div>
     </div>
@@ -432,7 +471,7 @@
     // --- Constants and DOM Elements ---
     const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // From home.html
     const QUIZ_QUESTION_COUNT = 10;
-    const POINTS_PER_ANSWER = 1; // NEW: Scoring logic
+    const POINTS_PER_ANSWER = 1; // Scoring logic
     const SONG_PLAYBACK_DURATION = 10000;
     const CHOICES_APPEAR_DELAY = 5000;
     const CHOICES_DISPLAY_DURATION = 10000;
@@ -456,6 +495,7 @@
     const lottieContainer = document.getElementById('lottieContainer');
 
     // --- Sound Effects (using Tone.js) ---
+    // We wrap sound playback in try...catch blocks to prevent errors if Tone.js fails
     const correctSoundPlayer = new Tone.Player({ url: 'correct.wav', autostart: false }).toDestination();
     const wrongSoundPlayer = new Tone.Player({ url: 'wrong.wav', autostart: false }).toDestination();
     const gameDoneSoundPlayer = new Tone.Player({ url: 'done.wav', autostart: false }).toDestination();
@@ -474,7 +514,7 @@
     let allSongs = [];
     let shuffledSongs = [];
     let currentQuestionIndex = 0;
-    let score = 0;
+    let finalScore = 0; // Use 'finalScore' to avoid conflict
     let roundTimer = null;
     let choicesTimer = null;
     let countdownInterval = null;
@@ -510,11 +550,12 @@
                 new Promise(resolve => {
                     Tone.loaded().then(() => {
                         audioLoaded = true;
+                        console.log("Audio assets loaded.");
                         resolve();
                     }).catch(e => {
                         audioLoaded = false;
                         console.error("Error loading audio assets:", e);
-                        resolve(); 
+                        resolve(); // Resolve anyway so game can start (silently)
                     });
                 })
             ]);
@@ -526,6 +567,7 @@
             resetGame();
             startButton.textContent = "Start Quiz";
             startButton.disabled = false;
+            console.log("Quiz songs and assets ready.");
 
         } catch (error) {
             console.error('Failed to initialize game:', error);
@@ -536,7 +578,7 @@
     }
 
     function resetGame() {
-        score = 0;
+        finalScore = 0;
         currentQuestionIndex = 0;
         shuffledSongs = shuffleArray([...allSongs]).slice(0, QUIZ_QUESTION_COUNT);
     }
@@ -560,18 +602,21 @@
         }
 
         loadQuestion();
+        // Handle browser back button during quiz
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', handlePopState);
     }
 
-    function handlePopState() {
+    function handlePopState(event) {
         if (gameActive) {
-            const confirmExit = window.confirm("Exiting the quiz will reset your progress. Are you sure?");
+            const confirmExit = window.confirm("Are you sure you want to quit? Your progress will be lost.");
             if (confirmExit) {
+                gameActive = false;
                 if(songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
                 window.removeEventListener('popstate', handlePopState);
-                window.location.href = 'home.html';
+                history.back(); // Go back to home.html
             } else {
+                // Stay on the page
                 history.pushState(null, null, location.href);
             }
         }
@@ -585,21 +630,25 @@
 
         const songData = shuffledSongs[currentQuestionIndex];
 
+        // 1. Reset UI
         choicesSection.classList.remove('visible');
         countdownTimerContainer.classList.add('hidden');
         lottieContainer.classList.remove('hidden'); // Show Lottie animation
         resetChoiceButtons();
 
+        // 2. Clear timers
         clearTimeout(roundTimer);
         clearTimeout(choicesTimer);
         clearInterval(countdownInterval);
 
+        // 3. Reset countdown timer visual
         countdownText.textContent = CHOICES_DISPLAY_DURATION / 1000;
         const radius = 15.9155;
         const circumference = 2 * Math.PI * radius;
         countdownCircleProgress.style.transition = `none`;
         countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`;
 
+        // 4. Stop previous song and play new one
         if (songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
 
         if (audioLoaded) {
@@ -608,7 +657,7 @@
                 songSnippetPlayer.start(0, 0, SONG_PLAYBACK_DURATION / 1000);
             } catch (e) {
                 console.error("Error loading or playing song snippet:", e);
-                handleAnswer(null, false);
+                handleAnswer(null, false); // Fail the question and move on
                 return;
             }
         } else {
@@ -617,6 +666,8 @@
             return;
         }
 
+        // 5. Set new timers
+        // Timer to show choices
         choicesTimer = setTimeout(() => {
             displayChoices(songData.choices);
             countdownTimerContainer.classList.remove('hidden');
@@ -624,8 +675,9 @@
             lottieContainer.classList.add('hidden'); // Hide Lottie when choices appear
         }, CHOICES_APPEAR_DELAY);
 
+        // Timer for the whole round (fail-safe)
         roundTimer = setTimeout(() => {
-            handleAnswer(null, false);
+            handleAnswer(null, false); // Time ran out
         }, TOTAL_ROUND_DURATION);
     }
 
@@ -654,7 +706,6 @@
         countdownCircleProgress.getBoundingClientRect(); 
         
         countdownCircleProgress.style.transition = `stroke-dasharray 1s linear`;
-        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`;
 
         // Wait a frame before starting animation
         requestAnimationFrame(() => {
@@ -672,8 +723,9 @@
             }
             countdownText.textContent = timeRemaining;
 
-            if (timeRemaining <= 3 && timeRemaining >= 0 && audioLoaded) {
-                timerTickSound.triggerAttackRelease('G4', '16n');
+            // Play tick sound on last 3 seconds
+            if (timeRemaining <= 3 && timeRemaining > 0 && audioLoaded) {
+                try { timerTickSound.triggerAttackRelease('G4', '16n'); } catch(e) {}
             }
             
             const progress = (timeRemaining / durationInSeconds) * circumference;
@@ -683,17 +735,18 @@
     }
 
     function handleAnswer(selectedAnswer, isCorrect) {
-        if (!gameActive) return; 
-        gameActive = false;
+        if (!gameActive) return; // Prevent double-clicks
+        gameActive = false; // Lock game during feedback
 
+        // 1. Stop all timers and audio
         clearTimeout(roundTimer);
         clearTimeout(choicesTimer);
         clearInterval(countdownInterval);
         countdownTimerContainer.classList.add('hidden');
         lottieContainer.classList.add('hidden');
-
         if (songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
 
+        // 2. Show feedback on buttons
         const songData = shuffledSongs[currentQuestionIndex];
         let correctlyAnswered = false;
 
@@ -709,21 +762,23 @@
             } else if (selectedAnswer && buttonFullText.trim() === selectedAnswer.trim()) {
                 button.classList.add('wrong');
             }
-            button.disabled = true;
+            button.disabled = true; // Disable all buttons
         });
 
+        // 3. Play sounds and update score
         if (correctlyAnswered) {
-            score++; // Score is 1 point per answer
+            finalScore++; // Score is 1 point per answer
             if(audioLoaded) { try { correctSoundPlayer.start(); } catch (e) {} }
         } else {
             if(audioLoaded) { try { wrongSoundPlayer.start(); buzzerSound.triggerAttackRelease('8n', 'C2'); } catch (e) {} }
         }
 
+        // 4. Go to next question after a delay
         setTimeout(() => {
             currentQuestionIndex++;
-            gameActive = true;
+            gameActive = true; // Unlock game for next round
             loadQuestion();
-        }, 1500);
+        }, 1500); // 1.5 second feedback
     }
 
     function resetChoiceButtons() {
@@ -737,42 +792,48 @@
     function endQuiz() {
         gameActive = false;
         if(songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
-        if(audioLoaded) gameDoneSoundPlayer.start();
+        if(audioLoaded) { try { gameDoneSoundPlayer.start(); } catch(e) {} }
         window.removeEventListener('popstate', handlePopState);
 
+        // Show results
         showScreen(resultScreen);
         doneButton.disabled = false;
+        doneButton.textContent = "Done";
 
-        // NEW: Updated scoring message logic
+        // Updated scoring message logic
         resultMessage.textContent = "Quiz Complete!";
-        resultSubtitle.textContent = `You answered ${score} out of ${QUIZ_QUESTION_COUNT} correctly.`;
-        pointsEarnedText.textContent = `You earned ${score * POINTS_PER_ANSWER} points!`;
+        resultSubtitle.textContent = `You answered ${finalScore} out of ${QUIZ_QUESTION_COUNT} correctly.`;
+        pointsEarnedText.textContent = `You earned ${finalScore * POINTS_PER_ANSWER} points!`;
         pointsEarnedText.classList.remove('hidden');
 
-        // NEW: Send points if score is greater than 0
-        if (score > 0) {
-            sendPointsToSheetDB();
-        }
+        // IMPORTANT: We do NOT send points here.
+        // The "Done" button will handle it.
     }
 
     /**
-     * NEW: Rewritten sendPointsToSheetDB function based on home.html
-     * This function now sends a payload matching the specified History sheet structure
+     * POSTS the final score to SheetDB.
+     * This function is now called by the "Done" button.
      */
     async function sendPointsToSheetDB() {
         if (!currentUserCode) {
             console.error("No current user code found. Cannot send points.");
             resultSubtitle.textContent += "\n(Error: Could not save points - no user code)";
-            return;
+            throw new Error("No user code"); // Throw error to stop the "Done" button
+        }
+        
+        // Only send if score > 0
+        if (finalScore <= 0) {
+            console.log("No points earned, skipping send.");
+            return; // Return a success (nothing to do)
         }
 
-        // NEW: Payload based on user request
+        // FIXED: Payload to match user request exactly
         const payload = {
             sheet: "History", // Sheet 2
             data: [{
                 "Access Code": currentUserCode,        // Column A
                 "Transaction": "Guess the Song",       // Column D
-                "Points": score * POINTS_PER_ANSWER,   // Column E (the final score)
+                "Points": finalScore * POINTS_PER_ANSWER, // Column E (the final score)
                 "Timestamp": new Date().toISOString()  // Column F
             }]
         };
@@ -791,29 +852,52 @@
 
             const result = await response.json();
             console.log('Points sent to SheetDB:', result);
+            // Return success
 
         } catch (error) {
             console.error('Failed to send points to SheetDB:', error);
-            // Append error message to subtitle, like in home.html
-            let errorMessage = "\n(Error saving points. Please tell staff.)";
-            resultSubtitle.textContent += errorMessage;
+            // Append error message to subtitle
+            resultSubtitle.textContent += "\n(Error saving points. Please tell staff.)";
+            // Return a failure
+            throw error; // Re-throw the error so the "Done" button knows it failed
         }
     }
 
     // --- Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
         initializeGame();
+        
         startButton.addEventListener('click', startQuiz);
-        doneButton.addEventListener('click', () => {
+
+        // FIXED: "Done" button listener
+        doneButton.addEventListener('click', async () => {
             doneButton.disabled = true;
-            window.location.href = 'home.html';
+            doneButton.textContent = "Saving...";
+
+            try {
+                // Wait for the sendPoints function to complete.
+                // It will handle the logic of skipping if score is 0.
+                await sendPointsToSheetDB();
+                
+                // If it succeeds (or skips), redirect
+                window.location.href = 'home.html';
+                
+            } catch (error) {
+                // If it fails, log it and re-enable the button
+                console.error("Failed to save score, not redirecting.", error);
+                doneButton.disabled = false;
+                doneButton.textContent = "Done (Save Failed)";
+                // You can add a more user-friendly alert here
+                alert("Error saving your score. Please try again or contact staff.");
+            }
         });
     });
 
+    // Handle page close/refresh
     window.addEventListener('beforeunload', (event) => {
         if (gameActive) {
             event.preventDefault();
-            event.returnValue = '';
+            event.returnValue = ''; // Standard for most browsers
         }
     });
 
