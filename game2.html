@@ -198,9 +198,11 @@
             max-width: 900px;
             position: relative;
             padding: 0 4rem; /* Space for back button and timer */
+            margin-bottom: 1rem; /* Add some space below header */
         }
         #gameScreen .header-quiz {
-            font-size: clamp(2rem, 7vw, 2.5rem);
+            /* MODIFIED: Increased font size */
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
             font-weight: 700;
             line-height: 1;
             color: white; /* Light text on dark bg */
@@ -250,14 +252,10 @@
         /* Lottie Animation Container */
         #lottieContainer {
             width: 100%;
-            max-width: 400px;
+            max-width: 400px; /* Max width of the animation */
             height: auto;
-            min-height: 320px; /* Give it space */
-            background-color: var(--card-bg);
-            border-radius: 1.5rem;
-            border: 1px solid var(--card-border); 
-            box-shadow: 0 8px 16px rgba(45, 55, 72, 0.1), 0 4px 6px rgba(45, 55, 72, 0.05);
-            padding: 1rem;
+            min-height: 300px; /* Give it space */
+            /* REMOVED card styles (background, border, shadow, padding) */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -304,7 +302,8 @@
             align-items: center;
             justify-content: center;
             padding: clamp(1rem, 3vw, 1.5rem); 
-            min-height: 80px;
+            /* MODIFIED: Slightly taller buttons */
+            min-height: 90px;
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
@@ -373,6 +372,9 @@
         #resultScreen .done-button-container {
             width: 100%;
             max-width: 300px;
+            /* FIXED: Add auto margins to center the container */
+            margin-left: auto;
+            margin-right: auto;
         }
         .result-footer {
             margin-top: 2rem;
@@ -435,7 +437,7 @@
         <!-- Lottie Animation Container -->
         <div id="lottieContainer">
             <dotlottie-wc 
-                src="https://lottie.host/f1156bd6-dacb-4851-b1d5-3d8a32e9eb04/AmPd63uxQj.lottie" 
+                src="https://lottie.host/47bc7a94-703c-4950-8cf5-c6ae3e2239e3/6vTIvEnXOV.lottie" 
                 autoplay 
                 loop>
             </dotlottie-wc>
@@ -462,7 +464,7 @@
             <footer class="result-footer">
                 Sound Effect by <a href="https://pixabay.com/users/n2kstudio-17715924/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">N2kStudio</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">Pixabay</a>
                 <br>
-                Lottie Animation by <a href="https://lottiefiles.com/user/207005" target="_blank" rel="noopener noreferrer">Margarita Ivanchikova</a> on <a href="https://lottiefiles.com/animations/music-A0wJ1ZYdAf" target="_blank" rel="noopener noreferrer">LottieFiles</a>
+                Lottie Animation by <a href="https://lottiefiles.com/user/131268" target="_blank" rel="noopener noreferrer">M S</a> on <a href="https://lottiefiles.com/animations/sound-wave-4-mJgEUxx2iX" target="_blank" rel="noopener noreferrer">LottieFiles</a>
             </footer>
         </div>
     </div>
