@@ -5,185 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Guess the Song</title>
 
-    <meta name="theme-color" content="#EEF7F6"/>
+    <meta name="theme-color" content="#89B3D9"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Guess Song">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
-    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png"> <!-- Changed to local path -->
-    <link rel="manifest" href="manifest.json"> <!-- Link to manifest for PWA -->
-    <meta name="mobile-web-app-capable" content="yes"> <!-- For Android PWA -->
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
 
     <style>
-        /* Base styles for a light, modern kiosk interface */
+        /* --- UNIFIED Color Palette & Font from home.html --- */
+        :root {
+            /* Core Palette */
+            --background: #89B3D9; 
+            --card-bg: #FFFFFF; /* "white" */
+            --card-border: #E1E5E3;
+            --primary-accent: #89B3D9; /* Brand Blue */
+            --cta-accent: #F4D35E;
+            --text-title: #2D3748;
+            --text-body: #5F7D97;
+            --text-on-cta: #1C2B26;
+
+            /* Tier Colors */
+            --tier1-green-bg: #E6F3E9;
+            --tier1-green-border: #C8E2D0;
+            --tier1-green-text: #2A745C;
+
+            /* Sizing variables */
+            --base-font-size: 16px;
+            --base-padding: 1.5rem;
+            --base-gap: 1.5rem;
+        }
+
+        /* --- Base Styles --- */
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background-color: #EEF7F6;
-            font-family: 'Poppins', sans-serif; color: #334155;
-            font-size: 16px; /* Base font size for responsiveness */
-            box-sizing: border-box; /* Crucial for consistent sizing */
+            overflow: hidden; /* Prevent body scroll */
+            background-color: var(--primary-accent);
+            background: linear-gradient(135deg, var(--primary-accent) 0%, #7aa8cc 100%);
+            font-family: 'Inter', sans-serif; 
+            color: var(--text-body);
+            font-size: var(--base-font-size);
+            box-sizing: border-box;
         }
-        /* Adjust base font size for smaller screens */
-        @media (max-width: 767px) {
-            html, body {
-                font-size: 14px;
-            }
-        }
-        @media (min-width: 768px) and (max-width: 1023px) {
-            html, body {
-                font-size: 15px;
-            }
-        }
+        *, *:before, *:after { box-sizing: inherit; }
 
-        /* Gradient variables from index.html */
-        :root {
-            --gradient-start: #4BA7AD; --gradient-mid: #89B3D9;
-            --gradient-end: #837FD9; --gradient-angle: 135deg;
-            --brand-color: #4BA7AD;
-        }
-
-        .gradient-bg {
-            background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
-        }
-
+        /* --- Screen Container --- */
         .screen-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100dvh;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             opacity: 0; visibility: hidden; transition: opacity 0.5s ease-out, visibility 0.5s;
             overflow: hidden;
-            box-sizing: border-box; /* Ensure padding is included in width/height */
-            padding: 1rem; /* Default padding for all screens */
+            padding: var(--base-padding);
         }
         .screen-container.active {
             opacity: 1; visibility: visible;
         }
 
-        /* Intro Screen */
-        #introScreen {
-            background-color: #EEF7F6;
-            justify-content: center; /* Center content vertically */
-            padding: 1rem; /* Base padding */
-        }
-        /* Landscape specific layout for Intro Screen */
-        @media (orientation: landscape) {
-            #introScreen {
-                flex-direction: row; /* Arrange content side-by-side */
-                justify-content: space-around; /* Distribute space */
-                align-items: center; /* Center items vertically in row */
-                padding: 1.5rem 3rem; /* More horizontal padding in landscape */
-            }
-            #introScreen > div { /* Target the content div inside introScreen */
-                max-width: 48%; /* Limit width of text content to allow side-by-side */
-                text-align: left; /* Align text left when in columns */
-                display: flex; /* Make it a flex container */
-                flex-direction: column; /* Stack its children vertically */
-                justify-content: center; /* Center content vertically */
-            }
-            #introScreen .title,
-            #introScreen .subtitle,
-            #introScreen .label,
-            #introScreen .instructions-list {
-                text-align: left; /* Override previous center alignment */
-                margin-left: 0; /* Remove auto margins if present */
-                margin-right: 0;
-            }
-            #introScreen button {
-                margin-top: 2rem; /* Add some top margin to the button in landscape */
-            }
+        /* --- Dashboard Card Style (Used for Intro/Result) --- */
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border-radius: 1.5rem;
+            border: 1px solid var(--card-border); 
+            box-shadow: 0 8px 16px rgba(45, 55, 72, 0.1), 0 4px 6px rgba(45, 55, 72, 0.05);
+            padding: clamp(1.5rem, 5vw, 2.5rem);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
         }
 
-        #introScreen .title {
-            font-family: 'Oswald', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4rem); /* Responsive title size */
-            line-height: 1;
-            color: #2D3748; /* Darker tone for emphasis */
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            text-align: center; /* Default center for mobile portrait */
+        /* --- Modal Button Style (Used for Start/Done) --- */
+        .modal-button { 
+            text-align: center; 
+            padding: 1rem; 
+            font-weight: 600; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
         }
-        @media (max-width: 767px) {
-            #introScreen .title {
-                font-size: clamp(2rem, 7vw, 3.5rem);
-            }
+        .modal-button.primary { 
+            background-color: var(--cta-accent); 
+            color: var(--text-on-cta); 
+            box-shadow: 0 4px 8px rgba(244, 211, 94, 0.3);
         }
-        #introScreen .subtitle {
-            font-size: clamp(1.1rem, 3.5vw, 1.5rem); /* Responsive subtitle size */
-            color: #4A5568;
-            text-align: center; /* Default center for mobile portrait */
-        }
-        #introScreen .label {
-            font-weight: 700;
-            color: #2C7A7B; /* A more vibrant, light-colored label */
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px; /* Pill shape */
-            background-color: #B2F5EA; /* Light background for the label */
-            font-size: clamp(0.9rem, 2.8vw, 1.25rem); /* Responsive label size */
-            margin-top: 1rem;
-            align-self: center; /* Center the pill for mobile portrait */
-        }
-        @media (orientation: landscape) {
-            #introScreen .label {
-                align-self: flex-start; /* Align left in landscape */
-            }
-        }
-        #introScreen .instructions-list {
-            max-width: 90%; /* Adjusted for better mobile fit */
-            text-align: left;
-            font-size: clamp(0.9rem, 2.8vw, 1.1rem); /* Responsive font size */
-            color: #6B7280;
-            line-height: 1.6;
-            margin-top: 2rem;
-            list-style: disc;
-            padding-left: 20px;
-            box-sizing: border-box;
-            margin-left: auto; /* Center list on mobile */
-            margin-right: auto;
-        }
-        @media (max-width: 767px) {
-            #introScreen .instructions-list {
-                font-size: clamp(0.8rem, 2.5vw, 1rem);
-                margin-top: 1rem;
-            }
-        }
-        #introScreen button {
-            padding: 1.25rem 3rem;
-            font-size: clamp(1.1rem, 3.8vw, 1.5rem); /* Responsive button text size */
-            font-weight: bold;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-            width: 80%; /* Make button fill more width on mobile */
-            max-width: 300px; /* Limit max width */
-            margin-top: 3rem; /* Increased margin for mobile portrait */
-        }
-        @media (orientation: landscape) {
-            #introScreen button {
-                width: auto; /* Auto width in landscape */
-                padding: 1rem 2.5rem; /* Slightly smaller padding */
-                font-size: clamp(1rem, 3.2vw, 1.4rem);
-                margin-top: 1.5rem; /* Reduced margin in landscape */
-            }
-        }
-        @media (max-width: 767px) {
-            #introScreen button {
-                padding: 1rem 2rem;
-                font-size: clamp(1rem, 3.5vw, 1.3rem);
-            }
-        }
-        #introScreen button:hover {
+        .modal-button.primary:hover:not(:disabled) { 
+            opacity: 0.9; 
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
-        #introScreen button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .modal-button.primary:disabled { 
+            background: #94A3B8; 
+            opacity: 0.7; 
+            cursor: wait; 
             transform: none;
             box-shadow: none;
+        }
+        
+        /* --- Intro Screen --- */
+        #introScreen .title {
+            font-size: clamp(2rem, 8vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text-title);
+            line-height: 1.2;
+        }
+        #introScreen .subtitle {
+            font-size: clamp(1.1rem, 4vw, 1.25rem);
+            font-weight: 500;
+            color: var(--text-body);
+            margin-top: 0.5rem;
+        }
+        #introScreen .instructions-list {
+            text-align: left;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            color: var(--text-body);
+            line-height: 1.6;
+            margin-top: 1.5rem;
+            padding-left: 20px;
+        }
+        #introScreen .instructions-list li {
+            margin-bottom: 0.5rem;
+        }
+        #startButton {
+            margin-top: 2rem;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Back Button - Top Left */
@@ -205,457 +162,230 @@
             background-color: rgba(255, 255, 255, 1);
             transform: translateY(-1px);
         }
-        @media (max-width: 767px) {
-            .back-button {
-                top: 0.75rem;
-                left: 0.75rem;
-                padding: 0.6rem;
-            }
-            .back-button svg {
-                height: 1.25rem;
-                width: 1.25rem;
-            }
-        }
-        @media (min-width: 768px) and (orientation: landscape) {
-            .back-button {
-                top: 1rem;
-                left: 1rem;
-                padding: 0.6rem;
-            }
-        }
 
-
-        /* Game Screen */
+        /* --- Game Screen --- */
         #gameScreen {
-            background-color: #EEF7F6;
-            justify-content: flex-start; /* Align content to top */
-            padding-top: 1rem; /* Space from top */
-            flex-direction: column; /* Ensure column layout */
-            gap: 1rem; /* Space between sections */
+            justify-content: flex-start;
+            gap: 1.5rem;
         }
-        @media (orientation: landscape) {
-            #gameScreen {
-                padding-top: 1.5rem;
-                gap: 1.5rem;
-            }
-        }
-
-        /* NEW: Top Game Section for Header and Timer */
+        
+        /* Top Game Section: Header and Timer */
         .top-game-section {
-            display: flex;
-            align-items: center; /* Vertically align header and timer */
-            justify-content: center; /* Center the combined content */
-            width: 90%;
-            max-width: 900px;
-            margin-bottom: 1rem; /* Space below this section */
-            position: relative; /* For absolute positioning of timer within this container */
-            padding-right: clamp(60px, 12vw, 90px); /* Reserve space for timer on the right */
-        }
-        @media (max-width: 767px) {
-            .top-game-section {
-                flex-direction: column; /* Stack header and timer on small screens */
-                gap: 0.5rem; /* Add gap when stacked */
-                margin-bottom: 0.5rem;
-                padding-right: 0; /* Remove padding-right when stacked */
-            }
-        }
-
-        #gameScreen .header-quiz {
-            font-family: 'Oswald', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            line-height: 1;
-            color: #2D3748;
-            text-align: center; /* Keep header text centered */
-            flex-grow: 1; /* Allow header to take available space */
-            flex-shrink: 1;
-        }
-        @media (max-width: 767px) {
-            #gameScreen .header-quiz {
-                font-size: clamp(2.2rem, 7vw, 3.5rem);
-            }
-        }
-        @media (orientation: landscape) {
-            #gameScreen .header-quiz {
-                font-size: clamp(3rem, 7vw, 4.5rem);
-            }
-        }
-
-
-        /* Countdown Timer - Fixed position relative to .top-game-section */
-        .countdown-timer-container {
-            position: absolute; /* Position absolutely within .top-game-section */
-            right: 0; /* Align to the right edge of .top-game-section */
-            top: 50%; /* Center vertically */
-            transform: translateY(-50%); /* Adjust for vertical centering */
-            width: clamp(60px, 12vw, 90px); /* Responsive size */
-            height: clamp(60px, 12vw, 90px); /* Responsive size */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            color: #334155;
-            background-color: rgba(255,255,255,0.8);
-            border-radius: 50%;
-            border: 4px solid #D1E0DE;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-            z-index: 5;
-            flex-shrink: 0;
-            /* No min-width/height needed here as its position is absolute */
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            padding: 0 4rem; /* Space for back button and timer */
         }
-        @media (max-width: 767px) {
-            .countdown-timer-container {
-                position: relative; /* Back to relative for stacking on small screens */
-                top: auto;
-                right: auto;
-                transform: none;
-                width: clamp(50px, 10vw, 70px);
-                height: clamp(50px, 10vw, 70px);
-                font-size: clamp(1.2rem, 3.5vw, 2rem);
-                border-width: 3px;
-            }
-        }
-        @media (orientation: landscape) {
-            .countdown-timer-container {
-                width: clamp(70px, 10vw, 100px);
-                height: clamp(70px, 10vw, 100px);
-                font-size: clamp(1.8rem, 4.5vw, 2.8rem);
-            }
+        #gameScreen .header-quiz {
+            font-size: clamp(2rem, 7vw, 2.5rem);
+            font-weight: 700;
+            line-height: 1;
+            color: white; /* Light text on dark bg */
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            flex-grow: 1;
         }
 
-        .countdown-timer-svg {
+        /* Countdown Timer */
+        .countdown-timer-container {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg); /* Start at top */
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: clamp(50px, 12vw, 60px);
+            height: clamp(50px, 12vw, 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            color: var(--text-title);
+            background-color: var(--card-bg);
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.5);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 5;
+        }
+        .countdown-timer-svg {
+            position: absolute; top: -3px; left: -3px;
+            width: calc(100% + 6px); height: calc(100% + 6px);
+            transform: rotate(-90deg);
             overflow: visible;
         }
         .countdown-circle-bg {
-            stroke: #E2E8F0;
-            stroke-width: 8;
+            stroke: var(--card-border);
+            stroke-width: 5;
             fill: none;
         }
         .countdown-circle-progress {
-            stroke: var(--brand-color);
-            stroke-width: 8;
+            stroke: var(--cta-accent); /* Yellow accent for timer */
+            stroke-width: 5;
             fill: none;
-            transition: stroke-dasharray linear; /* Smooth transition for countdown */
+            transition: stroke-dasharray 1s linear;
         }
 
-        /* Sound Wave Animation Placeholder */
-        .sound-wave-placeholder {
-            width: 80%;
-            max-width: 600px;
-            height: 80px; /* Fixed height for the wave */
-            border-radius: 0.5rem;
-            margin: 2rem 0; /* Space above and below */
+        /* Lottie Animation Container */
+        #lottieContainer {
+            width: 90%;
+            max-width: 400px;
+            height: auto;
+            background-color: var(--card-bg);
+            border-radius: 1.5rem;
+            border: 1px solid var(--card-border); 
+            box-shadow: 0 8px 16px rgba(45, 55, 72, 0.1), 0 4px 6px rgba(45, 55, 72, 0.05);
+            padding: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            position: relative;
         }
-        .sound-wave-bar {
-            width: 8px; /* Width of each bar */
-            height: 100%;
-            background-color: var(--brand-color);
-            margin: 0 2px; /* Space between bars */
-            animation: wave-animation 1.5s infinite ease-in-out alternate;
-            transform-origin: bottom; /* Animate from bottom */
-            border-radius: 2px;
-        }
-        .sound-wave-bar:nth-child(2n) { animation-delay: -0.1s; }
-        .sound-wave-bar:nth-child(3n) { animation-delay: -0.2s; }
-        .sound-wave-bar:nth-child(4n) { animation-delay: -0.3s; }
-        .sound-wave-bar:nth-child(5n) { animation-delay: -0.4s; }
-        .sound-wave-bar:nth-child(6n) { animation-delay: -0.5s; }
-        .sound-wave-bar:nth-child(7n) { animation-delay: -0.6s; }
-        .sound-wave-bar:nth-child(8n) { animation-delay: -0.7s; }
-        .sound-wave-bar:nth-child(9n) { animation-delay: -0.8s; }
-        .sound-wave-bar:nth-child(10n) { animation-delay: -0.9s; }
-        .sound-wave-bar:nth-child(11n) { animation-delay: -1.0s; }
-        .sound-wave-bar:nth-child(12n) { animation-delay: -1.1s; }
-        .sound-wave-bar:nth-child(13n) { animation-delay: -1.2s; }
-        .sound-wave-bar:nth-child(14n) { animation-delay: -1.3s; }
-        .sound-wave-bar:nth-child(15n) { animation-delay: -1.4s; }
-
-        @keyframes wave-animation {
-            0% { transform: scaleY(0.2); }
-            100% { transform: scaleY(1); }
-        }
-        @media (max-width: 767px) {
-            .sound-wave-placeholder {
-                height: 60px;
-                margin: 1rem 0;
-            }
-            .sound-wave-bar {
-                width: 6px;
-            }
+        #lottieContainer dotlottie-wc {
+            width: 300px;
+            height: 300px;
+            max-width: 100%;
         }
 
-
+        /* Choices Section */
         .choices-section {
-            flex-grow: 1; /* Takes up bottom half */
+            flex-grow: 1;
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
+            grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 1.25rem; /* Space between buttons */
-            width: 90%;
+            gap: 1rem;
+            width: 100%;
             max-width: 900px;
-            padding: 0.5rem; /* Reduced padding here, as gameScreen has padding */
-            opacity: 0; /* Hidden initially */
+            opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease-in;
-            box-sizing: border-box;
         }
         .choices-section.visible {
             opacity: 1;
             visibility: visible;
         }
-        @media (max-width: 767px) {
-            .choices-section {
-                gap: 0.75rem;
-                padding: 0.25rem;
-            }
-        }
-        @media (orientation: landscape) {
-            .choices-section {
-                gap: 1.5rem; /* Slightly more space in landscape */
-                padding: 0.5rem 0; /* Adjust vertical padding */
-            }
-        }
 
-
+        /* Choice Button (Styled like reward-button) */
         .choice-button {
-            background-color: white;
-            border: 2px solid #D1E0DE;
-            border-radius: 1rem;
-            padding: clamp(0.8rem, 3vw, 1.25rem); /* Responsive padding */
-            font-size: clamp(1rem, 3.5vw, 1.4rem); /* Responsive font size */
-            font-weight: 500;
-            color: #334155;
+            background-color: white; 
+            border: 1px solid var(--card-border);
+            border-radius: 1.5rem;
+            transition: all 0.2s ease-out;
+            position: relative;
+            text-decoration: none;
             display: flex;
-            flex-direction: column; /* Stack song title and artist */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            padding: clamp(1rem, 3vw, 1.5rem); 
+            min-height: 80px;
             cursor: pointer;
-            transition: all 0.2s ease-out;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            min-height: 80px; /* Ensure buttons have min height */
         }
-        .choice-button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            border-color: var(--brand-color);
+        .choice-button:hover:not(:disabled) { 
+            transform: translateY(-4px); 
+            border-color: var(--primary-accent);
+            box-shadow: 0 8px 20px -5px rgba(137, 179, 217, 0.3); 
         }
-        .choice-button:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
+        .choice-button:disabled { 
+            cursor: not-allowed; 
+            opacity: 0.7; 
         }
-        @media (max-width: 767px) {
-            .choice-button {
-                padding: 0.6rem;
-                font-size: clamp(0.9rem, 3vw, 1.2rem);
-                min-height: 60px;
-                border-radius: 0.8rem;
-            }
-        }
-        @media (orientation: landscape) {
-            .choice-button {
-                font-size: clamp(1.1rem, 3vw, 1.5rem);
-                padding: clamp(0.9rem, 2.5vw, 1.3rem);
-            }
-        }
-
-        /* NEW: Styles for song title and artist within choice buttons */
+        
         .song-title {
-            font-size: clamp(1.1rem, 3.8vw, 1.5rem); /* Larger for emphasis */
+            font-size: clamp(1rem, 3.8vw, 1.25rem);
             font-weight: 600;
-            color: #2D3748; /* Darker color */
-            line-height: 1.2;
+            color: var(--text-title);
+            text-align: center;
+            line-height: 1.3;
         }
         .artist-name {
-            font-size: clamp(0.8rem, 2.5vw, 1.1rem); /* Smaller for hierarchy */
+            font-size: clamp(0.8rem, 2.8vw, 1rem);
             font-weight: 400;
-            color: #6B7280; /* Subtler color */
-            margin-top: 0.25rem; /* Small space between title and artist */
-        }
-        @media (max-width: 767px) {
-            .song-title {
-                font-size: clamp(1rem, 3.5vw, 1.3rem);
-            }
-            .artist-name {
-                font-size: clamp(0.7rem, 2.2vw, 1rem);
-            }
+            color: var(--text-body);
+            margin-top: 0.25rem;
+            text-align: center;
         }
 
         /* Answer feedback colors */
         .choice-button.correct {
-            background-color: #D1FAE5; /* Light green */
-            border-color: #34D399; /* Green */
-            box-shadow: 0 0 15px rgba(52, 211, 153, 0.5); /* Green glow */
+            background-color: var(--tier1-green-bg);
+            border-color: var(--tier1-green-border);
+            box-shadow: 0 0 15px rgba(42, 116, 92, 0.4);
         }
         .choice-button.wrong {
             background-color: #FEE2E2; /* Light red */
             border-color: #EF4444; /* Red */
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); /* Red glow */
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
         }
-
-        /* Countdown Timer - Integrated with Header */
-        /* This was already styled above, making sure it's responsive and aligns */
-
 
         /* Result Screen */
-        #resultScreen {
-            background-color: #EEF7F6;
-            text-align: center;
-            padding: 2rem;
-            flex-direction: column; /* Ensure content is stacked vertically */
-            justify-content: center; /* Center content vertically */
-            align-items: center; /* Center content horizontally */
-        }
-        @media (orientation: landscape) {
-            #resultScreen {
-                padding: 1.5rem; /* Reduced padding for landscape */
-            }
-        }
         #resultScreen .message {
-            font-family: 'Oswald', sans-serif;
-            font-size: clamp(2.2rem, 7vw, 3.5rem); /* Responsive message size */
-            line-height: 1.2;
-            color: #2D3748;
-            margin-bottom: 1rem;
-        }
-        @media (max-width: 767px) {
-            #resultScreen .message {
-                font-size: clamp(2rem, 6.5vw, 3rem);
-            }
+            font-size: clamp(2rem, 8vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 0.5rem;
         }
         #resultScreen .subtitle-message {
-            font-size: clamp(1.1rem, 3.5vw, 1.5rem); /* Responsive subtitle size */
-            color: #4A5568;
+            font-size: clamp(1.1rem, 4vw, 1.25rem);
+            color: var(--text-body);
+            margin-bottom: 1.5rem;
+        }
+        #resultScreen .points-earned-text {
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+            font-weight: 700;
+            color: var(--tier1-green-text); /* Green from home.html */
             margin-bottom: 2rem;
         }
-        @media (max-width: 767px) {
-            #resultScreen .subtitle-message {
-                font-size: clamp(1rem, 3vw, 1.3rem);
-            }
-        }
-
-        #resultScreen .done-button-container { /* New container for done button */
-            margin-top: 2rem; /* Add spacing above the button */
-            width: 100%; /* Allow it to take full width for centering */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #resultScreen .done-button {
-            padding: 1.25rem 3rem;
-            font-size: clamp(1.1rem, 3.8vw, 1.5rem); /* Responsive button text size */
-            font-weight: bold;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-            color: white;
-            background-image: linear-gradient(var(--gradient-angle), var(--gradient-start), var(--gradient-mid), var(--gradient-end));
-        }
-        #resultScreen .done-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        #resultScreen .done-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        @media (max-width: 767px) {
-            #resultScreen .done-button {
-                padding: 1rem 2.5rem;
-                font-size: clamp(1rem, 3.5vw, 1.3rem);
-            }
-        }
-
-        /* Points Earned Text for Result Screen */
-        .points-earned-text {
-            font-size: clamp(1.4rem, 4.5vw, 2rem); /* Responsive font size */
-            font-weight: bold;
-            color: #10B981; /* Green color for earned points */
-            margin-top: -1rem; /* Adjust spacing */
-            margin-bottom: 2rem;
-            text-align: center; /* Centered with other messages */
-            width: 80%; /* Match max width of other content for consistent alignment */
-            max-width: 900px;
-        }
-        @media (max-width: 767px) {
-            .points-earned-text {
-                font-size: clamp(1.2rem, 4vw, 1.8rem);
-            }
-        }
-
-        /* NEW: Result Screen Footer */
-        .result-footer {
-            position: absolute;
-            bottom: 1rem;
-            font-size: clamp(0.7rem, 2vw, 0.8rem); /* Responsive font size for footer */
-            color: #9CA3AF; /* Soft gray color */
-            text-align: center;
+        #resultScreen .done-button-container {
             width: 100%;
-            padding: 0 1rem;
+            max-width: 300px;
+        }
+        .result-footer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #9CA3AF;
         }
         .result-footer a {
-            color: #6B7280; /* Slightly darker gray for links */
+            color: var(--text-body);
             text-decoration: underline;
         }
-        .result-footer a:hover {
-            color: var(--brand-color);
-        }
 
-        /* Generic utilities for hidden elements */
+        /* Generic utilities */
         .hidden {
             display: none !important;
         }
 
-        /* Ensure body content is centered for all screens */
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-        }
-
     </style>
 </head>
-<body class="flex flex-col h-full w-full">
+<body>
 
     <div id="introScreen" class="screen-container active">
-        <a href="home.html" class="back-button"> <!-- Changed href to home.html -->
+        <a href="home.html" class="back-button">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
         </a>
-        <div class="flex flex-col items-center justify-center">
+        <div class="dashboard-card">
             <h1 class="title">Guess the Song</h1>
-            <p class="subtitle font-semibold text-lg md:text-xl mt-2">(Audio Quiz)</p>
-            <span class="label">Moderate</span>
-            <ul class="instructions-list mt-8 px-4">
-                <li>Each round plays a 10-second audio snippet of a K-Pop song.</li>
-                <li>Choices will appear 5 seconds into the audio and last for 10 seconds.</li>
-                <li>Answer 10 questions.</li>
-                <li>Be quick to answer! Get all 10 correct to win!</li>
+            <p class="subtitle">(Audio Quiz)</p>
+            <ul class="instructions-list">
+                <li>A 10-second audio snippet will play.</li>
+                <li>Choices appear 5 seconds into the audio.</li>
+                <li>You have 10 seconds to guess.</li>
+                <li>Answer 10 questions. Earn 1 point per correct answer!</li>
             </ul>
-            <button id="startButton" class="mt-12 text-white gradient-bg" disabled>Quiz Not Ready</button>
+            <button id="startButton" class="modal-button primary" disabled>Loading Quiz...</button>
         </div>
     </div>
 
     <div id="gameScreen" class="screen-container hidden">
-        <!-- NEW: Top Game Section for Header and Timer -->
+        <a href="home.html" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
+        
         <div class="top-game-section">
             <h2 id="gameTitleHeader" class="header-quiz">Guess the Song</h2>
             <div id="countdownTimerContainer" class="countdown-timer-container hidden">
@@ -667,24 +397,13 @@
             </div>
         </div>
 
-        <!-- Sound Wave Animation Placeholder -->
-        <div id="soundWavePlaceholder" class="sound-wave-placeholder">
-            <!-- Bars for the sound wave animation -->
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
-            <div class="sound-wave-bar"></div>
+        <div id="lottieContainer">
+            <dotlottie-wc 
+                src="https://lottie.host/f1156bd6-dacb-4851-b1d5-3d8a32e9eb04/AmPd63uxQj.lottie" 
+                style="width: 300px; height: 300px;" 
+                autoplay 
+                loop>
+            </dotlottie-wc>
         </div>
 
         <div id="choicesSection" class="choices-section">
@@ -696,12 +415,12 @@
     </div>
 
     <div id="resultScreen" class="screen-container hidden">
-        <div class="flex flex-col items-center justify-center h-full w-full">
-            <h2 id="resultMessage" class="message"></h2>
-            <p id="resultSubtitle" class="subtitle-message"></p>
-            <p id="pointsEarnedText" class="points-earned-text hidden"></p>
+        <div class="dashboard-card">
+            <h2 id="resultMessage" class="message">Quiz Complete!</h2>
+            <p id="resultSubtitle" class="subtitle-message">You got 0 out of 10 correct.</p>
+            <p id="pointsEarnedText" class="points-earned-text">You earned 0 points!</p>
             <div class="done-button-container">
-                <button id="doneButton" class="done-button">Done</button>
+                <button id="doneButton" class="modal-button primary">Done</button>
             </div>
             <footer class="result-footer">
                 Sound Effect by <a href="https://pixabay.com/users/n2kstudio-17715924/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">N2kStudio</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163649" target="_blank" rel="noopener noreferrer">Pixabay</a>
@@ -711,14 +430,13 @@
 
 <script>
     // --- Constants and DOM Elements ---
-    // *** MODIFIED: Renamed to SHEETDB_POST_API_ID for clarity ***
-    const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // Replace with your SheetDB API ID
-    const GAME_POINTS = 15; // Points awarded for winning the game
-    const QUIZ_QUESTION_COUNT = 10; // Number of questions in the quiz
-    const SONG_PLAYBACK_DURATION = 10000; // Song plays for 10 seconds (10000 ms)
-    const CHOICES_APPEAR_DELAY = 5000; // Choices appear after 5 seconds of song playback
-    const CHOICES_DISPLAY_DURATION = 10000; // Choices last for 10 seconds
-    const TOTAL_ROUND_DURATION = CHOICES_APPEAR_DELAY + CHOICES_DISPLAY_DURATION; // Total round duration is 5s (audio only) + 10s (choices) = 15s
+    const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // From home.html
+    const QUIZ_QUESTION_COUNT = 10;
+    const POINTS_PER_ANSWER = 1; // NEW: Scoring logic
+    const SONG_PLAYBACK_DURATION = 10000;
+    const CHOICES_APPEAR_DELAY = 5000;
+    const CHOICES_DISPLAY_DURATION = 10000;
+    const TOTAL_ROUND_DURATION = CHOICES_APPEAR_DELAY + CHOICES_DISPLAY_DURATION;
 
     const introScreen = document.getElementById('introScreen');
     const gameScreen = document.getElementById('gameScreen');
@@ -733,41 +451,24 @@
     const resultSubtitle = document.getElementById('resultSubtitle');
     const pointsEarnedText = document.getElementById('pointsEarnedText');
     const doneButton = document.getElementById('doneButton');
-    const soundWavePlaceholder = document.getElementById('soundWavePlaceholder');
+    
+    // LOTTIEFILE container
+    const lottieContainer = document.getElementById('lottieContainer');
 
     // --- Sound Effects (using Tone.js) ---
-    const correctSoundPlayer = new Tone.Player({
-        url: 'correct.wav',
-        autostart: false,
-    }).toDestination();
-
-    const wrongSoundPlayer = new Tone.Player({
-        url: 'wrong.wav',
-        autostart: false,
-    }).toDestination();
-
-    const gameDoneSoundPlayer = new Tone.Player({
-        url: 'done.wav',
-        autostart: false,
-    }).toDestination();
-
-    const songSnippetPlayer = new Tone.Player({
-        autostart: false,
-    }).toDestination();
-
+    const correctSoundPlayer = new Tone.Player({ url: 'correct.wav', autostart: false }).toDestination();
+    const wrongSoundPlayer = new Tone.Player({ url: 'wrong.wav', autostart: false }).toDestination();
+    const gameDoneSoundPlayer = new Tone.Player({ url: 'done.wav', autostart: false }).toDestination();
+    const songSnippetPlayer = new Tone.Player({ autostart: false }).toDestination();
     const timerTickSound = new Tone.MembraneSynth({
-        pitchDecay: 0.05,
-        octaves: 0.5,
-        oscillator: { type: 'sine' },
+        pitchDecay: 0.05, octaves: 0.5, oscillator: { type: 'sine' },
         envelope: { attack: 0.002, decay: 0.2, sustain: 0.0, release: 0.05 }
     }).toDestination();
-    
     const buzzerSound = new Tone.NoiseSynth().toDestination();
     buzzerSound.envelope.attack = 0.005;
     buzzerSound.envelope.decay = 0.2;
     buzzerSound.envelope.sustain = 0;
     buzzerSound.envelope.release = 0.3;
-
 
     // --- Game State Variables ---
     let allSongs = [];
@@ -776,9 +477,10 @@
     let score = 0;
     let roundTimer = null;
     let choicesTimer = null;
-    let countdownInterval = null; // Renamed from countdownTimer to avoid confusion with DOM element
+    let countdownInterval = null;
     let gameActive = false;
     let audioLoaded = false;
+    let currentUserCode = null; // Store user code
 
     // --- Utility Functions ---
     function shuffleArray(array) {
@@ -791,6 +493,14 @@
 
     // --- Game Flow Functions ---
     async function initializeGame() {
+        // Check for user code from session storage
+        currentUserCode = sessionStorage.getItem('currentUserCode');
+        if (!currentUserCode) {
+            alert('User session not found. Returning to home.');
+            window.location.href = 'home.html';
+            return;
+        }
+
         startButton.textContent = "Loading Quiz...";
         startButton.disabled = true;
 
@@ -800,7 +510,6 @@
                 new Promise(resolve => {
                     Tone.loaded().then(() => {
                         audioLoaded = true;
-                        console.log("All audio assets loaded.");
                         resolve();
                     }).catch(e => {
                         audioLoaded = false;
@@ -817,7 +526,6 @@
             resetGame();
             startButton.textContent = "Start Quiz";
             startButton.disabled = false;
-            console.log("Quiz songs and assets ready.");
 
         } catch (error) {
             console.error('Failed to initialize game:', error);
@@ -834,18 +542,12 @@
     }
 
     function showScreen(screenToShow) {
-        introScreen.classList.remove('active');
-        gameScreen.classList.remove('active');
-        resultScreen.classList.remove('active');
-
-        introScreen.classList.add('hidden');
-        gameScreen.classList.add('hidden');
-        resultScreen.classList.add('hidden');
-
+        [introScreen, gameScreen, resultScreen].forEach(screen => {
+            screen.classList.remove('active');
+            screen.classList.add('hidden');
+        });
         screenToShow.classList.remove('hidden');
-        setTimeout(() => {
-            screenToShow.classList.add('active');
-        }, 10);
+        setTimeout(() => screenToShow.classList.add('active'), 10);
     }
 
     async function startQuiz() {
@@ -854,11 +556,7 @@
         showScreen(gameScreen);
         
         if (audioLoaded) {
-            try {
-                await Tone.start();
-            } catch (e) {
-                console.error("Failed to start Tone.js audio context:", e);
-            }
+            try { await Tone.start(); } catch (e) { console.error("Failed to start Tone.js audio context:", e); }
         }
 
         loadQuestion();
@@ -887,32 +585,27 @@
 
         const songData = shuffledSongs[currentQuestionIndex];
 
-        choicesSection.classList.remove('visible'); // Hide choices
-        countdownTimerContainer.classList.add('hidden'); // Hide timer at the start of the round
-        soundWavePlaceholder.classList.remove('hidden'); // Show sound wave animation
-        resetChoiceButtons(); // Reset buttons to clear previous states and colors
+        choicesSection.classList.remove('visible');
+        countdownTimerContainer.classList.add('hidden');
+        lottieContainer.classList.remove('hidden'); // Show Lottie animation
+        resetChoiceButtons();
 
-        // Clear any existing timers
         clearTimeout(roundTimer);
         clearTimeout(choicesTimer);
-        clearInterval(countdownInterval); // Use countdownInterval
+        clearInterval(countdownInterval);
 
-        // Reset countdown display to full duration (e.g., 10 seconds) before it starts counting down
         countdownText.textContent = CHOICES_DISPLAY_DURATION / 1000;
         const radius = 15.9155;
         const circumference = 2 * Math.PI * radius;
-        countdownCircleProgress.style.transition = `none`; // Remove transition for instant reset
-        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`; // Set to full circle
+        countdownCircleProgress.style.transition = `none`;
+        countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`;
 
-        // Stop previous song snippet if playing
-        if (songSnippetPlayer.state === 'started') {
-            songSnippetPlayer.stop();
-        }
+        if (songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
 
         if (audioLoaded) {
             try {
                 await songSnippetPlayer.load(`audio/${songData.audio}`);
-                songSnippetPlayer.start(0, 0, SONG_PLAYBACK_DURATION / 1000); // Play for SONG_PLAYBACK_DURATION
+                songSnippetPlayer.start(0, 0, SONG_PLAYBACK_DURATION / 1000);
             } catch (e) {
                 console.error("Error loading or playing song snippet:", e);
                 handleAnswer(null, false);
@@ -924,18 +617,16 @@
             return;
         }
 
-        // Schedule showing choices and starting countdown AFTER CHOICES_APPEAR_DELAY
         choicesTimer = setTimeout(() => {
             displayChoices(songData.choices);
-            countdownTimerContainer.classList.remove('hidden'); // Show timer when choices appear
-            startCountdownTimer(CHOICES_DISPLAY_DURATION / 1000); // Pass duration in seconds (10 seconds)
-            soundWavePlaceholder.classList.add('hidden'); // Hide sound wave when choices appear
-        }, CHOICES_APPEAR_DELAY); // Choices appear after 5 seconds
+            countdownTimerContainer.classList.remove('hidden');
+            startCountdownTimer(CHOICES_DISPLAY_DURATION / 1000);
+            lottieContainer.classList.add('hidden'); // Hide Lottie when choices appear
+        }, CHOICES_APPEAR_DELAY);
 
-        // Set a timer for the entire round. If it expires, handle as wrong answer.
         roundTimer = setTimeout(() => {
-            handleAnswer(null, false); // Time ran out
-        }, TOTAL_ROUND_DURATION); // Total round duration is 15 seconds
+            handleAnswer(null, false);
+        }, TOTAL_ROUND_DURATION);
     }
 
     function displayChoices(choices) {
@@ -949,7 +640,6 @@
             const artistName = parts.length > 1 ? parts.slice(1).join(' - ') : '';
 
             button.innerHTML = `<span class="song-title">${songTitle}</span><span class="artist-name">${artistName}</span>`;
-            
             button.onclick = () => handleAnswer(choiceText, choiceText === shuffledSongs[currentQuestionIndex].correctAnswer);
             button.disabled = false;
         });
@@ -960,8 +650,17 @@
         const radius = 15.9155;
         const circumference = 2 * Math.PI * radius;
 
-        countdownCircleProgress.style.transition = `stroke-dasharray ${durationInSeconds}s linear`;
+        // Force a reflow to apply the reset
+        countdownCircleProgress.getBoundingClientRect(); 
+        
+        countdownCircleProgress.style.transition = `stroke-dasharray 1s linear`;
         countdownCircleProgress.style.strokeDasharray = `${circumference}, ${circumference}`;
+
+        // Wait a frame before starting animation
+        requestAnimationFrame(() => {
+             const progress = (timeRemaining / durationInSeconds) * circumference;
+             countdownCircleProgress.style.strokeDasharray = `${progress}, ${circumference}`;
+        });
 
         countdownText.textContent = timeRemaining;
 
@@ -991,11 +690,9 @@
         clearTimeout(choicesTimer);
         clearInterval(countdownInterval);
         countdownTimerContainer.classList.add('hidden');
-        soundWavePlaceholder.classList.add('hidden');
+        lottieContainer.classList.add('hidden');
 
-        if (songSnippetPlayer.state === 'started') {
-            songSnippetPlayer.stop();
-        }
+        if (songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
 
         const songData = shuffledSongs[currentQuestionIndex];
         let correctlyAnswered = false;
@@ -1016,23 +713,10 @@
         });
 
         if (correctlyAnswered) {
-            score++;
-            if(audioLoaded) {
-                try {
-                    correctSoundPlayer.start();
-                } catch (e) {
-                    console.error("Error playing correct sound:", e);
-                }
-            }
+            score++; // Score is 1 point per answer
+            if(audioLoaded) { try { correctSoundPlayer.start(); } catch (e) {} }
         } else {
-            if(audioLoaded) {
-                try {
-                    wrongSoundPlayer.start();
-                    buzzerSound.triggerAttackRelease('8n', 'C2');
-                } catch (e) {
-                    console.error("Error playing wrong/buzzer sound:", e);
-                }
-            }
+            if(audioLoaded) { try { wrongSoundPlayer.start(); buzzerSound.triggerAttackRelease('8n', 'C2'); } catch (e) {} }
         }
 
         setTimeout(() => {
@@ -1042,16 +726,10 @@
         }, 1500);
     }
 
-    function disableChoiceButtons() {
-        choiceButtons.forEach(button => {
-            button.disabled = true;
-        });
-    }
-
     function resetChoiceButtons() {
         choiceButtons.forEach(button => {
             button.innerHTML = '';
-            button.classList.remove('correct', 'wrong'); // This removes the green/red feedback
+            button.classList.remove('correct', 'wrong');
             button.disabled = true;
         });
     }
@@ -1065,41 +743,41 @@
         showScreen(resultScreen);
         doneButton.disabled = false;
 
-        if (score === QUIZ_QUESTION_COUNT) {
-            resultMessage.textContent = "Congratulations you won!";
-            resultSubtitle.textContent = `You got all ${QUIZ_QUESTION_COUNT} questions right!`;
-            pointsEarnedText.textContent = `You earned ${GAME_POINTS} points!`;
-            pointsEarnedText.classList.remove('hidden');
+        // NEW: Updated scoring message logic
+        resultMessage.textContent = "Quiz Complete!";
+        resultSubtitle.textContent = `You answered ${score} out of ${QUIZ_QUESTION_COUNT} correctly.`;
+        pointsEarnedText.textContent = `You earned ${score * POINTS_PER_ANSWER} points!`;
+        pointsEarnedText.classList.remove('hidden');
+
+        // NEW: Send points if score is greater than 0
+        if (score > 0) {
             sendPointsToSheetDB();
-        } else {
-            resultMessage.textContent = "Game Over!";
-            resultSubtitle.textContent = `You answered ${score} out of ${QUIZ_QUESTION_COUNT} correctly. Keep practicing!`;
-            pointsEarnedText.classList.add('hidden');
         }
     }
 
-    // *** MODIFIED: This function now sends a payload matching the Sheet 2 structure ***
+    /**
+     * NEW: Rewritten sendPointsToSheetDB function based on home.html
+     * This function now sends a payload matching the specified History sheet structure
+     */
     async function sendPointsToSheetDB() {
-        const currentUserCode = sessionStorage.getItem('currentUserCode');
         if (!currentUserCode) {
-            console.error("No current user code found in session storage. Cannot send points.");
+            console.error("No current user code found. Cannot send points.");
             resultSubtitle.textContent += "\n(Error: Could not save points - no user code)";
             return;
         }
 
-        // Corrected payload to match History sheet structure
+        // NEW: Payload based on user request
         const payload = {
-            sheet: "History",
+            sheet: "History", // Sheet 2
             data: [{
-                "Access Code": currentUserCode,
-                "Transaction": "Game2 Win (Guess the Song)", // E: Transaction
-                "Points": GAME_POINTS,                 // F: Points
-                "Timestamp": new Date().toISOString()    // G: Timestamp
+                "Access Code": currentUserCode,        // Column A
+                "Transaction": "Guess the Song",       // Column D
+                "Points": score * POINTS_PER_ANSWER,   // Column E (the final score)
+                "Timestamp": new Date().toISOString()  // Column F
             }]
         };
 
         try {
-            // Use the renamed POST API ID variable
             const response = await fetch(`https://sheetdb.io/api/v1/${SHEETDB_POST_API_ID}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1116,12 +794,8 @@
 
         } catch (error) {
             console.error('Failed to send points to SheetDB:', error);
-            let errorMessage = "\n(Error saving points: Please try again.)";
-            if (error.message.includes("405")) {
-                errorMessage = "\n(Error saving points: Method Not Allowed. Check SheetDB API config.)";
-            } else if (error.message.includes("404")) {
-                errorMessage = "\n(Error saving points: API ID or Sheet Name not found.)";
-            }
+            // Append error message to subtitle, like in home.html
+            let errorMessage = "\n(Error saving points. Please tell staff.)";
             resultSubtitle.textContent += errorMessage;
         }
     }
@@ -1129,9 +803,7 @@
     // --- Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
         initializeGame();
-
         startButton.addEventListener('click', startQuiz);
-
         doneButton.addEventListener('click', () => {
             doneButton.disabled = true;
             window.location.href = 'home.html';
