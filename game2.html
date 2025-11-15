@@ -252,8 +252,9 @@
         /* --- NEW: Music Note Animation --- */
         #musicNoteContainer {
             width: 100%;
-            max-width: 400px; /* Max width of the animation area */
-            height: 300px; /* Fixed height for the animation area */
+            max-width: 450px; /* Max width of the animation area */
+            /* MODIFIED: Increased height */
+            height: 400px; /* Fixed height for the animation area */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -264,58 +265,65 @@
         
         .music-note {
             position: absolute;
-            bottom: -40px; /* Start below the container */
+            bottom: -50px; /* Start below the container */
             color: white;
-            font-size: 2rem; /* Base size */
+            /* MODIFIED: Increased base font-size */
+            font-size: 2.5rem; /* Base size */
             opacity: 0;
-            animation: dance 4s infinite linear;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            /* MODIFIED: Increased duration for a slower dance */
+            animation: dance 5s infinite linear;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.25);
         }
 
         /* Create variations in animation */
         .music-note.note-1 {
-            left: 15%;
+            left: 10%;
             animation-delay: 0s;
-            font-size: 1.5rem;
-        }
-        .music-note.note-2 {
-            left: 35%;
-            animation-delay: 1s;
+            /* MODIFIED: Increased font size */
             font-size: 2.5rem;
         }
+        .music-note.note-2 {
+            left: 30%;
+            animation-delay: 1.5s;
+            /* MODIFIED: Increased font size */
+            font-size: 3.5rem;
+        }
         .music-note.note-3 {
-            left: 55%;
-            animation-delay: 2s;
-            font-size: 1.75rem;
+            left: 50%;
+            animation-delay: 2.5s;
+            /* MODIFIED: Increased font size */
+            font-size: 2.75rem;
         }
         .music-note.note-4 {
-            left: 75%;
-            animation-delay: 3s;
-            font-size: 2.25rem;
+            left: 70%;
+            animation-delay: 3.5s;
+            /* MODIFIED: Increased font size */
+            font-size: 3.25rem;
         }
         .music-note.note-5 { /* Add one more */
-            left: 45%;
-            animation-delay: 3.5s;
-            font-size: 1.25rem;
+            left: 85%;
+            animation-delay: 4s;
+            /* MODIFIED: Increased font size */
+            font-size: 2rem;
         }
 
         @keyframes dance {
             0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
+                transform: translateY(0) translateX(0) rotate(-10deg);
                 opacity: 0;
             }
             20% {
                 /* Fade in */
-                opacity: 0.8;
+                opacity: 0.9;
             }
             80% {
-                /* Move up, slightly sideways, and rotate */
-                transform: translateY(-300px) translateX(20px) rotate(20deg);
-                opacity: 0.5;
+                /* MODIFIED: Move up, sway more, and rotate */
+                transform: translateY(-380px) translateX(30px) rotate(20deg);
+                opacity: 0.6;
             }
             100% {
-                /* Float all the way up and fade out */
-                transform: translateY(-350px) translateX(-20px) rotate(-20deg);
+                /* MODIFIED: Float all the way up and fade out */
+                transform: translateY(-450px) translateX(-30px) rotate(-10deg);
                 opacity: 0;
             }
         }
