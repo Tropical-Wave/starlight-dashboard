@@ -318,5 +318,125 @@
       "Forever One - Girl's Generation",
       "What is Love - TWICE"
     ]
+  },
+  {
+    "audio": "song33.mp3",
+    "correctAnswer": "Icy - ITZY",
+    "choices": [
+      "Icy - ITZY",
+      "Wannabe - ITZY",
+      "Knock - Chaeyeon",
+      "Bboom Bboom - Momoland"
+    ]
+  },
+  {
+    "audio": "song34.mp3",
+    "correctAnswer": "Wannabe - ITZY",
+    "choices": [
+      "Wannabe - ITZY",
+      "Icy - ITZY",
+      "Drama - Aespa",
+      "Kill This Love - Blackpink"
+    ]
+  },
+  {
+    "audio": "song35.mp3",
+    "correctAnswer": "Knock - Chaeyeon",
+    "choices": [
+      "Knock - Chaeyeon",
+      "Crush - Zerobaseone",
+      "Hands Up - Meovv",
+      "Crazy Form - ATEEZ"
+    ]
+  },
+  {
+    "audio": "song36.mp3",
+    "correctAnswer": "Bouncy - ATEEZ",
+    "choices": [
+      "Bouncy - ATEEZ",
+      "Drama - Aespa",
+      "Lalala - Stray Kids",
+      "Fact Check - NCT127"
+    ]
+  },
+  {
+    "audio": "song37.mp3",
+    "correctAnswer": "Drama - Aespa",
+    "choices": [
+      "Drama - Aespa",
+      "Wannabe - ITZY",
+      "Bouncy - ATEEZ",
+      "Kill This Love - Blackpink"
+    ]
+  },
+  {
+    "audio": "song38.mp3",
+    "correctAnswer": "Crush - Zerobaseone",
+    "choices": [
+      "Crush - Zerobaseone",
+      "Hands Up - Meovv",
+      "Knock - Chaeyeon",
+      "Crazy Form - ATEEZ"
+    ]
+  },
+  {
+    "audio": "song39.mp3",
+    "correctAnswer": "Hands Up - Meovv",
+    "choices": [
+      "Hands Up - Meovv",
+      "Crush - Zerobaseone",
+      "Lalala - Stray Kids",
+      "Bboom Bboom - Momoland"
+    ]
+  },
+  {
+    "audio": "song40.mp3",
+    "correctAnswer": "Lalala - Stray Kids",
+    "choices": [
+      "Lalala - Stray Kids",
+      "Fact Check - NCT127",
+      "Icy - ITZY",
+      "Drama - Aespa"
+    ]
+  },
+  {
+    "audio": "song41.mp3",
+    "correctAnswer": "Fact Check - NCT127",
+    "choices": [
+      "Fact Check - NCT127",
+      "Crazy Form - ATEEZ",
+      "Lalala - Stray Kids",
+      "Kill This Love - Blackpink"
+    ]
+  },
+  {
+    "audio": "song42.mp3",
+    "correctAnswer": "Crazy Form - ATEEZ",
+    "choices": [
+      "Crazy Form - ATEEZ",
+      "Bouncy - ATEEZ",
+      "Crush - Zerobaseone",
+      "Icy - ITZY"
+    ]
+  },
+  {
+    "audio": "song43.mp3",
+    "correctAnswer": "Bboom Bboom - Momoland",
+    "choices": [
+      "Bboom Bboom - Momoland",
+      "Kill This Love - Blackpink",
+      "Hands Up - Meovv",
+      "Wannabe - ITZY"
+    ]
+  },
+  {
+    "audio": "song44.mp3",
+    "correctAnswer": "Kill This Love - Blackpink",
+    "choices": [
+      "Kill This Love - Blackpink",
+      "Bboom Bboom - Momoland",
+      "Fact Check - NCT127",
+      "Drama - Aespa"
+    ]
   }
 ]
