@@ -260,7 +260,7 @@
         /* --- NEW: Lottie Animation Container --- */
         #lottieContainer {
             width: 100%;
-            /* MODIFIED: This container now fills all available space */
+            /* This container now fills all available space */
             flex-grow: 1; 
             display: flex;
             align-items: center;
@@ -270,16 +270,16 @@
             min-height: 200px; /* Ensure it has at least some space */
         }
         #lottieContainer dotlottie-wc {
-            /* MODIFIED: Replaced fixed sizes with a responsive, aspect-ratio-driven solution */
-            width: 100%; /* Fill the container's width */
-            max-width: 600px; /* But don't get bigger than 600px */
+            /* --- CSS UPDATED AS REQUESTED --- */
+            /* Fully responsive, fills width, respects max height */
+            width: 100%; /* Fill the horizontal width */
+            height: auto; /* Scale height proportionally */
+            max-height: 60vh; /* Prevent from being too tall on large screens */
             
-            height: 100%; /* Fill the container's height */
-            /* Don't be taller than 80% of the screen */
-            max-height: 80vh; 
-
-            /* This is the key: Force it to be square */
-            aspect-ratio: 1 / 1;
+            /* REMOVED: aspect-ratio: 1 / 1; */
+            /* REMOVED: max-width: 600px; */
+            /* REMOVED: height: 100%; */
+            /* REMOVED: max-height: 80vh; */
         }
 
         /* Choices Section */
