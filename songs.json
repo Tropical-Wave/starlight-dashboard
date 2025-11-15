@@ -438,5 +438,125 @@
       "Fact Check - NCT127",
       "Drama - Aespa"
     ]
+  },
+  {
+    "audio": "song45.mp3",
+    "correctAnswer": "Igloo - Kiss of Life",
+    "choices": [
+      "Igloo - Kiss of Life",
+      "Bad Boy - Red Velvet",
+      "Izna - Izna",
+      "Whistle - Blackpink"
+    ]
+  },
+  {
+    "audio": "song46.mp3",
+    "correctAnswer": "Bad Boy - Red Velvet",
+    "choices": [
+      "Bad Boy - Red Velvet",
+      "Perfect Night - Lesserafim",
+      "Seven - Jungkook",
+      "Psycho - Red Velvet"
+    ]
+  },
+  {
+    "audio": "song47.mp3",
+    "correctAnswer": "Izna - Izna",
+    "choices": [
+      "Izna - Izna",
+      "Killing Me Good - Jihyo",
+      "Nobody Knows - Kiss of Life",
+      "Invitation - Junny"
+    ]
+  },
+  {
+    "audio": "song48.mp3",
+    "correctAnswer": "Whistle - Blackpink",
+    "choices": [
+      "Whistle - Blackpink",
+      "Butterfly - Loona",
+      "Igloo - Kiss of Life",
+      "Impurities - Lesserafim"
+    ]
+  },
+  {
+    "audio": "song49.mp3",
+    "correctAnswer": "Perfect Night - Lesserafim",
+    "choices": [
+      "Perfect Night - Lesserafim",
+      "Seven - Jungkook",
+      "Psycho - Red Velvet",
+      "Killing Me Good - Jihyo"
+    ]
+  },
+  {
+    "audio": "song50.mp3",
+    "correctAnswer": "Seven - Jungkook",
+    "choices": [
+      "Seven - Jungkook",
+      "Invitation - Junny",
+      "Nobody Knows - Kiss of Life",
+      "Butterfly - Loona"
+    ]
+  },
+  {
+    "audio": "song51.mp3",
+    "correctAnswer": "Psycho - Red Velvet",
+    "choices": [
+      "Psycho - Red Velvet",
+      "Bad Boy - Red Velvet",
+      "Impurities - Lesserafim",
+      "Izna - Izna"
+    ]
+  },
+  {
+    "audio": "song52.mp3",
+    "correctAnswer": "Killing Me Good - Jihyo",
+    "choices": [
+      "Killing Me Good - Jihyo",
+      "Igloo - Kiss of Life",
+      "Perfect Night - Lesserafim",
+      "Nobody Knows - Kiss of Life"
+    ]
+  },
+  {
+    "audio": "song53.mp3",
+    "correctAnswer": "Nobody Knows - Kiss of Life",
+    "choices": [
+      "Nobody Knows - Kiss of Life",
+      "Izna - Izna",
+      "Whistle - Blackpink",
+      "Killing Me Good - Jihyo"
+    ]
+  },
+  {
+    "audio": "song54.mp3",
+    "correctAnswer": "Invitation - Junny",
+    "choices": [
+      "Invitation - Junny",
+      "Butterfly - Loona",
+      "Seven - Jungkook",
+      "Perfect Night - Lesserafim"
+    ]
+  },
+  {
+    "audio": "song55.mp3",
+    "correctAnswer": "Butterfly - Loona",
+    "choices": [
+      "Butterfly - Loona",
+      "Psycho - Red Velvet",
+      "Nobody Knows - Kiss of Life",
+      "Impurities - Lesserafim"
+    ]
+  },
+  {
+    "audio": "song56.mp3",
+    "correctAnswer": "Impurities - Lesserafim",
+    "choices": [
+      "Impurities - Lesserafim",
+      "Whistle - Blackpink",
+      "Invitation - Junny",
+      "Bad Boy - Red Velvet"
+    ]
   }
 ]
