@@ -637,7 +637,8 @@
 
     // --- App Configuration ---
     // GET requests (fetch data) MUST use Google Apps Script
-    const GAS_WEB_APP_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; // IMPORTANT: This URL MUST be correct
+    // *** FIXED: Replaced placeholder with your actual Google Apps Script URL ***
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZCT9QZb7ynw9VKQySRkzGVnbZ2d_djXhFCV0NJNTd28WmfxXpNUpCSvkjtI1DmF0h/exec";
     
     // POST requests (submit data) MUST use SheetDB
     const SHEETDB_POST_API_ID = "5ss66fnmfz8vl"; // IMPORTANT: Replace with your SheetDB API ID
@@ -731,9 +732,7 @@
       }
     
       try {
-        if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbwZCT9QZb7ynw9VKQySRkzGVnbZ2d_djXhFCV0NJNTd28WmfxXpNUpCSvkjtI1DmF0h/exec") {
-            throw new Error("GAS_WEB_APP_URL not set.");
-        }
+        // *** FIXED: Removed the incorrect 'if' block that threw an error ***
         
         // This action fetches ALL data (user, history, inventory)
         const url = `${GAS_WEB_APP_URL}?action=getHomePageData&code=${encodeURIComponent(code)}`;

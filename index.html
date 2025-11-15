@@ -284,8 +284,8 @@
 
 
     // --- App Configuration ---
-    // *** NEW: Replace with your Google Apps Script URL ***
-    const GAS_WEB_APP_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; // IMPORTANT: This is your new URL
+    // *** FIXED: Replaced placeholder with your actual Google Apps Script URL ***
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZCT9QZb7ynw9VKQySRkzGVnbZ2d_djXhFCV0NJNTd28WmfxXpNUpCSvkjtI1DmF0h/exec";
     const MIN_UID_LENGTH = 4; // Min length of NFC UID to trigger verification
 
     // --- App State ---
@@ -353,9 +353,8 @@
       showVerifyingMessage();
 
       try {
-        if (GAS_WEB_APP_URL === "https://script.google.com/macros/s/AKfycbwZCT9QZb7ynw9VKQySRkzGVnbZ2d_djXhFCV0NJNTd28WmfxXpNUpCSvkjtI1DmF0h/exec") {
-            throw new Error("GAS_WEB_APP_URL not set.");
-        }
+        // *** FIXED: Removed the incorrect 'if' block that threw an error ***
+        
         // Use Google Apps Script for GET request
         const userUrl = `${GAS_WEB_APP_URL}?action=getUser&code=${encodeURIComponent(code)}`;
         
