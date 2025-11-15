@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Starlight Dashboard</title>
 
-    <!-- Meta tags for PWA -->
-    <meta name="theme-color" content="#89B3D9"/> <!-- NEW: Changed to brand blue -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#89B3D9"/> <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Starlight">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -17,7 +15,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font is unified to "Inter" for design consistency -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -396,29 +393,21 @@
 </head>
 <body class="antialiased">
     
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110] visible"> <!-- Start visible -->
-        <div class="text-center">
+    <div id="loadingOverlay" class="fullscreen-overlay !bg-white/80 z-[110] visible"> <div class="text-center">
             <svg class="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="color: var(--primary-accent);"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8
  0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
             <p id="loadingText" class="mt-4 font-semibold" style="color: var(--text-body);">Loading Data...</p>
         </div>
     </div>
 
-    <!-- Main Dashboard -->
     <main id="dashboard" class="flex">
         
-        <!-- Row 2: Main 3x2 Grid -->
         <div class="main-grid">
             
-            <!-- Cell: Top-Left (User Info) -->
             <div id="grid-user-info" class="dashboard-card flex flex-col">
                 
-                <!-- Main ticket area -->
                 <div class="ticket-main">
-                    <!-- SVG logo -->
                     <div class="w-full max-w-[300px] mx-auto mb-4">
-                        <!-- MODIFICATION: Replaced SVG code -->
                         <?xml version="1.0" encoding="UTF-8"?>
                         <svg id="Layer_2_Logo" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84.16 37.41" class="h-auto w-full">
                           <defs>
@@ -463,17 +452,13 @@
                         </svg>
                     </div>
 
-                    <!-- Passenger Info -->
                     <div>
                         <p class="ticket-label">Passenger</p>
-                        <!-- JS will populate this span -->
                         <p id="userName" class="ticket-data text-xl md:text-2xl">
                             <span class="font-semibold" style="color: var(--text-title);">...</span>
                         </p>
                     </div>
                     
-                    <!-- Flight, Dest, & Ticket Info -->
-                    <!-- NEW: Changed to a 3-column grid to fit all info -->
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <p class="ticket-label">Flight</p>
@@ -490,19 +475,14 @@
                     </div>
                 </div>
 
-                <!-- Ticket Stub area -->
                 <div class="ticket-stub text-center">
-                    <!-- NEW: Wrapper for rotated content -->
                     <div class="ticket-stub-content">
-                        <!-- Pass card is now nested inside -->
-                        <div id="userPassCard" class="tier-pending"> <!-- Width 100% is applied by style -->
-                            <p id="userTier" class="text-2xl font-bold">Loading...</p>
+                        <div id="userPassCard" class="tier-pending"> <p id="userTier" class="text-2xl font-bold">Loading...</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Cell: Top-Middle (Game) -->
             <div id="grid-game" class="dashboard-card flex flex-col game-card">
                 <h3 class="font-bold text-xl text-center mb-4 flex-shrink-0" style="color: var(--text-title);">Want to play a game?</h3>
                 <div class="text-sm space-y-3 px-2 flex-shrink-0 text-center">
@@ -510,43 +490,32 @@
                     <p>🏆 Earn points for every correct answer.</p>
                 </div>
                 <div class="flex-grow flex items-center justify-center pt-6">
-                    <!-- MODIFIED: Updated game button link, icon, and removed subtitle -->
                     <a href="game2.html" class="interactive-card" data-label="Guess the Song">
                         <div class="card-icon">
-                            <!-- NEW SVG ICON -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 24 24"><g fill="none"><path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21 3.694v3.585a2 2 0 0 1-1.367 1.897L15 10.721V17.5a4.5 4.5 0 1 1-2-3.742V6.44a3 3 0 0 1 2.051-2.846l3.975-1.324A1.5 1.5 0 0 1 21 3.694M7 1a1 1 0 0 1 .946.677l.13.378a3 3 0 0 0 1.869 1.87l.378.129a1 1 0 0 1 0 1.892l-.378.13a3 3 0 0 0-1.87 1.869l-.129.378a1 1 0 0 1-1.892 0l-.13-.378a3 3 0 0 0-1.869-1.87l-.378-.129a1 1 0 0 1 0-1.892l.378-.13a3 3 0 0 0 1.87-1.869l.129-.378A1 1 0 0 1 7 1"/></g></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 24 24" style="color: #6D28D9;"><g fill="none"><path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21 3.694v3.585a2 2 0 0 1-1.367 1.897L15 10.721V17.5a4.5 4.5 0 1 1-2-3.742V6.44a3 3 0 0 1 2.051-2.846l3.975-1.324A1.5 1.5 0 0 1 21 3.694M7 1a1 1 0 0 1 .946.677l.13.378a3 3 0 0 0 1.869 1.87l.378.129a1 1 0 0 1 0 1.892l-.378.13a3 3 0 0 0-1.87 1.869l-.129.378a1 1 0 0 1-1.892 0l-.13-.378a3 3 0 0 0-1.869-1.87l-.378-.129a1 1 0 0 1 0-1.892l.378-.13a3 3 0 0 0 1.87-1.869l.129-.378A1 1 0 0 1 7 1"/></g></svg>
                         </div>
                         <span class="card-title block font-semibold" style="color: var(--text-title);">Guess the Song</span>
-                        <!-- REMOVED Subtitle -->
-                    </a>
+                        </a>
                 </div>
             </div>
 
-            <!-- Cell: Right (Full Height) (Points & History) -->
-            <!-- NEW WRAPPER for 3rd column content -->
             <div id="grid-col-3-wrapper" class="flex flex-col" style="gap: var(--base-gap);">
                 <div id="grid-history" class="dashboard-card flex flex-col overflow-hidden history-card">
-                    <!-- Top Section: Points -->
                     <div class="flex-shrink-0">
-                        <div class="flex justify-between items-start" style="border-color: var(--card-border);"> <!-- items-start -->
-                            <div class="flex items-center gap-2 md:gap-3">
+                        <div class="flex justify-between items-start" style="border-color: var(--card-border);"> <div class="flex items-center gap-2 md:gap-3">
                                 <span class="font-semibold text-base md:text-lg">Points:</span>
                                 <span id="userPoints" class="text-3xl md:text-4xl font-bold" style="color: var(--text-title);">0</span>
                             </div>
                         </div>
                     </div>
-                    <!-- History Section Title -->
                     <div class="flex-shrink-0 flex justify-between items-center mt-6 pt-4 border-t" style="border-color: var(--card-border);">
                          <h3 class="text-lg font-bold" style="color: var(--text-title);">Points History</h3>
                          <button id="refreshHistoryBtn" class="p-1 rounded-full hover:bg-slate-100"><svg class="h-6 w-6" style="color: var(--text-body);" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M2 12.08c-.006-.862.91-1.356 1.618-.975l.095.058 2.678 1.804c.972.655.377 2.143-.734 2.007l-.117-.02-1.063-.234a8.002 8.002 0 0 0 14.804.605 1 1 0 0 1 1.82.828c-1.987 4.37-6.896 6.793-11.687 5.509A10.003 10.003 0 0 1 2 12.08Zm.903-4.228C4.89 3.482 9.799 1.06 14.59 2.343a10.002 10.002 0 0 1 7.414 9.581c.007.863-.91 1.358-1.617.976l-.096-.058-2.678-1.804c-.972-.655-.377-2.143.734-2.007l.117.02 1.063.234A8.002 8.002 0 0 0 4.723 8.68a1 1 0 1 1-1.82-.828Z" fill="currentColor"/></g></svg></button>
                     </div>
-                    <!-- Scrollable List -->
                     <div id="historyList" class="flex-grow overflow-y-auto pt-2">
-                        <!-- History items will be injected here by JS -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- NEW: Logout button as a separate element below the card -->
                 <button id="logoutButton" 
                         class="w-full text-center py-3 px-6 rounded-xl text-sm font-medium transition-colors 
                                bg-white border border-gray-200 hover:bg-gray-50 
@@ -555,14 +524,10 @@
                 </button>
             </div>
 
-            <!-- Cell: Bottom Left/Middle (Span) (Rewards) -->
             <div id="grid-rewards" class="dashboard-card flex flex-col overflow-hidden rewards-card">
                 <h3 class="text-lg font-bold flex-shrink-0" style="color: var(--text-title);">Redeem Rewards</h3>
-                <main id="rewardsGrid" class="flex-grow overflow-y-auto pt-4 grid grid-cols-4 gap-4 md:gap-6"> <!-- MODIFIED: 4 columns -->
-                    
-                    <!-- NEW REWARD BUTTONS -->
-                    <button class="reward-button" data-cost="10" data-label="₱10 Voucher" data-reward-code="Voucher10">
-                        <img src="https://placehold.co/128x128/FFFBEB/D97706?text=₱10" alt="Voucher Icon" class="bg-amber-100">
+                <main id="rewardsGrid" class="flex-grow overflow-y-auto pt-4 grid grid-cols-4 gap-4 md:gap-6"> <button class="reward-button" data-cost="10" data-label="₱10 Voucher" data-reward-code="Voucher10">
+                        <img src="voucher.png" alt="Voucher Icon" style="background-color: #FFFBEB;">
                         <p class="label">₱10 Voucher</p>
                         <p class="points">10 pts</p>
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
@@ -570,7 +535,7 @@
                     </button>
 
                     <button class="reward-button" data-cost="50" data-label="Lomo Card" data-reward-code="LomoCard">
-                        <img src="https://placehold.co/128x128/F0F9FF/0284C7?text=LC" alt="Lomo Card Icon" class="bg-sky-100">
+                        <img src="lomo.png" alt="Lomo Card Icon" style="background-color: #E6F3E9;">
                         <p class="label">Lomo Card</p>
                         <p class="points">50 pts</p>
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
@@ -578,7 +543,7 @@
                     </button>
 
                     <button class="reward-button" data-cost="100" data-label="Official PC" data-reward-code="OfficialPC">
-                        <img src="https://placehold.co/128x128/FEF2F2/DC2626?text=PC" alt="Photocard Icon" class="bg-red-100">
+                        <img src="pc.png" alt="Photocard Icon" style="background-color: #D9E8F1;">
                         <p class="label">Official PC</p>
                         <p class="points">100 pts</p>
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
@@ -586,7 +551,7 @@
                     </button>
 
                     <button class="reward-button" data-cost="200" data-label="Official Album" data-reward-code="OfficialAlbum">
-                        <img src="https://placehold.co/128x128/F5F3FF/6D28D9?text=ALBUM" alt="Album Icon" class="bg-violet-100">
+                        <img src="album.png" alt="Album Icon" style="background-color: #FFF4D6;">
                         <p class="label">Official Album</p>
                         <p class="points">200 pts</p>
                         <p class="quantity"><span class="quantity-value">--</span> left</p>
@@ -599,22 +564,17 @@
         </div>
     </main>
     
-    <!-- MODALS (Merged) -->
-    
-    <!-- General Info Modal (for errors, logout) -->
     <div id="infoModal" class="fullscreen-overlay">
         <div class="popup-card p-6 gap-4 text-center">
             <h3 id="infoModalTitle" class="text-2xl font-bold" style="color: var(--text-title);"></h3>
             <p id="infoModalMessage" class="text-slate-500 break-words"></p>
             <div class="flex items-center justify-center gap-4 mt-4 w-full">
-                <!-- NEW: Cancel button for confirmation dialogs -->
                 <button id="infoModalCancelBtn" class="modal-button primary !bg-slate-200 !text-slate-700" style="display: none;">Cancel</button>
                 <button id="infoModalCloseBtn" class="modal-button primary w-full">OK</button>
             </div>
         </div>
     </div>
 
-    <!-- Redeem Confirmation Modal (from rewards.html) -->
     <div id="redeemModal" class="fullscreen-overlay">
         <div class="popup-card p-6 gap-4 text-center">
             <button id="redeemModalCloseBtn" class="absolute top-3 right-3 p-1 rounded-full hover:bg-slate-100" style="color: var(--text-body);">
