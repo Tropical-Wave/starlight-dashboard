@@ -185,8 +185,8 @@
 
         /* --- Game Screen --- */
         #gameScreen {
-            /* MODIFIED: Make screen a column that justifies content from top to bottom */
-            justify-content: space-between;
+            /* MODIFIED: Make screen a column that justifies content from the top */
+            justify-content: flex-start;
             gap: 1.5rem;
             height: 100dvh; /* Ensure it takes full viewport height */
         }
@@ -260,14 +260,15 @@
         /* --- NEW: Lottie Animation Container --- */
         #lottieContainer {
             width: 100%;
-            /* This container now fills all available space */
-            flex-grow: 1; 
+            /* MODIFIED: This container no longer grows, just takes space it needs */
+            flex-grow: 0; 
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             overflow: hidden;
             min-height: 200px; /* Ensure it has at least some space */
+            margin-bottom: 1.5rem; /* ADDED: Breathing room below Lottie */
         }
         #lottieContainer dotlottie-wc {
             /* --- CSS UPDATED AS REQUESTED --- */
@@ -697,7 +698,7 @@
             displayChoices(songData.choices);
             countdownTimerContainer.classList.remove('hidden');
             startCountdownTimer(CHOICES_DISPLAY_DURATION / 1000);
-            lottieContainer.classList.add('hidden'); // Hide Lottie
+            /* REMOVED: lottieContainer.classList.add('hidden'); */
         }, CHOICES_APPEAR_DELAY);
 
         // Timer for the whole round (fail-safe)
@@ -768,7 +769,7 @@
         clearTimeout(choicesTimer);
         clearInterval(countdownInterval);
         countdownTimerContainer.classList.add('hidden');
-        lottieContainer.classList.add('hidden');
+        /* REMOVED: lottieContainer.classList.add('hidden'); */
         if (songSnippetPlayer.state === 'started') songSnippetPlayer.stop();
 
         // 2. Show feedback on buttons
