@@ -683,7 +683,7 @@
     "audio": "song69.mp3",
     "correctAnswer": "Love language - Enhypen",
     "choices": [
-      "Whiplash - Aespa",
+      "Love language - Enhypen",
       "PTT(Paint the Town) - Loona",
       "Maestro - Seventeen",
       "Step back - Got the Beat"
@@ -693,7 +693,7 @@
     "audio": "song3.mp3",
     "correctAnswer": "Latata - (G) - IDLE",
     "choices": [
-      "Work - ATEEZ",
+      "Latata - (G) - IDLE",
       "Loco - Itzy",
       "Flash - X1",
       "Drama - Aespa"
@@ -703,7 +703,7 @@
     "audio": "song70.mp3",
     "correctAnswer": "Alcohol Free - Twice",
     "choices": [
-      "Eve Psyche & The Bluebeard's Wife - Lesserafim",
+      "Alcohol Free - Twice",
       "Bon Bon Chocolat - Everglow",
       "Midas Touch - Kiss of Life",
       "Crazy - Le Serrafim"
@@ -713,7 +713,7 @@
     "audio": "song71.mp3",
     "correctAnswer": "Love shot - EXO",
     "choices": [
-      "Whiplash - Aespa",
+      "Love shot - EXO",
       "Maestro - Seventeen",
       "Step back - Got the Beat",
       "Work - ATEEZ"
@@ -723,7 +723,7 @@
     "audio": "song72.mp3",
     "correctAnswer": "Smart - Le Serrafim",
     "choices": [
-      "Loco - Itzy",
+      "Smart - Le Serrafim",
       "Flash - X1",
       "Drama - Aespa",
       "Eve Psyche & The Bluebeard's Wife - Lesserafim"
@@ -733,7 +733,7 @@
     "audio": "song73.mp3",
     "correctAnswer": "Sticky - Kiss of Life",
     "choices": [
-      "Bon Bon Chocolat - Everglow",
+      "Sticky - Kiss of Life",
       "Midas Touch - Kiss of Life",
       "Crazy - Le Serrafim",
       "PTT(Paint the Town) - Loona"
@@ -743,7 +743,7 @@
     "audio": "song7.mp3",
     "correctAnswer": "1&Only - XLov",
     "choices": [
-      "Maestro - Seventeen",
+      "1&Only - XLov",
       "Step back - Got the Beat",
       "Work - ATEEZ",
       "Loco - Itzy"
@@ -753,7 +753,7 @@
     "audio": "song74.mp3",
     "correctAnswer": "Dance the Night Away - Twice",
     "choices": [
-      "Flash - X1",
+      "Dance the Night Away - Twice",
       "Drama - Aespa",
       "Eve Psyche & The Bluebeard's Wife - Lesserafim",
       "Bon Bon Chocolat - Everglow"
@@ -763,7 +763,7 @@
     "audio": "song75.mp3",
     "correctAnswer": "Wave - ATEEZ",
     "choices": [
-      "Midas Touch - Kiss of Life",
+      "Wave - ATEEZ",
       "Crazy - Le Serrafim",
       "Whiplash - Aespa",
       "PTT(Paint the Town) - Loona"
@@ -773,7 +773,7 @@
     "audio": "song9.mp3",
     "correctAnswer": "Really really - WINNER",
     "choices": [
-      "Maestro - Seventeen",
+      "Really really - WINNER",
       "Step back - Got the Beat",
       "Work - ATEEZ",
       "Loco - Itzy"
@@ -783,20 +783,10 @@
     "audio": "song76.mp3",
     "correctAnswer": "Gabriela - Katseye",
     "choices": [
-      "Flash - X1",
+      "Gabriela - Katseye",
       "Drama - Aespa",
       "Eve Psyche & The Bluebeard's Wife - Lesserafim",
       "Bon Bon Chocolat - Everglow"
-    ]
-  },
-  {
-    "audio": "song78.mp3",
-    "correctAnswer": "Egotistic - MAMAMOO",
-    "choices": [
-      "Midas Touch - Kiss of Life",
-      "Crazy - Le Serrafim",
-      "Whiplash - Aespa",
-      "PTT(Paint the Town) - Loona"
     ]
   }
 ]
