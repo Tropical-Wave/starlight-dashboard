@@ -108,7 +108,7 @@
         #introScreen .instructions-list li { margin-bottom: 0.5rem; }
         #startButton { margin-top: 2rem; max-width: 300px; margin-left: auto; margin-right: auto; }
 
-        /* Back Button - Top Left */
+        /* Back Button - Top Left (Used on Game Screen) */
         .back-button {
             position: absolute; top: 1.5rem; left: 1.5rem;
             background-color: rgba(255, 255, 255, 0.8); border-radius: 9999px;
@@ -149,11 +149,11 @@
             stroke: var(--cta-accent); stroke-width: 5; fill: none; transition: stroke-dasharray 1s linear;
         }
 
-        /* --- NEW: Question Container (replaces Lottie container) --- */
+        /* --- MODIFIED: Question Container Layout --- */
         #questionContainer {
             width: 100%;
             max-width: 900px;
-            flex-grow: 1;
+            flex-grow: 0.6; /* Reduced from 1 to give more space to buttons */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -161,34 +161,37 @@
             border-radius: 1.5rem;
             border: 1px solid var(--card-border);
             box-shadow: 0 8px 16px rgba(45, 55, 72, 0.1);
-            padding: clamp(1.5rem, 5vw, 2.5rem);
+            padding: clamp(1rem, 4vw, 2rem); /* Adjusted padding */
             text-align: center;
-            min-height: 150px;
+            min-height: 120px; /* Reduced min-height */
         }
         #questionText {
-            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            font-size: clamp(1.4rem, 4.5vw, 2rem); /* Slightly smaller font to fit smaller card */
             font-weight: 600;
             line-height: 1.4;
             color: var(--text-title);
         }
 
-        /* Choices Section */
+        /* --- MODIFIED: Choices Section Layout --- */
         .choices-section {
-            flex-grow: 0; flex-shrink: 0; display: grid; grid-template-columns: repeat(2, 1fr);
+            flex-grow: 1; /* Added to take up more space */
+            flex-shrink: 0; display: grid; grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(2, 1fr); gap: 1rem; width: 100%; max-width: 900px;
             opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in;
         }
         @media (max-width: 767px) { .choices-section { gap: 0.75rem; } }
         .choices-section.visible { opacity: 1; visibility: visible; }
 
-        /* Choice Button */
+        /* --- MODIFIED: Choice Button Layout --- */
         .choice-button {
             background-color: white; border: 1px solid var(--card-border);
             border-radius: 1.5rem; transition: all 0.2s ease-out;
             text-decoration: none; display: flex; align-items: center; justify-content: center;
-            padding: clamp(1rem, 3vw, 1.5rem); min-height: 90px;
+            padding: clamp(1.2rem, 4vw, 1.8rem); /* Increased padding */
+            min-height: 110px; /* Increased min-height */
             cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            font-size: clamp(1rem, 3.8vw, 1.25rem); font-weight: 600;
+            font-size: clamp(1.1rem, 4vw, 1.5rem); /* Increased font size */
+            font-weight: 600;
             color: var(--text-title); text-align: center; line-height: 1.3;
         }
         .choice-button:hover:not(:disabled) { 
@@ -229,19 +232,16 @@
 
     <!-- Intro Screen -->
     <div id="introScreen" class="screen-container active">
-        <a href="home.html" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-        </a>
+        <!-- REMOVED Back Button from Intro -->
         <div class="dashboard-card">
             <h1 class="title">K-Pop Quiz</h1>
             <p class="subtitle">(Multiple Choice)</p>
+            <!-- MODIFIED Game Rules -->
             <ul class="instructions-list">
-                <li>Test your K-Pop knowledge!</li>
-                <li>Answer 5 questions.</li>
-                <li>Each round lasts 7 seconds.</li>
-                <li>Earn points for each correct answer!</li>
+                <li>You will be asked <strong>10</strong> multiple-choice questions.</li>
+                <li>Each question has a <strong>7-second</strong> time limit.</li>
+                <li>Choices will appear after 2 seconds. Be ready!</li>
+                <li>Score points for every correct answer. Good luck!</li>
             </ul>
             <button id="startButton" class="modal-button primary" disabled>Loading Quiz...</button>
         </div>
@@ -249,6 +249,11 @@
 
     <!-- Game Screen -->
     <div id="gameScreen" class="screen-container hidden">
+        <a href="home.html" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
         <div class="top-game-section">
             <h2 class="header-quiz">K-Pop Quiz</h2>
             <div id="countdownTimerContainer" class="countdown-timer-container hidden">
@@ -260,12 +265,10 @@
             </div>
         </div>
         
-        <!-- Question Container -->
         <div id="questionContainer">
             <p id="questionText"></p>
         </div>
 
-        <!-- Choices -->
         <div id="choicesSection" class="choices-section">
             <button class="choice-button" data-choice-index="0"></button>
             <button class="choice-button" data-choice-index="1"></button>
@@ -281,7 +284,7 @@
             <p id="resultSubtitle" class="subtitle-message"></p>
             <p id="pointsEarnedText" class="points-earned-text hidden"></p>
             <div class="done-button-container">
-                <button id="doneButton" class="modal-button primary">Done</button>
+                <button id="doneButton" class="modal-button primary">Play Again</button>
             </div>
             <footer class="result-footer">
                 Sound Effect by <a href="https://pixabay.com/users/n2kstudio-17715924/" target="_blank">N2kStudio</a> from <a href="https://pixabay.com/" target="_blank">Pixabay</a>
@@ -291,7 +294,8 @@
 
 <script>
     // --- Constants and DOM Elements ---
-    const QUIZ_QUESTION_COUNT = 5;
+    // MODIFIED: Increased question count
+    const QUIZ_QUESTION_COUNT = 10;
     const TOTAL_ROUND_DURATION = 7000;
     const CHOICES_DISPLAY_DURATION = 5000;
 
@@ -377,7 +381,6 @@
             console.error('Failed to initialize game:', error);
             startButton.textContent = "Quiz Not Ready";
             alert('Failed to load quiz resources. Please try again.');
-            window.location.href = 'home.html';
         }
     }
 
@@ -415,24 +418,26 @@
         window.addEventListener('popstate', handlePopState);
     }
 
-    function handlePopState() {
+    function handlePopState(event) {
         if (gameActive) {
-            const confirmExit = window.confirm("Exiting will reset your progress. Are you sure?");
+            // This re-pushes the state, effectively canceling the back button
+            history.pushState(null, null, window.location.href);
+            const confirmExit = window.confirm("Are you sure you want to quit? Your progress will be lost.");
             if (confirmExit) {
+                gameActive = false;
                 if(backgroundMusicPlayer.state === 'started') backgroundMusicPlayer.stop();
                 window.removeEventListener('popstate', handlePopState);
-                window.location.href = 'home.html';
-            } else {
-                history.pushState(null, null, location.href);
+                location.reload(); // Reload to go back to intro screen cleanly
             }
         }
     }
 
+
     function adjustQuestionFontSize() {
         const questionLength = questionText.textContent.length;
         questionText.style.fontSize = ''; // Reset
-        if (questionLength > 90) questionText.style.fontSize = 'clamp(1.3rem, 4vw, 1.7rem)';
-        else if (questionLength > 60) questionText.style.fontSize = 'clamp(1.5rem, 5vw, 2.0rem)';
+        if (questionLength > 90) questionText.style.fontSize = 'clamp(1.2rem, 4vw, 1.6rem)';
+        else if (questionLength > 60) questionText.style.fontSize = 'clamp(1.4rem, 4.5vw, 1.8rem)';
     }
     
     function loadQuestion() {
@@ -572,9 +577,10 @@
     document.addEventListener('DOMContentLoaded', () => {
         initializeGame();
         startButton.addEventListener('click', startQuiz);
+        
+        // MODIFIED: Done button now reloads the page to restart the game
         doneButton.addEventListener('click', () => {
-            doneButton.disabled = true;
-            window.location.href = 'home.html';
+            location.reload();
         });
     });
 

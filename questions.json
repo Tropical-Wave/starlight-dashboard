@@ -1,102 +1,192 @@
 [
   {
-    "question": "Which K-Pop girl group is known for the hit song 'Cheer Up'?",
-    "choices": ["TWICE", "Red Velvet", "GFRIEND", "MAMAMOO"],
-    "correctAnswer": "TWICE"
+    "question": "Which food allergy does Taeyeon have?",
+    "choices": ["Chicken", "Chocolate", "Nuts", "Shellfish"],
+    "correctAnswer": "Nuts"
   },
   {
-    "question": "Which male idol is the leader of BTS?",
-    "choices": ["Jin", "Jungkook", "J-Hope", "RM"],
-    "correctAnswer": "RM"
+    "question": "Where was Krystal (f(x)) born?",
+    "choices": ["Seoul, South Korea", "Busan, South Korea", "San Francisco, USA", "Los Angeles, USA"],
+    "correctAnswer": "San Francisco, USA"
   },
   {
-    "question": "Which K-Pop group is known for the song 'Love Shot'?",
-    "choices": ["SEVENTEEN", "EXO", "NCT", "SHINee"],
-    "correctAnswer": "EXO"
+    "question": "SISTAR was under which entertainment company during their active years?",
+    "choices": ["SM Entertainment", "JYP Entertainment", "Starship Entertainment", "YG Entertainment"],
+    "correctAnswer": "Starship Entertainment"
   },
   {
-    "question": "What is the fandom name of BLACKPINK?",
-    "choices": ["Blink", "Pinkies", "Rosebuds", "Blackies"],
-    "correctAnswer": "Blink"
+    "question": "Which 4Minute member used to be part of Wonder Girls before joining 4Minute?",
+    "choices": ["Jihyun", "Gayoon", "Sohyun", "Hyuna"],
+    "correctAnswer": "Hyuna"
   },
   {
-    "question": "Which of these idols was originally part of the group Miss A?",
-    "choices": ["Sunmi", "HyunA", "Suzy", "IU"],
-    "correctAnswer": "Suzy"
+    "question": "What was the title of Wonder Girls' debut single?",
+    "choices": ["Irony", "Tell Me", "Nobody", "So Hot"],
+    "correctAnswer": "Irony"
   },
   {
-    "question": "Which K-Pop boy group is known for the song 'Call Me Baby'?",
-    "choices": ["BTS", "GOT7", "EXO", "MONSTA X"],
-    "correctAnswer": "EXO"
+    "question": "What martial art does Chorong (Apink) have a black belt in?",
+    "choices": ["Taekwondo", "Karate", "Hapkido", "Judo"],
+    "correctAnswer": "Hapkido"
   },
   {
-    "question": "Which K-Pop group debuted under YG Entertainment in 2016?",
-    "choices": ["BLACKPINK", "TREASURE", "iKON", "2NE1"],
-    "correctAnswer": "BLACKPINK"
+    "question": "What is Jin's (BTS) favorite food?",
+    "choices": ["Pizza", "Sushi", "Lobster & meat", "Fried rice"],
+    "correctAnswer": "Lobster & meat"
   },
   {
-    "question": "What is the official fandom name of TWICE?",
-    "choices": ["ONCE", "Twinkies", "Love", "Candy"],
-    "correctAnswer": "ONCE"
+    "question": "What local food in Buriram became especially popular because of Lisa (BLACKPINK)?",
+    "choices": ["Sticky rice", "Grilled skewers", "Standing meatballs", "Fried bananas"],
+    "correctAnswer": "Standing meatballs"
   },
   {
-    "question": "Which of the following is NOT a member of Red Velvet?",
-    "choices": ["Irene", "Joy", "Solar", "Seulgi"],
-    "correctAnswer": "Solar"
+    "question": "Which Red Velvet member is known for having a 'sixth sense' and a very serious personality offstage?",
+    "choices": ["Wendy", "Seulgi", "Yeri", "Irene"],
+    "correctAnswer": "Irene"
   },
   {
-    "question": "Which entertainment company is behind the group SEVENTEEN?",
-    "choices": ["YG Entertainment", "SM Entertainment", "Pledis Entertainment", "JYP Entertainment"],
-    "correctAnswer": "Pledis Entertainment"
+    "question": "Which of the following best describes Mingyu (SEVENTEEN)?",
+    "choices": ["Left-handed", "Right-handed", "Ambidextrous", "I don’t know"],
+    "correctAnswer": "Left-handed"
   },
   {
-    "question": "Which group has a sub‑unit named ‘Odd Eye Circle’?",
-    "choices": ["Red Velvet", "LOONA", "TWICE", "aespa"],
-    "correctAnswer": "LOONA"
+    "question": "Which NCT member once performed solo at Vienna’s Golden Hall when he was just 9 years old?",
+    "choices": ["Taeyong", "Jaehyun", "Chenle", "Renjun"],
+    "correctAnswer": "Chenle"
   },
   {
-    "question": "Which BTS member is nicknamed the 'Golden Maknae'?",
-    "choices": ["V", "Jimin", "Jungkook", "J‑Hope"],
-    "correctAnswer": "Jungkook"
+    "question": "Who is the oldest member of GOT7?",
+    "choices": ["JB", "Jackson", "Mark Tuan", "Youngjae"],
+    "correctAnswer": "Mark Tuan"
   },
   {
-    "question": "Which girl group debuted with the song ‘Dalla Dalla’?",
-    "choices": ["ITZY", "Blackpink", "GFriend", "Mamamoo"],
-    "correctAnswer": "ITZY"
+    "question": "Which company is iKON under?",
+    "choices": ["SM Entertainment", "JYP Entertainment", "YG Entertainment", "BigHit (HYBE)"],
+    "correctAnswer": "YG Entertainment"
   },
   {
-    "question": "In what year did BoA debut?",
-    "choices": ["1998", "2000", "2002", "2004"],
-    "correctAnswer": "2000"
+    "question": "WINNER was formed through which reality survival program on Mnet?",
+    "choices": ["Produce 101", "Show Me The Money", "WIN: Who Is Next", "Mix & Match"],
+    "correctAnswer": "WIN: Who Is Next"
   },
   {
-    "question": "Which EXO member acted in the Chinese film ‘So I Married an Anti‑fan’?",
-    "choices": ["Suho", "Chanyeol", "Baekhyun", "Chen"],
-    "correctAnswer": "Chanyeol"
+    "question": "In 2015, GFRIEND filmed a reality show titled One Fine Day in which country?",
+    "choices": ["Japan", "Taiwan", "Philippines", "Thailand"],
+    "correctAnswer": "Philippines"
   },
   {
-    "question": "Which group was the first K‑Pop group to be featured on the Billboard 200?",
-    "choices": ["BTS", "Blackpink", "Wonder Girls", "Bigbang"],
-    "correctAnswer": "Wonder Girls"
+    "question": "Before debuting with EXID, Hani was originally a trainee set to debut in a girl group under which major entertainment company?",
+    "choices": ["SM Entertainment", "JYP Entertainment", "FNC Entertainment", "Cube Entertainment"],
+    "correctAnswer": "JYP Entertainment"
   },
   {
-    "question": "Which legendary solo artist is often called the ‘King of K‑Pop’?",
-    "choices": ["Rain", "G‑Dragon", "PSY", "BoA"],
-    "correctAnswer": "Rain"
+    "question": "DAY6's Young K was born in South Korea but moved to which country to attend high school and lived there for about 4 years?",
+    "choices": ["United States", "Australia", "Canada", "United Kingdom"],
+    "correctAnswer": "Canada"
   },
   {
-    "question": "Which boy group debuted in 1992 and is considered the first idol group?",
-    "choices": ["H.O.T.", "Seo Taiji and Boys", "Shinhwa", "DBSK"],
-    "correctAnswer": "Seo Taiji and Boys"
+    "question": "The fandom name for Oh My Girl, 'Miracle,' was announced during the comeback showcase for which EP?",
+    "choices": ["Coloring Book", "Closer", "Pink Ocean", "Nonstop"],
+    "correctAnswer": "Pink Ocean"
   },
   {
-    "question": "Which K‑Pop group has 13 members and 3 sub‑units?",
-    "choices": ["SEVENTEEN", "NCT 127", "EXO", "Stray Kids"],
-    "correctAnswer": "SEVENTEEN"
+    "question": "Which EXO member made his solo debut with the song \"That's Okay\" as a part of SM Station in 2019?",
+    "choices": ["Kai", "Baekhyun", "D.O.", "Sehun"],
+    "correctAnswer": "D.O."
   },
   {
-    "question": "Which soloist is known for the hit song ‘Gashina’?",
-    "choices": ["Chungha", "Sunmi", "IU", "Taeyeon"],
-    "correctAnswer": "Sunmi"
+    "question": "Which ITZY member has a phobia of balloons popping?",
+    "choices": ["Yeji", "Lia", "Ryujin", "Chaeryeong"],
+    "correctAnswer": "Chaeryeong"
+  },
+  {
+    "question": "The first episode of ATEEZ's debut reality show was originally titled Code Name is ATEEZ, but what was the final name of the show?",
+    "choices": ["ATEEZ: Expedition", "ATEEZ: The Beginning", "ATEEZ: TREASURE FILM", "ATEEZ: Debut Mission"],
+    "correctAnswer": "ATEEZ: TREASURE FILM"
+  },
+  {
+    "question": "TREASURE was formed through which reality survival program produced by YG Entertainment?",
+    "choices": ["Mix & Match", "Stray Kids", "YG Treasure Box", "Produce 48"],
+    "correctAnswer": "YG Treasure Box"
+  },
+  {
+    "question": "EVERGLOW's debut single album, Arrival of EVERGLOW, was released in which year?",
+    "choices": ["2018", "2019", "2020", "2021"],
+    "correctAnswer": "2019"
+  },
+  {
+    "question": "The name \"STAYC\" is an abbreviation for what phrase?",
+    "choices": ["Shine Together Always Young Crew", "Star To A Young Culture", "Sweet Teens Always Yearning Compassion", "Stellar Talent Aspiring Youth Center"],
+    "correctAnswer": "Star To A Young Culture"
+  },
+  {
+    "question": "ENHYPEN's Ni-ki is often praised for his versatility and acute muscle control, but which distinct dance style is he known to have trained in at a very young age, contributing to his grace?",
+    "choices": ["Jazz", "Ballroom", "Ballet", "Tap"],
+    "correctAnswer": "Ballet"
+  },
+  {
+    "question": "What is the title of the lead single from Kep1er's debut extended play, First Impact?",
+    "choices": ["Shine", "See the Light", "MVSK", "Wa Da Da"],
+    "correctAnswer": "Wa Da Da"
+  },
+  {
+    "question": "What is the title of the lead single from Oneus's debut EP, Light Us, which was released in January 2019?",
+    "choices": ["LIT", "Valkyrie", "Come Back Home", "To Be or Not to Be"],
+    "correctAnswer": "Valkyrie"
+  },
+  {
+    "question": "IZ*ONE's former member Kim Chaewon was born on which date in the year 2000?",
+    "choices": ["July 15", "August 1", "September 8", "October 29"],
+    "correctAnswer": "August 1"
+  },
+  {
+    "question": "Before debuting with NewJeans, members Minji and Hanni made a guest appearance in the music video for which 2021 song by labelmate BTS?",
+    "choices": ["Dynamite", "Butter", "Permission to Dance", "Life Goes On"],
+    "correctAnswer": "Permission to Dance"
+  },
+  {
+    "question": "Which IVE member is the tallest?",
+    "choices": ["Yujin", "Rei", "Liz", "Wonyoung"],
+    "correctAnswer": "Wonyoung"
+  },
+  {
+    "question": "What is Kim Chaewon's official position within LE SSERAFIM, besides being the leader?",
+    "choices": ["Main Rapper, Sub Vocalist", "Main Dancer, Lead Vocalist", "Lead Rapper, Main Dancer", "Lead Vocalist, Sub Dancer"],
+    "correctAnswer": "Main Dancer, Lead Vocalist"
+  },
+  {
+    "question": "aespa's concept involves \"ae\" members, which are the virtual counterparts of the real members, and the boundary between the two is known as what?",
+    "choices": ["The Nexus", "The Synk", "The Bridge", "The Kwangya"],
+    "correctAnswer": "The Synk"
+  },
+  {
+    "question": "The name RIIZE is a portmanteau of the English words \"Rise\" and \"Realize,\" which together mean what?",
+    "choices": ["To soar and imagine", "To rise up and shine", "To grow and achieve", "To move forward and conquer"],
+    "correctAnswer": "To grow and achieve"
+  },
+  {
+    "question": "BABYMONSTER's pre-debut single, which was released in May 2023, is titled...?",
+    "choices": ["Batter Up", "DREAM", "Stuck In The Middle", "SHEESH"],
+    "correctAnswer": "DREAM"
+  },
+  {
+    "question": "Which member of NMIXX, known for her powerful vocal range, was a former child model and actress?",
+    "choices": ["Lily", "Haewon", "Sullyoon", "Bae"],
+    "correctAnswer": "Sullyoon"
+  },
+  {
+    "question": "The group name MEOVV is an abbreviation of which phrase, suggesting their playful and distinct image?",
+    "choices": ["Mysterious Energy Of Very Vibes", "My Eyes Only View Victory", "Most Excellent Original Voice Velocity", "Musical Excellence On Very Vocal"],
+    "correctAnswer": "My Eyes Only View Victory"
+  },
+  {
+    "question": "The name ILLIT is a combination of the phrase \"I Will,\" symbolizing the girls' desire, and what word?",
+    "choices": ["Lit", "It", "Bit", "Wit"],
+    "correctAnswer": "It"
+  },
+  {
+    "question": "KATSEYE was formed through the global girl group creation project titled 'The Debut: Dream Academy,' which was a collaboration between Hybe and which U.S. music label?",
+    "choices": ["Columbia Records", "Capitol Records", "Geffen Records", "Interscope Records"],
+    "correctAnswer": "Geffen Records"
   }
 ]
