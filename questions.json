@@ -188,5 +188,95 @@
     "question": "KATSEYE was formed through the global girl group creation project titled 'The Debut: Dream Academy,' which was a collaboration between Hybe and which U.S. music label?",
     "choices": ["Columbia Records", "Capitol Records", "Geffen Records", "Interscope Records"],
     "correctAnswer": "Geffen Records"
+  },
+  {
+    "question": "Which BTS song remains one of the longest-charting K-pop songs on the Billboard Hot 100?",
+    "choices": ["Dynamite", "Permission to Dance", "Butter", "Boy With Luv"],
+    "correctAnswer": "Butter"
+  },
+  {
+    "question": "What was the tank variant featured in BLACKPINK’s “DDU-DU DDU-DU” music video?",
+    "choices": ["T-34-85", "T-72A", "M4A3 Sherman", "T-54"],
+    "correctAnswer": "T-34-85"
+  },
+  {
+    "question": "Which group is known for writing and choreographing their own music?",
+    "choices": ["TXT", "Seventeen", "EXO", "SHINee"],
+    "correctAnswer": "Seventeen"
+  },
+  {
+    "question": "Which of these is NOT a member of Stray Kids’ unit 3RACHA?",
+    "choices": ["Bang Chan", "Changbin", "Han", "Felix"],
+    "correctAnswer": "Felix"
+  },
+  {
+    "question": "What is TWICE’s official greeting?",
+    "choices": ["“One in a million! Hello, we are TWICE!”", "“One of a million! Hello, we are TWICE!”", "“One in a billion! Hello, we are TWICE!”", "“One in a million! Hi, we are TWICE!”"],
+    "correctAnswer": "“One in a million! Hello, we are TWICE!”"
+  },
+  {
+    "question": "What’s the name of the sub-label of HYBE that formed NewJeans?",
+    "choices": ["ADOR", "BELIFT LAB", "KOZ Entertainment", "PLEDIS Entertainment"],
+    "correctAnswer": "ADOR"
+  },
+  {
+    "question": "Which IVE members were previously in IZ*ONE?",
+    "choices": ["Wonyoung and Yujin", "Rei and Liz", "Gaeul and Leeseo", "Yujin and Rei"],
+    "correctAnswer": "Wonyoung and Yujin"
+  },
+  {
+    "question": "LE SSERAFIM Official Color:",
+    "choices": ["Fearless Blue", "Brave Navy", "Fear White", "Brave Sky"],
+    "correctAnswer": "Fearless Blue"
+  },
+  {
+    "question": "What is the second sub-unit of the boy group NCT?",
+    "choices": ["NCT U", "NCT 127", "NCT DREAM", "WayV"],
+    "correctAnswer": "NCT 127"
+  },
+  {
+    "question": "ATEEZ, known pre-debut as?",
+    "choices": ["KQ Fellaz", "KQ Fellows", "KQ Fellas", "KQ Flare"],
+    "correctAnswer": "KQ Fellaz"
+  },
+  {
+    "question": "Which (G)I-DLE member produces most of their music?",
+    "choices": ["Miyeon", "Minnie", "Soyeon", "Yuqi"],
+    "correctAnswer": "Soyeon"
+  },
+  {
+    "question": "Which TXT member was the first member to be revealed?",
+    "choices": ["Beomgyu", "Yeonjun", "Hueningkai", "Taehyun"],
+    "correctAnswer": "Yeonjun"
+  },
+  {
+    "question": "Which group was formed through the reality show “I-LAND”?",
+    "choices": ["BOYNEXTDOOR", "ENHYPEN", "TREASURE", "ZEROBASEONE"],
+    "correctAnswer": "ENHYPEN"
+  },
+  {
+    "question": "Which ITZY member starred in BTS’ Love Yourself Highlight Reel with J-Hope and Jimin?",
+    "choices": ["Yeji", "Lia", "Ryujin", "Yuna"],
+    "correctAnswer": "Ryujin"
+  },
+  {
+    "question": "Before TREASURE’s official debut, the group was known as _____?",
+    "choices": ["TREASURE 13", "TREASURE 12", "TREASURE X13", "TREASURE TEAM 13"],
+    "correctAnswer": "TREASURE 13"
+  },
+  {
+    "question": "What is the official fandom name of RIIZE?",
+    "choices": ["BRIIZE", "RIZEE", "BREEZE", "PRIIZE"],
+    "correctAnswer": "BRIIZE"
+  },
+  {
+    "question": "ZEROBASEONE (ZB1) was formed through which survival reality show?",
+    "choices": ["Boys Planet", "Boyz Plan", "Planet Boys", "Boy Planet"],
+    "correctAnswer": "Boys Planet"
+  },
+  {
+    "question": "Which Red Velvet member tried out for Cube Entertainment?",
+    "choices": ["Irene", "Seulgi", "Wendy", "Joy"],
+    "correctAnswer": "Wendy"
   }
 ]
